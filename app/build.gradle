@@ -80,7 +80,13 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$logging_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$logging_version"
 
+    // naver login
+    implementation 'com.navercorp.nid:oauth:5.1.0' // jdk 11
+//    implementation 'com.navercorp.nid:oauth-jdk8:5.1.0' // jdk 8
 
+    // kakao login
+    implementation group: 'com.kakao.sdk', name: 'usermgmt', version: '1.30.0'
+    implementation "com.kakao.sdk:v2-user:2.10.0" // 카카오 로그인
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -1,7 +1,9 @@
 package com.naeggeodo.presentation.di
 
 import android.app.Application
+import com.kakao.sdk.common.KakaoSdk
 import com.naeggeodo.presentation.BuildConfig
+import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.utils.TimberDebugTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -21,5 +23,8 @@ class App: Application() {
         if (BuildConfig.DEBUG){
             Timber.plant(TimberDebugTree())
         }
+
+        // initialize Kakao SDK
+        KakaoSdk.init(this, getString(R.string.kakao_app_key))
     }
 }
