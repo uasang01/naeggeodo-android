@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -53,6 +54,10 @@ dependencies {
     // logger
     implementation "com.jakewharton.timber:timber:4.7.1"
 
+    //hilts
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
 
     // ktx
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$ktx_version"
@@ -64,9 +69,6 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
 
 
-    //hilts
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 //    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
 
     // material components

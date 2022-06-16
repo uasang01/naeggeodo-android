@@ -7,6 +7,10 @@ buildscript {
     ext.logging_version = "4.9.3"
     ext.gson_version = "2.9.0"
     ext.ktx_version = "2.4.0"
+
+    dependencies {
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+    }
 }
 
 plugins {
