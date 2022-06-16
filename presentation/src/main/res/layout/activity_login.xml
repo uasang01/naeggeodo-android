@@ -15,7 +15,7 @@
             style="@style/font_bold_26"
             android:textColor="@color/black"
 
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="100dp"
 
             app:layout_constraintStart_toStartOf="@+id/guideline_left"
             app:layout_constraintTop_toTopOf="parent" />

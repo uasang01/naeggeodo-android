@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id "androidx.navigation.safeargs.kotlin"
 }
 
 android {
@@ -65,9 +66,11 @@ dependencies {
 
     // Kotlin
     implementation "androidx.activity:activity-ktx:$activity_version"
-    // Kotlin
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
 
+    // navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
 //    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
 
