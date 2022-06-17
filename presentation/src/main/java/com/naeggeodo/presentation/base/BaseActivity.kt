@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
-abstract class BaseActivity<T: ViewDataBinding>
-    (@LayoutRes private val layoutId: Int): AppCompatActivity() {
+abstract class BaseActivity<T : ViewDataBinding>
+    (@LayoutRes private val layoutId: Int) : AppCompatActivity() {
 
     protected lateinit var binding: T
 
@@ -25,9 +25,11 @@ abstract class BaseActivity<T: ViewDataBinding>
         initView()
         initViewModel()
         initListener()
+        observeViewModels()
         afterOnCreate()
     }
 
+    protected open fun observeViewModels() {}
     protected open fun beforeSetContentView() {}
     protected open fun initView() {}
     protected open fun initViewModel() {}

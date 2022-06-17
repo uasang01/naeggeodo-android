@@ -1,5 +1,6 @@
 package com.naeggeodo.presentation.di
 
+import com.damda.data.api.LogInApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,22 +12,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class ApiModule {
-
-//    @Provides
-//    @Singleton
-//    fun provideSignInApiService(@Named("Login") retrofit: Retrofit): SignInApi {
-//        return retrofit.create(SignInApi::class.java)
-//    }
-//
-//    @Provides
-//    @Singleton
-//    fun provideGetUserInfoApiService(@Named("Main") retrofit: Retrofit): UserInfoApi {
-//        return retrofit.create(UserInfoApi::class.java)
-//    }
-//
-//    @Provides
-//    @Singleton
-//    fun provideRestaurantApiService(@Named("Main") retrofit: Retrofit): RestaurantApi {
-//        return retrofit.create(RestaurantApi::class.java)
-//    }
+    @Provides
+    @Singleton
+    fun provideLogInApiService(@Named("Login") retrofit: Retrofit): LogInApi {
+        return retrofit.create(LogInApi::class.java)
+    }
 }

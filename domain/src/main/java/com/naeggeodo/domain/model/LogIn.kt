@@ -5,12 +5,14 @@ import com.google.gson.annotations.SerializedName
 data class LogIn(
     @SerializedName("accessToken")
     val accessToken: String,
-    @SerializedName("SerializedName")
+    @SerializedName("refreshToken")
     val refreshToken: String,
-    @SerializedName("SerializedName")
+    @SerializedName("type")
     val type: String,
-    @SerializedName("SerializedName")
+    @SerializedName("user_id")
     val user_id: String,
-    @SerializedName("SerializedName")
-    val address: String
+    @SerializedName("address")
+    val address: String?,
+    @SerializedName("buildingCode")
+    val buildingCode: String?
 )
