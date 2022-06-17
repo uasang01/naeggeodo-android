@@ -19,7 +19,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("Main")
+    @Named("AuthHeader")
     fun provideHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(10, TimeUnit.SECONDS)
@@ -37,7 +37,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("Login")
+    @Named("NoAuthHeader")
     fun provideLoginHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(10, TimeUnit.SECONDS)
@@ -49,9 +49,9 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("Main")
+    @Named("AuthHeader")
     fun provideMainRetrofitInstance(
-        @Named("Main") okHttpClient: OkHttpClient,
+        @Named("AuthHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
@@ -64,9 +64,9 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("Login")
+    @Named("NoAuthHeader")
     fun provideLoginRetrofitInstance(
-        @Named("Login") okHttpClient: OkHttpClient,
+        @Named("NoAuthHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()

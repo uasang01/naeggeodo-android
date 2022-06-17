@@ -14,7 +14,7 @@ import javax.inject.Singleton
 class ApiModule {
     @Provides
     @Singleton
-    fun provideLogInApiService(@Named("Login") retrofit: Retrofit): LogInApi {
+    fun provideLogInApiService(@Named("NoAuthHeader") retrofit: Retrofit): LogInApi {
         return retrofit.create(LogInApi::class.java)
     }
 }
