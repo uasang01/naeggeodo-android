@@ -9,6 +9,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseActivity
 import com.naeggeodo.presentation.databinding.ActivityLoginBinding
+import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util.shortShowToast
 import com.naeggeodo.presentation.viewmodel.LoginViewModel
 import com.navercorp.nid.NaverIdLoginSDK
@@ -157,7 +158,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
     override fun observeViewModels() {
         loginViewModel.loginResult.observe(this) { logIn ->
-            Timber.e("$logIn")
+            App.prefs.accessToken = logIn.accessToken
             goToHome()
         }
     }

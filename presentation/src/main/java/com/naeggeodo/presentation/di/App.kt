@@ -4,6 +4,7 @@ import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
 import com.naeggeodo.presentation.BuildConfig
 import com.naeggeodo.presentation.R
+import com.naeggeodo.presentation.utils.Prefs
 import com.naeggeodo.presentation.utils.TimberDebugTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -12,9 +13,11 @@ import timber.log.Timber
 class App: Application() {
     companion object {
         lateinit var INSTANCE: Application
+        lateinit var prefs: Prefs
     }
 
     override fun onCreate() {
+        prefs = Prefs(applicationContext)
         super.onCreate()
 
         INSTANCE = this

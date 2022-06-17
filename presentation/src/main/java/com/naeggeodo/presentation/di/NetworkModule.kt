@@ -19,18 +19,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("Main")
     fun provideHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(10, TimeUnit.SECONDS)
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .addInterceptor(getLoggingInterceptor())
-//                .addInterceptor { chain ->
-//                    val request = chain.request().newBuilder()
-//                        .addHeader("Authorization", "Bearer ${App.prefs.accessToken!!}")
-//                        .build()
-//                    chain.proceed(request)
-//                }
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("Authorization", "Bearer ${App.prefs.accessToken}")
+                    .build()
+                chain.proceed(request)
+            }
             .build()
     }
 
@@ -50,7 +51,7 @@ object NetworkModule {
     @Provides
     @Named("Main")
     fun provideMainRetrofitInstance(
-        okHttpClient: OkHttpClient,
+        @Named("Main") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
