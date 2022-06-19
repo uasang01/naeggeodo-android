@@ -1,5 +1,10 @@
 package com.naeggeodo.domain.model
 
-data class Category(
-    val categories: List<Map<Int, String>>
+import com.google.gson.annotations.SerializedName
+
+class Category(
+    @SerializedName("idx")
+    val idx: Int,
+    @SerializedName("category")
+    val category: String
 )

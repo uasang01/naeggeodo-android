@@ -28,4 +28,10 @@ class Prefs(context: Context) {
         }
 
 
+    fun clearAll()  = prefs.let{
+        accessToken = null
+        refreshToken = null
+        userId = null
+        address = null
+    }
 }

@@ -3,7 +3,6 @@ package com.naeggeodo.presentation.view.home
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.naeggeodo.domain.model.Category
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemCategoryBinding
 
@@ -22,14 +21,20 @@ class CategoryAdapter(private var datas: ArrayList<String>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.run {
-//            category.text = datas[position]
+            category.text = datas[position]
         }
     }
 
     override fun getItemCount() = datas.size
-    fun setData(category: Category) {
+    fun setData(categories: ArrayList<String>) {
+        clearData()
+        datas.addAll(categories)
+        notifyItemRangeChanged(0, categories.size)
+    }
+    fun clearData(){
+        val size = datas.size
         datas.clear()
-//        datas.addAll(category.categories.map{it.keys})
+        notifyItemRangeChanged(0, size)
     }
 //    fun addList(data: List<Restaurant>){
 //        datas.addAll(data)

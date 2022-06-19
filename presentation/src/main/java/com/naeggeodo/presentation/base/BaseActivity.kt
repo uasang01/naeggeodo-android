@@ -30,11 +30,11 @@ abstract class BaseActivity<T : ViewDataBinding>
         afterOnCreate()
     }
 
-    protected open fun observeViewModels() {}
     protected open fun beforeSetContentView() {}
     protected open fun initView() {}
     protected open fun initViewModel() {}
     protected open fun initListener() {}
+    protected open fun observeViewModels() {}
     protected open fun afterOnCreate() {}
 
 
@@ -46,6 +46,6 @@ abstract class BaseActivity<T : ViewDataBinding>
 
     override fun onDestroy() {
         super.onDestroy()
-        App.prefs.accessToken = null
+        App.prefs.clearAll()
     }
 }

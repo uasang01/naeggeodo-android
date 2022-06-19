@@ -2,7 +2,7 @@ package com.damda.data.repository.home.remote
 
 import com.damda.data.api.CategoryApi
 import com.damda.data.base.BaseRepository
-import com.naeggeodo.domain.model.Category
+import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import timber.log.Timber
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(
 ) : HomeRemoteDataSource, BaseRepository() {
     override suspend fun getCategories(
         remoteErrorEmitter: RemoteErrorEmitter
-    ): Category? {
+    ): Categories? {
         val res = safeApiCall(remoteErrorEmitter) {
             categoryApi.getCategories()
         }
