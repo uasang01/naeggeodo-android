@@ -25,18 +25,18 @@ abstract class BaseFragment<B : ViewDataBinding>(
     ): View? {
         _binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
         init()
-
-        Timber.e("onCreateView called")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
-        Timber.e("onViewCreated called")
     }
 
     abstract fun init()
+    open fun initView() {}
+    open fun initListener() {}
+    open fun observeViewModels() {}
 
     override fun onDestroyView() {
         super.onDestroyView()

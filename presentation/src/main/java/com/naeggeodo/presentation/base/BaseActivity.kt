@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.naeggeodo.presentation.di.App
 
 abstract class BaseActivity<T : ViewDataBinding>
     (@LayoutRes private val layoutId: Int) : AppCompatActivity() {
@@ -43,4 +44,8 @@ abstract class BaseActivity<T : ViewDataBinding>
 //    protected fun longShowToast(msg: String) =
 //        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
+    override fun onDestroy() {
+        super.onDestroy()
+        App.prefs.accessToken = null
+    }
 }

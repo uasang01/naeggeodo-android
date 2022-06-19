@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="com.naeggeodo.presentation.view.HomeFragment"
+        android:name="com.naeggeodo.presentation.view.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/search"
-        android:name="com.naeggeodo.presentation.view.SearchFragment"
+        android:name="com.naeggeodo.presentation.view.search.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/create"
-        android:name="com.naeggeodo.presentation.view.CreateFragment"
+        android:name="com.naeggeodo.presentation.view.create.CreateFragment"
         android:label="fragment_create"
         tools:layout="@layout/fragment_create" />
     <fragment
         android:id="@+id/chat"
-        android:name="com.naeggeodo.presentation.view.ChatFragment"
+        android:name="com.naeggeodo.presentation.view.chat.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/info"
-        android:name="com.naeggeodo.presentation.view.InfoFragment"
+        android:name="com.naeggeodo.presentation.view.info.InfoFragment"
         android:label="fragment_info"
         tools:layout="@layout/fragment_info" />
 </navigation>

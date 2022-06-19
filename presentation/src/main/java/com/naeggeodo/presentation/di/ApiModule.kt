@@ -1,5 +1,6 @@
 package com.naeggeodo.presentation.di
 
+import com.damda.data.api.CategoryApi
 import com.damda.data.api.LogInApi
 import dagger.Module
 import dagger.Provides
@@ -16,5 +17,11 @@ class ApiModule {
     @Singleton
     fun provideLogInApiService(@Named("NoAuthHeader") retrofit: Retrofit): LogInApi {
         return retrofit.create(LogInApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryApiService(@Named("NoAuthHeader") retrofit: Retrofit): CategoryApi {
+        return retrofit.create(CategoryApi::class.java)
     }
 }
