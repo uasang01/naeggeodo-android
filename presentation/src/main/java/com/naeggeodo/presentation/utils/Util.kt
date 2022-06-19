@@ -10,7 +10,4 @@ object Util {
 
     fun shortLongToast(context: Context, msg: String) =
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-
-    fun convertEngCategoryToKor(str: String) = enumValueOf<CategoryType>(str)
-
 }

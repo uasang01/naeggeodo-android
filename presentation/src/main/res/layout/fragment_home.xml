@@ -31,8 +31,8 @@
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:drawablePadding="10dp"
 
-                android:hint="검색어를 입력해 주세요"
                 android:focusedByDefault="false"
+                android:hint="검색어를 입력해 주세요"
                 android:inputType="text"
                 android:paddingHorizontal="20dp"
                 android:textColor="@color/black"
@@ -41,13 +41,20 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+            android:id="@+id/category_recycler_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/serach_bar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chat_list_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_recycler_view" />
 
 
         <!--  Guidelines  -->

@@ -12,7 +12,8 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
-    private val adapter by lazy { CategoryAdapter(arrayListOf()) }
+    private val categoryAdapter by lazy { CategoryAdapter(arrayListOf()) }
+    private val chatListAdapter by lazy { ChatListAdapter(arrayListOf()) }
     private val homeViewModel: HomeViewModel by viewModels()
 
     override fun init() {
@@ -25,10 +26,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
 
     override fun initView() {
-        binding.recyclerView.adapter = adapter
+        binding.categoryRecyclerView.adapter = categoryAdapter
         val lm = LinearLayoutManager(requireContext())
         lm.orientation = LinearLayoutManager.HORIZONTAL
-        binding.recyclerView.layoutManager = lm
+        binding.categoryRecyclerView.layoutManager = lm
+
+        binding.chatListRecyclerView.adapter = chatListAdapter
+        binding.chatListRecyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun initListener() {
@@ -42,7 +46,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             val list = arrayListOf<String>()
             list.addAll(value.categories.map { enumValueOf<CategoryType>(it.category).korean })
 
-            adapter.setData(list)
+            categoryAdapter.setData(list)
         }
     }
 
