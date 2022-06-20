@@ -7,7 +7,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface LogInApi {
-    @POST("/login/mobil/{provider}")
+    @POST("login/mobil/{provider}")
     suspend fun logIn(
         @Path("provider") provider: String,
         @Body params: HashMap<String, String?>
