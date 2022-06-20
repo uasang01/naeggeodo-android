@@ -144,9 +144,10 @@ class AddressSearchDialogFragment : DialogFragment() {
                 Timber.e("address : $address, buildingCode : $buildingCode, apartment : $apartment")
 
                 locationViewModel.apply {
-                    setAddress(address)
-                    setBuildingCode(buildingCode)
-                    setApartment(apartment)
+//                    setAddress(address)
+//                    setBuildingCode(buildingCode)
+//                    setApartment(apartment)
+                    setAddressInfo(Triple(address, buildingCode, apartment))
                 }
                 dialog?.dismiss()
             }

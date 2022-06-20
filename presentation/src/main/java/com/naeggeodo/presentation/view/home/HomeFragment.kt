@@ -65,17 +65,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             categoryAdapter.setData(list)
         }
 
-        locationViewModel.address.observe(viewLifecycleOwner) { value ->
+        locationViewModel.addressInfo.observe(viewLifecycleOwner) { value ->
             Timber.e("address $value")
+            val address = value.first
+            val buildingCode = value.second
+            val apartment = value.third
+
+            if (apartment == "Y") {
+                binding.searchBarText.text = address
+                requestChatList(buildingCode = buildingCode)
+            } else {
+                binding.searchBarText.text = getText(R.string.not_apartment)
+            }
         }
 
-        locationViewModel.buildingCode.observe(viewLifecycleOwner) { value ->
-            Timber.e("buildingCode $value")
+        homeViewModel.chatList.observe(viewLifecycleOwner) { value ->
+            Timber.e("$value")
         }
 
-        locationViewModel.apartment.observe(viewLifecycleOwner) { value ->
-            Timber.e("apartment $value")
-        }
+    }
+
+    private fun requestChatList(category: String? = null, buildingCode: String) {
+        homeViewModel.getChatList(category, buildingCode)
     }
 
     private fun requestCategory() {

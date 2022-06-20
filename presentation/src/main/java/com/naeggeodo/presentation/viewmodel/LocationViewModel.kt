@@ -8,16 +8,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LocationViewModel @Inject constructor() : BaseViewModel() {
-    private val _address: MutableLiveData<String> = MutableLiveData()
-    val address: LiveData<String> get() = _address
 
-    private val _buildingCode: MutableLiveData<String> = MutableLiveData()
-    val buildingCode: LiveData<String> get() = _buildingCode
+    private val _addressInfo: MutableLiveData<Triple<String, String, String>> = MutableLiveData()
+    val addressInfo: LiveData<Triple<String, String, String>> get() = _addressInfo
 
-    private val _apartment: MutableLiveData<String> = MutableLiveData()
-    val apartment: LiveData<String> get() = _apartment
-
-    fun setAddress(str: String) = _address.postValue(str)
-    fun setBuildingCode(str: String) = _buildingCode.postValue(str)
-    fun setApartment(str: String) = _apartment.postValue(str)
+    fun setAddressInfo(info: Triple<String, String, String>) = _addressInfo.postValue(info)
 }

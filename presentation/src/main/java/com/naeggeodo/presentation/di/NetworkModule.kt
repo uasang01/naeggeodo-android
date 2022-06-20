@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -27,6 +28,7 @@ object NetworkModule {
             .writeTimeout(15, TimeUnit.SECONDS)
             .addInterceptor(getLoggingInterceptor())
             .addInterceptor { chain ->
+                Timber.e("TOKEN / Bearer ${App.prefs.accessToken}")
                 val request = chain.request().newBuilder()
                     .addHeader("Authorization", "Bearer ${App.prefs.accessToken}")
                     .build()
@@ -49,9 +51,9 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("AuthHeader")
+    @Named("NoAuthHeader")
     fun provideMainRetrofitInstance(
-        @Named("AuthHeader") okHttpClient: OkHttpClient,
+        @Named("NoAuthHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()

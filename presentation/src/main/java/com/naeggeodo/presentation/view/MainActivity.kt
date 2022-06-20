@@ -5,6 +5,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseActivity
 import com.naeggeodo.presentation.databinding.ActivityMainBinding
+import com.naeggeodo.presentation.di.App
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,5 +19,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         val navController = navHostFragment.navController
 
         binding.navBar.setupWithNavController(navController)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        App.prefs.clearAccessToken()
     }
 }
