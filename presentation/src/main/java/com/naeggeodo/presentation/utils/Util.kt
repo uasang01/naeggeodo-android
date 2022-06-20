@@ -1,13 +1,26 @@
 package com.naeggeodo.presentation.utils
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.view.View
 import android.widget.Toast
-import com.naeggeodo.domain.utils.CategoryType
+import androidx.databinding.ViewDataBinding
+import com.google.android.material.snackbar.Snackbar
 
 object Util {
-    fun shortShowToast(context: Context, msg: String) =
+    fun showShortToast(context: Context, msg: String) =
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 
-    fun shortLongToast(context: Context, msg: String) =
+    fun showLongToast(context: Context, msg: String) =
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+
+    fun showShortSnackbar(rootView: View, msg: String) =
+        Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT).show()
+
+    fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return connectivityManager.activeNetwork != null &&
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
+    }
 }

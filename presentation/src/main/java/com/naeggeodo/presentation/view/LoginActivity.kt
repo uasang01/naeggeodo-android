@@ -10,7 +10,7 @@ import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseActivity
 import com.naeggeodo.presentation.databinding.ActivityLoginBinding
 import com.naeggeodo.presentation.di.App
-import com.naeggeodo.presentation.utils.Util.shortShowToast
+import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.viewmodel.LoginViewModel
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -92,7 +92,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                     val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
 
                     Timber.e("naver login error occurred / errorCode:$errorCode, errorDesc:$errorDescription")
-                    shortShowToast(applicationContext, "네이버 로그인 실패")
+                    showShortToast(applicationContext, "네이버 로그인 실패")
                 }
 
                 override fun onError(errorCode: Int, message: String) {

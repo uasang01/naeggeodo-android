@@ -1,12 +1,16 @@
 package com.naeggeodo.presentation.view.home
 
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentHomeBinding
+import com.naeggeodo.presentation.utils.Util
+import com.naeggeodo.presentation.utils.Util.showShortSnackbar
 import com.naeggeodo.presentation.viewmodel.HomeViewModel
+import com.naeggeodo.presentation.viewmodel.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -15,6 +19,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val categoryAdapter by lazy { CategoryAdapter(arrayListOf()) }
     private val chatListAdapter by lazy { ChatListAdapter(arrayListOf()) }
     private val homeViewModel: HomeViewModel by viewModels()
+    private val locationViewModel: LocationViewModel by activityViewModels()
 
     override fun init() {
     }
@@ -36,6 +41,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     override fun initListener() {
+        binding.serachBarCardview.setOnClickListener {
+            //사용하기 위해 버튼을 클릭하면 다이얼로그가 실행되게
+
+            //인터넷 연결 확인
+            if (Util.isNetworkConnected(requireContext())) {
+                //주소검색 웹 뷰를 띄울 DialogFragment 선언
+                AddressSearchDialogFragment().show(parentFragmentManager, "addressDialog")
+            } else {
+                showShortSnackbar(binding.root, "인터넷 연결을 확인해주세요.")
+            }
+        }
     }
 
     override fun observeViewModels() {
@@ -48,8 +64,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
             categoryAdapter.setData(list)
         }
-    }
 
+        locationViewModel.address.observe(viewLifecycleOwner) { value ->
+            Timber.e("address $value")
+        }
+
+        locationViewModel.buildingCode.observe(viewLifecycleOwner) { value ->
+            Timber.e("buildingCode $value")
+        }
+
+        locationViewModel.apartment.observe(viewLifecycleOwner) { value ->
+            Timber.e("apartment $value")
+        }
+    }
 
     private fun requestCategory() {
         homeViewModel.getCategories()
