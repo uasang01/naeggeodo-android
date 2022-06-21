@@ -3,6 +3,7 @@ package com.naeggeodo.presentation.view.home
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -17,7 +18,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val categoryAdapter by lazy { CategoryAdapter(arrayListOf()) }
-    private val chatListAdapter by lazy { ChatListAdapter(arrayListOf()) }
+    private val chatListAdapter by lazy { ChatListAdapter(requireContext(), arrayListOf()) }
     private val homeViewModel: HomeViewModel by viewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
 
@@ -57,7 +58,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun observeViewModels() {
         homeViewModel.categories.observe(viewLifecycleOwner) { value ->
             value.categories.map {
-                Timber.e("${it.category}")
+                Timber.e(it.category)
             }
             val list = arrayListOf<String>()
             list.addAll(value.categories.map { enumValueOf<CategoryType>(it.category).korean })
@@ -81,6 +82,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         homeViewModel.chatList.observe(viewLifecycleOwner) { value ->
             Timber.e("$value")
+            chatListAdapter.setData(ArrayList(value))
         }
 
     }
