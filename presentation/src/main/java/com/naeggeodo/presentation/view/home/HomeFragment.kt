@@ -3,8 +3,6 @@ package com.naeggeodo.presentation.view.home
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentHomeBinding
@@ -17,7 +15,7 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
-    private val categoryAdapter by lazy { CategoryAdapter(arrayListOf()) }
+    private val categoryAdapter by lazy { CategoryAdapter(requireContext(), arrayListOf()) }
     private val chatListAdapter by lazy { ChatListAdapter(requireContext(), arrayListOf()) }
     private val homeViewModel: HomeViewModel by viewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
@@ -58,12 +56,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun observeViewModels() {
         homeViewModel.categories.observe(viewLifecycleOwner) { value ->
             value.categories.map {
-                Timber.e(it.category)
+                Timber.e("${it.idx} ${it.category} ")
             }
-            val list = arrayListOf<String>()
-            list.addAll(value.categories.map { enumValueOf<CategoryType>(it.category).korean })
-
-            categoryAdapter.setData(list)
+            categoryAdapter.setData(ArrayList(value.categories))
         }
 
         locationViewModel.addressInfo.observe(viewLifecycleOwner) { value ->
@@ -74,7 +69,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
             if (apartment == "Y") {
                 binding.searchBarText.text = address
-                requestChatList(buildingCode = buildingCode)
+                requestChatList(
+                    category = categoryAdapter.getSelectedCategory(),
+                    buildingCode = buildingCode
+                )
             } else {
                 binding.searchBarText.text = getText(R.string.not_apartment)
             }
