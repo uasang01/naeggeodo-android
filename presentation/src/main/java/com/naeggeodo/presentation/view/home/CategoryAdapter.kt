@@ -9,12 +9,12 @@ import com.naeggeodo.domain.model.Category
 import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemCategoryBinding
-import timber.log.Timber
 
 class CategoryAdapter(private val context: Context, private var datas: ArrayList<Category>) :
     RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
     private var selected: Int = 0
+    private var itemClickEvent: (Int) -> Unit = {}
 
     inner class ViewHolder(val binding: ItemCategoryBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -37,11 +37,14 @@ class CategoryAdapter(private val context: Context, private var datas: ArrayList
             }
 
             category.setOnClickListener {
+                if (selected == position) return@setOnClickListener
+
                 val prevPos = selected
                 selected = datas[position].idx
                 notifyItemChanged(prevPos)
                 notifyItemChanged(selected)
-                Timber.e(getSelectedCategory())
+
+                itemClickEvent(position)
             }
         }
     }
@@ -60,25 +63,8 @@ class CategoryAdapter(private val context: Context, private var datas: ArrayList
         datas.clear()
         notifyItemRangeChanged(0, size)
     }
-//    fun addList(data: List<Restaurant>){
-//        datas.addAll(data)
-//        notifyItemInserted(datas.size)
-//    }
 
-//    fun clearList() {
-//        Timber.e("data - $datas")
-//
-//        val s = datas.size
-//        datas.clear()
-//        notifyItemRangeRemoved(0, s);
-//        Timber.e("data - $datas")
-//    }
-
-//    fun removeAt(pos: Int) {
-//        println("datas = ${datas}")
-//        println("pos = ${pos}")
-//        datas.removeAt(pos)
-//        notifyItemRemoved(pos);
-//        notifyItemRangeChanged(pos, datas.size);
-//    }
+    fun setItemClickEvent(e: (Int) -> Unit) {
+        itemClickEvent = e
+    }
 }

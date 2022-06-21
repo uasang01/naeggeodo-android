@@ -1,18 +1,22 @@
 package com.naeggeodo.presentation.view.home
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.SvgDecoder
-import coil.load
 import coil.request.ImageRequest
+import coil.size.ViewSizeResolver
 import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatListBinding
 import com.naeggeodo.presentation.utils.Util
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -21,6 +25,9 @@ import java.util.*
 
 class ChatListAdapter(private val context: Context, private var datas: ArrayList<Chat>) :
     RecyclerView.Adapter<ChatListAdapter.ViewHolder>(), ImageLoaderFactory {
+
+    val drawableList = hashMapOf<Int, Drawable>()
+    val imageLoader by lazy { newImageLoader() }
 
     inner class ViewHolder(val binding: ItemChatListBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -49,20 +56,38 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
             time.text = getTimeStr(timeDiff)
             count.text = "인원 ${datas[position].currentCount}명 / ${datas[position].maxCount}명"
 
-
-            val imgRequest = ImageRequest
-                .Builder(context)
-                .data(datas[position].imgPath)
-                .target { drawable ->
-                    image.setImageDrawable(drawable)
+            // 이미지를 한번 불러왔다면 또 url로부터 로드하지 않고 사용
+            if (drawableList[position] == null) {
+                val imgRequest = ImageRequest
+                    .Builder(context)
+                    .data(datas[position].imgPath)
+                    .size(ViewSizeResolver(image))
+                    .target { drawable ->
+                        CoroutineScope(Dispatchers.Main).launch {
+                            image.setImageDrawable(drawable)
+                        }
+                    }
+                    .listener(
+                        onSuccess = { _, result ->
+                            Timber.e("imageLoad Success. pos:$position")
+                            drawableList[position] = result.drawable
+                        },
+                        onError = { _, result ->
+                            Timber.e("imageLoad Fail. pos:$position")
+                        }
+                    )
+                    .build()
+                CoroutineScope(Dispatchers.IO).launch {
+                    val a = imageLoader.execute(imgRequest)
+                    Timber.e("position $position : ${a.request.listener}")
                 }
-                .build()
-            newImageLoader().enqueue(imgRequest)
 
-            image.load(datas[position].imgPath)
-
-            enterContainer.setOnClickListener {
-                Util.showShortSnackbar(holder.binding.root, "order together clicked")
+                enterContainer.setOnClickListener {
+                    Util.showShortSnackbar(holder.binding.root, "order together clicked")
+                }
+            } else {
+                Timber.e("position $position : ${drawableList[position]}")
+                image.setImageDrawable(drawableList[position])
             }
         }
     }
@@ -95,14 +120,16 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
     fun setData(chatList: ArrayList<Chat>) {
         clearData()
         datas.addAll(chatList)
-        notifyItemRangeChanged(0, chatList.size)
+        notifyItemRangeInserted(0, chatList.size)
     }
 
     fun clearData() {
         val size = datas.size
         datas.clear()
-        notifyItemRangeChanged(0, size)
+        drawableList.clear()
+        notifyItemRangeRemoved(0, size)
     }
+
 
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(context)

@@ -121,7 +121,7 @@ class AddressSearchDialogFragment : DialogFragment() {
                     Timber.e("페이지 로딩 / $url")
                 }
             }
-            loadUrl("https://sanghun.s3.ap-northeast-2.amazonaws.com/postcode.html")
+            loadUrl("https://naeggeodo.com/api/postcode.html")
         }
     }
 
