@@ -1,8 +1,8 @@
 package com.naeggeodo.presentation.di
 
-import com.damda.data.api.CategoryApi
-import com.damda.data.api.GetChatListApi
-import com.damda.data.api.LogInApi
+import com.naeggeodo.data.api.CategoryApi
+import com.naeggeodo.data.api.GetChatListApi
+import com.naeggeodo.data.api.LogInApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

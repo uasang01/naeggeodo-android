@@ -1,7 +1,7 @@
 package com.damda.data.repository.home.remote
 
-import com.damda.data.api.CategoryApi
-import com.damda.data.api.GetChatListApi
+import com.naeggeodo.data.api.CategoryApi
+import com.naeggeodo.data.api.GetChatListApi
 import com.damda.data.base.BaseRepository
 import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.ChatList

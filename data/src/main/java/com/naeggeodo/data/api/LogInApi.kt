@@ -1,4 +1,4 @@
-package com.damda.data.api
+package com.naeggeodo.data.api
 
 import com.naeggeodo.domain.model.LogIn
 import retrofit2.Response
