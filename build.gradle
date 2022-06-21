@@ -8,6 +8,7 @@ buildscript {
     ext.gson_version = "2.9.0"
     ext.ktx_version = "2.4.0"
     ext.nav_version = "2.4.2"
+    ext.glide_version = "4.13.0"
 
     dependencies {
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
