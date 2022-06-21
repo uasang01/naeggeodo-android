@@ -6,5 +6,5 @@ class Category(
     @SerializedName("idx")
     val idx: Int,
     @SerializedName("category")
-    val category: String
+    val category: String,
 )
