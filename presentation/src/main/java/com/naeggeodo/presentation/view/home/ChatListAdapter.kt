@@ -1,14 +1,14 @@
 package com.naeggeodo.presentation.view.home
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.decode.SvgDecoder
+import coil.load
+import coil.request.ImageRequest
 import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatListBinding
@@ -18,8 +18,9 @@ import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 
+
 class ChatListAdapter(private val context: Context, private var datas: ArrayList<Chat>) :
-    RecyclerView.Adapter<ChatListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ChatListAdapter.ViewHolder>(), ImageLoaderFactory {
 
     inner class ViewHolder(val binding: ItemChatListBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -48,21 +49,17 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
             time.text = getTimeStr(timeDiff)
             count.text = "인원 ${datas[position].currentCount}명 / ${datas[position].maxCount}명"
 
-            Glide.with(context)
-                .asBitmap()
-                .load(datas[position].imgPath)
-                .into(object : CustomTarget<Bitmap>(){
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        image.setImageBitmap(resource)
-                    }
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        // this is called when imageView is cleared on lifecycle call or for
-                        // some other reason.
-                        // if you are referencing the bitmap somewhere else too other than this imageView
-                        // clear it here as you can no longer have the bitmap
-                        Timber.e("Error occurred loading image by Glide")
-                    }
-                })
+
+            val imgRequest = ImageRequest
+                .Builder(context)
+                .data(datas[position].imgPath)
+                .target { drawable ->
+                    image.setImageDrawable(drawable)
+                }
+                .build()
+            newImageLoader().enqueue(imgRequest)
+
+            image.load(datas[position].imgPath)
 
             enterContainer.setOnClickListener {
                 Util.showShortSnackbar(holder.binding.root, "order together clicked")
@@ -105,5 +102,13 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
         val size = datas.size
         datas.clear()
         notifyItemRangeChanged(0, size)
+    }
+
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(context)
+            .components {
+                add(SvgDecoder.Factory())
+            }
+            .build()
     }
 }
