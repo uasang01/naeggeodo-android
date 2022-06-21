@@ -51,9 +51,9 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("NoAuthHeader")
+    @Named("Auth")
     fun provideMainRetrofitInstance(
-        @Named("NoAuthHeader") okHttpClient: OkHttpClient,
+        @Named("AuthHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
@@ -66,7 +66,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("NoAuthHeader")
+    @Named("NoAuth")
     fun provideLoginRetrofitInstance(
         @Named("NoAuthHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory

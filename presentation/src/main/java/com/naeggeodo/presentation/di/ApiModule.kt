@@ -16,19 +16,19 @@ import javax.inject.Singleton
 class ApiModule {
     @Provides
     @Singleton
-    fun provideLogInApiService(@Named("NoAuthHeader") retrofit: Retrofit): LogInApi {
+    fun provideLogInApiService(@Named("NoAuth") retrofit: Retrofit): LogInApi {
         return retrofit.create(LogInApi::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideCategoryApiService(@Named("NoAuthHeader") retrofit: Retrofit): CategoryApi {
+    fun provideCategoryApiService(@Named("NoAuth") retrofit: Retrofit): CategoryApi {
         return retrofit.create(CategoryApi::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideGetChatListApiService(@Named("AuthHeader") retrofit: Retrofit): GetChatListApi {
+    fun provideGetChatListApiService(@Named("Auth") retrofit: Retrofit): GetChatListApi {
         return retrofit.create(GetChatListApi::class.java)
     }
 }
