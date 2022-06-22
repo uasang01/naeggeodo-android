@@ -1,7 +1,10 @@
 package com.naeggeodo.presentation.view.search
 
+import android.app.Activity
+import android.content.Context
 import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexDirection
@@ -10,6 +13,7 @@ import com.google.android.flexbox.JustifyContent
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentSearchBinding
+import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.viewmodel.SearchViewModel
 import timber.log.Timber
 
@@ -59,17 +63,26 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
                     Timber.e("${binding.searchBarText.text}")
                     val searchType = "search"
                     val keyWord = binding.searchBarText.text.toString()
-                    view.clearFocus()
+
                     searchChatList(searchType, keyWord)
+                    hideKeyboard(activity as Activity)
+
                     return@setOnKeyListener true
                 }
+//                KeyEvent.KEYCODE_BACK -> {
+//                    screenChanger(false)
+//                    hideKeyboard(activity as Activity)
+//
+//                    return@setOnKeyListener true
+//                }
                 else -> return@setOnKeyListener false
             }
         }
-        binding.searchBarText.onFocusChangeListener = View.OnFocusChangeListener { view, isFocused ->
-            Timber.e("view:$view isFocused:$isFocused")
+        binding.searchBarText.onFocusChangeListener =
+            View.OnFocusChangeListener { view, isFocused ->
+                Timber.e("view:$view isFocused:$isFocused")
 
-        }
+            }
     }
 
     override fun observeViewModels() {
@@ -78,21 +91,29 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         }
         searchViewModel.chatList.observe(viewLifecycleOwner) {
             chatListAdapter.setData(ArrayList(it))
-            screenChanger(false)
+            recyclerViewChanger(false)
         }
     }
 
     private fun searchChatList(searchType: String, keyWord: String) =
         searchViewModel.searchChatList(searchType, keyWord)
 
-    private fun screenChanger(showTags: Boolean){
-        if(showTags){
+    private fun recyclerViewChanger(showTags: Boolean) {
+        if (showTags) {
             binding.chatListRecyclerView.visibility = View.GONE
             binding.tagRecyclerView.visibility = View.VISIBLE
 
-        }else{
+        } else {
             binding.tagRecyclerView.visibility = View.GONE
             binding.chatListRecyclerView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideKeyboard(activity: Activity) {
+        activity.currentFocus?.let { view ->
+            val imm =
+                App.INSTANCE.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }
