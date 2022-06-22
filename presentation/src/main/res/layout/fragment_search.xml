@@ -1,13 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.SearchFragment">
+    tools:context=".view.search.SearchFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="search" />
-</FrameLayout>
+
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/search_bar_cardview"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+
+            android:backgroundTint="@color/grey_F2F2F8"
+
+            app:cardCornerRadius="5dp"
+            app:cardElevation="0dp"
+
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_top">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="20dp">
+
+                <ImageView
+                    android:id="@+id/search_bar_ic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_search_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/search_bar_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@color/transparent"
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/search_bar_ic"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/search_bar_arrow"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:src="@drawable/ic_arrow_right"-->
+                <!--                    app:layout_constraintTop_toTopOf="parent"-->
+                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                    app:layout_constraintEnd_toEndOf="parent"/>-->
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tag_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/defaultMargin"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/defaultMargin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_bar_cardview" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chat_list_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/defaultMargin"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_bar_cardview" />
+
+
+        <!--        <com.google.android.flexbox.FlexboxLayout-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="0dp"-->
+
+        <!--            app:flexWrap="wrap"-->
+        <!--            app:alignItems="flex_start"-->
+        <!--            android:layout_marginTop="@dimen/defaultMargin"-->
+        <!--            app:layout_constraintStart_toStartOf="@id/guideline_left"-->
+        <!--            app:layout_constraintEnd_toEndOf="@id/guideline_right"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/search_bar_layout"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            >-->
+
+        <!--&lt;!&ndash;            <androidx.cardview.widget.CardView&ndash;&gt;-->
+        <!--&lt;!&ndash;                android:id="@+id/tag"&ndash;&gt;-->
+        <!--&lt;!&ndash;                android:backgroundTint="@color/grey_F2F2F8"&ndash;&gt;-->
+        <!--&lt;!&ndash;                app:cardCornerRadius="5dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;                app:contentPadding="10dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;                android:layout_margin="10dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;                android:layout_width="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;                android:layout_height="wrap_content">&ndash;&gt;-->
+        <!--&lt;!&ndash;                <TextView&ndash;&gt;-->
+        <!--&lt;!&ndash;                    android:id="@+id/tagText"&ndash;&gt;-->
+        <!--&lt;!&ndash;                    android:layout_width="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;                    android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;                    android:includeFontPadding="false"&ndash;&gt;-->
+        <!--&lt;!&ndash;                    android:text="Tag"&ndash;&gt;-->
+        <!--&lt;!&ndash;                    android:textSize="15sp"&ndash;&gt;-->
+        <!--&lt;!&ndash;                    android:textColor="@color/black"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;            </androidx.cardview.widget.CardView>&ndash;&gt;-->
+
+        <!--        </com.google.android.flexbox.FlexboxLayout>-->
+
+        <!--  Guidelines  -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_left"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/defaultMargin" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/defaultMargin" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/defaultMargin" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

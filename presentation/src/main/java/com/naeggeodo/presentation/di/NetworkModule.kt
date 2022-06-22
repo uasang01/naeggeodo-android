@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -15,28 +16,30 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://3.38.33.232:8080"
+    private const val BASE_URL = "https://naeggeodo.com/api/"
 
     @Provides
     @Singleton
+    @Named("AuthHeader")
     fun provideHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(10, TimeUnit.SECONDS)
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .addInterceptor(getLoggingInterceptor())
-//                .addInterceptor { chain ->
-//                    val request = chain.request().newBuilder()
-//                        .addHeader("Authorization", "Bearer ${App.prefs.accessToken!!}")
-//                        .build()
-//                    chain.proceed(request)
-//                }
+            .addInterceptor { chain ->
+                Timber.e("TOKEN / Bearer ${App.prefs.accessToken}")
+                val request = chain.request().newBuilder()
+                    .addHeader("Authorization", "Bearer ${App.prefs.accessToken}")
+                    .build()
+                chain.proceed(request)
+            }
             .build()
     }
 
     @Provides
     @Singleton
-    @Named("Login")
+    @Named("NoAuthHeader")
     fun provideLoginHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(10, TimeUnit.SECONDS)
@@ -48,9 +51,9 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("Main")
+    @Named("Auth")
     fun provideMainRetrofitInstance(
-        okHttpClient: OkHttpClient,
+        @Named("AuthHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
@@ -63,9 +66,9 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("Login")
+    @Named("NoAuth")
     fun provideLoginRetrofitInstance(
-        @Named("Login") okHttpClient: OkHttpClient,
+        @Named("NoAuthHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()

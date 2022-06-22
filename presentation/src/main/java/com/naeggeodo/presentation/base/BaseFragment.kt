@@ -25,18 +25,21 @@ abstract class BaseFragment<B : ViewDataBinding>(
     ): View? {
         _binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
         init()
-
-        Timber.e("onCreateView called")
+        initView()
+        initListener()
+        observeViewModels()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
-        Timber.e("onViewCreated called")
     }
 
     abstract fun init()
+    open fun initView() {}
+    open fun initListener() {}
+    open fun observeViewModels() {}
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -45,7 +48,7 @@ abstract class BaseFragment<B : ViewDataBinding>(
         _binding = null
     }
 
-    protected fun shortShowToast(msg: String) =
+    protected fun showShortToast(msg: String) =
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 
     protected fun longShowToast(msg: String) =

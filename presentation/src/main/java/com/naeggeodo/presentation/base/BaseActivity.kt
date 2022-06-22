@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
-abstract class BaseActivity<T: ViewDataBinding>
-    (@LayoutRes private val layoutId: Int): AppCompatActivity() {
+abstract class BaseActivity<T : ViewDataBinding>
+    (@LayoutRes private val layoutId: Int) : AppCompatActivity() {
 
     protected lateinit var binding: T
 
@@ -25,6 +25,7 @@ abstract class BaseActivity<T: ViewDataBinding>
         initView()
         initViewModel()
         initListener()
+        observeViewModels()
         afterOnCreate()
     }
 
@@ -32,6 +33,7 @@ abstract class BaseActivity<T: ViewDataBinding>
     protected open fun initView() {}
     protected open fun initViewModel() {}
     protected open fun initListener() {}
+    protected open fun observeViewModels() {}
     protected open fun afterOnCreate() {}
 
 
@@ -40,5 +42,4 @@ abstract class BaseActivity<T: ViewDataBinding>
 //
 //    protected fun longShowToast(msg: String) =
 //        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-
 }
