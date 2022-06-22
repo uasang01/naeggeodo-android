@@ -5,7 +5,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface GetChatListApi {
+interface SearchChatListByCategoryApi {
     @GET("chat-rooms")
     suspend fun getChatList(
         @Query("category") category: String?,

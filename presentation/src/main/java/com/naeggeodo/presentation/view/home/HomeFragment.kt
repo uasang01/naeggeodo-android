@@ -34,7 +34,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     override fun initView() {
         // 채팅 바 텍스트
-        binding.searchBarLayout.searchBarText.text = getText(R.string.not_apartment)
+        binding.searchBarText.text = getText(R.string.not_apartment)
 
         // 카테고리 텝
         binding.categoryRecyclerView.adapter = categoryAdapter
@@ -48,7 +48,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     override fun initListener() {
-        binding.searchBarLayout.searchBarCardview.setOnClickListener {
+        binding.searchBarText.setOnClickListener {
             // 인터넷 연결 확인
             if (Util.isNetworkConnected(requireContext())) {
                 // 주소검색 웹 뷰를 띄울 DialogFragment 로 이동
@@ -121,7 +121,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             val buildingCode = value.second
             val apartment = value.third
 
-            val textview = binding.searchBarLayout.searchBarText
+            val textview = binding.searchBarText
             if (apartment == ApartmentFlag.Y.name) {
                 textview.text = address
                 requestChatList(

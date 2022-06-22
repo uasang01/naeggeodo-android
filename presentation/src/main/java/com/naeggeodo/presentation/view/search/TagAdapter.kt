@@ -51,10 +51,10 @@ class TagAdapter(private val context: Context, private var datas: ArrayList<Tag>
     override fun getItemCount() = datas.size
 //    fun getSelectedCategory() = if (selected == 0) null else datas[selected].category
 
-    fun setData(tagList: ArrayList<Tag>) {
+    fun setData(Tags: ArrayList<Tag>) {
         clearData()
-        datas.addAll(tagList)
-        notifyItemRangeChanged(0, tagList.size)
+        datas.addAll(Tags)
+        notifyItemRangeChanged(0, Tags.size)
     }
 
     fun clearData() {

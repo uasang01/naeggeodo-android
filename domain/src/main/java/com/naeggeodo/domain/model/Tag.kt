@@ -3,6 +3,8 @@ package com.naeggeodo.domain.model
 import com.google.gson.annotations.SerializedName
 
 class Tag(
-    @SerializedName("tag")
-    val tag: String,
+    @SerializedName("idx")
+    val idx: Int,
+    @SerializedName("msg")
+    val tag: String
 )

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tag"
+    android:id="@+id/tag_card_view"
     android:backgroundTint="@color/grey_F2F2F8"
     app:cardCornerRadius="5dp"
     app:cardElevation="0dp"

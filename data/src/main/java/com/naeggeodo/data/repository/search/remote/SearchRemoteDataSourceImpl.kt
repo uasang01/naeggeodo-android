@@ -1,23 +1,23 @@
-package com.damda.data.repository.home.remote
+package com.naeggeodo.data.repository.search.remote
 
-import com.naeggeodo.data.api.CategoryApi
-import com.naeggeodo.data.api.SearchChatListByCategoryApi
 import com.damda.data.base.BaseRepository
-import com.naeggeodo.domain.model.Categories
+import com.naeggeodo.data.api.GetTagsApi
+import com.naeggeodo.data.api.SearchChatListByKeyWordApi
 import com.naeggeodo.domain.model.ChatList
+import com.naeggeodo.domain.model.Tags
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import timber.log.Timber
 import javax.inject.Inject
 
-class HomeRemoteDataSourceImpl @Inject constructor(
-    private val categoryApi: CategoryApi,
-    private val searchChatListByCategoryApi: SearchChatListByCategoryApi
-) : HomeRemoteDataSource, BaseRepository() {
-    override suspend fun getCategories(
+class SearchRemoteDataSourceImpl @Inject constructor(
+    private val getTagsApi: GetTagsApi,
+    private val searchChatListByKeyWordApi: SearchChatListByKeyWordApi
+) : SearchRemoteDataSource, BaseRepository() {
+    override suspend fun getTags(
         remoteErrorEmitter: RemoteErrorEmitter
-    ): Categories? {
+    ): Tags? {
         val res = safeApiCall(remoteErrorEmitter) {
-            categoryApi.getCategories()
+            getTagsApi.getTags()
         }
         return if (res != null && res.isSuccessful && res.code() == 200) {
             res.body()
@@ -29,11 +29,11 @@ class HomeRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getChatList(
         remoteErrorEmitter: RemoteErrorEmitter,
-        category: String?,
-        buildingCode: String
+        searchType: String,
+        keyWord: String
     ): ChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
-            searchChatListByCategoryApi.getChatList(category, buildingCode)
+            searchChatListByKeyWordApi.getChatList(searchType, keyWord)
         }
         return if (res != null && res.isSuccessful && res.code() == 200) {
             res.body()

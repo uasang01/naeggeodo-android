@@ -1,8 +1,6 @@
 package com.naeggeodo.presentation.di
 
-import com.naeggeodo.data.api.CategoryApi
-import com.naeggeodo.data.api.GetChatListApi
-import com.naeggeodo.data.api.LogInApi
+import com.naeggeodo.data.api.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +26,19 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideGetChatListApiService(@Named("Auth") retrofit: Retrofit): GetChatListApi {
-        return retrofit.create(GetChatListApi::class.java)
+    fun provideSearchChatListByCategoryApiService(@Named("NoAuth") retrofit: Retrofit): SearchChatListByCategoryApi {
+        return retrofit.create(SearchChatListByCategoryApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetTagsApiService(@Named("Auth") retrofit: Retrofit): GetTagsApi {
+        return retrofit.create(GetTagsApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchChatListByKeyWordApiService(@Named("Auth") retrofit: Retrofit): SearchChatListByKeyWordApi {
+        return retrofit.create(SearchChatListByKeyWordApi::class.java)
     }
 }
