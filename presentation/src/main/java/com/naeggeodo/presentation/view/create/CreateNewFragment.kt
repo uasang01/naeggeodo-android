@@ -1,10 +1,10 @@
-package com.naeggeodo.presentation.view.info
+package com.naeggeodo.presentation.view.create
 
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
-import com.naeggeodo.presentation.databinding.FragmentInfoBinding
+import com.naeggeodo.presentation.databinding.FragmentCreateNewBinding
 
-class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
+class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragment_create_new) {
     override fun init() {
     }
 
