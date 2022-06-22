@@ -22,12 +22,12 @@
 | **Blog**       | https://velog.io/@cjy0029 | https://velog.io/@kmh916 | https://dal-dagury.tistory.com/  | 🛵 | https://uasang01.tistory.com/ | 
 | **Position**   | FrontEnd / IOS | BackEnd | FrontEnd | BackEnd | Android |
 
-# Tech Stack
+### Tech Stack
 Kotlin, Jetpack, Clean Architecture ... 
 
 
 
-# 커밋 규칙
+### 커밋 규칙
 
 feat : 새로운 기능에 대한 커밋\
 fix : 버그 수정에 대한 커밋\
