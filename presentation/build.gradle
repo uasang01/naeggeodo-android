@@ -71,6 +71,9 @@ dependencies {
 //    implementation "com.github.bumptech.glide:glide:$glide_version"
 //    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
+    // FlexboxLayout
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
     // coil(image loader)
     implementation "io.coil-kt:coil:2.1.0"
     implementation "io.coil-kt:coil-svg:2.1.0"
