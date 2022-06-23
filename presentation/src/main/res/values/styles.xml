@@ -43,11 +43,18 @@
     <style name="font_regular_12">
         <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
         <item name="android:textSize">12sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="font_regular_15">
+        <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="font_regular_17">
         <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
         <item name="android:textSize">17sp</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="font_default_bold_15">
