@@ -1,35 +1,37 @@
 package com.naeggeodo.presentation.view.create
 
+import androidx.navigation.fragment.findNavController
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentCreateBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CreateFragment : BaseFragment<FragmentCreateBinding>(R.layout.fragment_create) {
     override fun init() {
 
     }
 
-    override fun initView() {
-        super.initView()
-    }
-
     override fun initListener() {
-        super.initListener()
         binding.writeSelfButton.setOnClickListener {
-            showShortToast("직접 입력")
+            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+            findNavController().navigate(action)
         }
         binding.oneHourButton.setOnClickListener {
-            showShortToast("1시간 이내")
+            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+            findNavController().navigate(action)
         }
         binding.quickButton.setOnClickListener {
-            showShortToast("최대한 빨리")
+            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+            findNavController().navigate(action)
         }
         binding.freedomButton.setOnClickListener {
-            showShortToast("상관없음")
+            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+            findNavController().navigate(action)
         }
     }
 
     override fun observeViewModels() {
-        super.observeViewModels()
+
     }
 }

@@ -3,7 +3,9 @@ package com.naeggeodo.presentation.view.create
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentOrderedListBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class OrderedListFragment :
     BaseFragment<FragmentOrderedListBinding>(R.layout.fragment_ordered_list) {
     override fun init() {

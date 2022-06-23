@@ -7,6 +7,11 @@
         <!--        <item name="android:fontWeight">400</item>-->
     </style>
 
+    <style name="font_bold_18">
+        <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
     <style name="font_bold_17">
         <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
         <item name="android:textSize">17sp</item>
@@ -35,7 +40,10 @@
     </style>
 
     <style name="font_default_bold_15">
-        <item name="android:textStyle">bold</item>
         <item name="android:textSize">15sp</item>
+    </style>
+    <style name="font_default_medium_18">
+        <item name="android:fontWeight">700</item>
+        <item name="android:textSize">18sp</item>
     </style>
 </resources>
