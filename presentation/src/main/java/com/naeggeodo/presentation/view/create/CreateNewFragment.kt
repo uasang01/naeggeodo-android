@@ -14,6 +14,9 @@ class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragme
     }
 
     override fun initListener() {
+        binding.categoryBox.setOnClickListener {
+
+        }
     }
 
     override fun observeViewModels() {

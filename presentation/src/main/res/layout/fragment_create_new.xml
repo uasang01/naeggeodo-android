@@ -6,17 +6,136 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/restaurant_name_box"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="CreateNewFragment"
+            android:paddingVertical="20dp"
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_top">
+
+            <TextView
+                android:id="@+id/restaurant_name_text"
+                style="@style/font_bold_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="가게명"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                style="@style/font_bold_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="4dp"
+                android:text="*"
+                android:textColor="@color/orange_EF6212"
+                app:layout_constraintBottom_toBottomOf="@+id/restaurant_name_text"
+                app:layout_constraintStart_toEndOf="@id/restaurant_name_text"
+                app:layout_constraintTop_toTopOf="@id/restaurant_name_text" />
+
+            <EditText
+                android:id="@+id/restaurant_name_edit_text"
+                style="@style/font_default_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:hint="가게 이름을 입력해주세요"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/restaurant_name_text"
+
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_F2F2F8"
+            app:layout_constraintTop_toBottomOf="@id/restaurant_name_box" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/category_box"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="20dp"
+
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@+id/restaurant_name_box">
+
+            <TextView
+                style="@style/font_bold_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="카테고리 선택"
+                android:textColor="@color/grey_696969"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.utils.widget.ImageFilterView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_right_black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_F2F2F8"
+            app:layout_constraintTop_toBottomOf="@id/category_box" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/link_box"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="20dp"
+
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@+id/category_box">
+
+            <TextView
+                android:id="@+id/link_text"
+                style="@style/font_bold_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="가게 링크"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/link_edit_text"
+                style="@style/font_default_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:hint="http://"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/link_text"
+
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_F2F2F8"
+            app:layout_constraintTop_toBottomOf="@id/link_box" />
 
         <!--  Guidelines  -->
         <androidx.constraintlayout.widget.Guideline
@@ -38,6 +157,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="@dimen/defaultMargin" />
+            app:layout_constraintGuide_begin="30dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
