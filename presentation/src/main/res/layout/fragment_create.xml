@@ -1,12 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.create.CreateFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView
+            style="@style/font_bold_26"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/defaultMargin"
+            android:text="언제 음식을\n주문하실건가요?"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_top" />
+
+        <TextView
+            android:id="@+id/write_self_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:includeFontPadding="false"
+            android:text="직접입력"
+            android:textColor="@color/grey_696969"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@id/one_hour_button"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/one_hour_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+
+            android:backgroundTint="@color/grey_F2F2F8"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+
+            app:layout_constraintBottom_toTopOf="@id/quick_button"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left">
+
+            <TextView
+                style="@style/font_default_bold_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:includeFontPadding="false"
+                android:text="1시간 이내"
+                android:textColor="@color/black" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/quick_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+
+            android:backgroundTint="@color/grey_F2F2F8"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+
+            app:layout_constraintBottom_toTopOf="@id/freedom_button"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left">
+
+            <TextView
+                style="@style/font_default_bold_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:includeFontPadding="false"
+                android:text="최대한 빨리"
+                android:textColor="@color/black" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/freedom_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/grey_F2F2F8"
+
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+
+            app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left">
+
+            <TextView
+                style="@style/font_default_bold_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:includeFontPadding="false"
+                android:text="상관없음 (인원이 모집되는대로)"
+                android:textColor="@color/black" />
+        </androidx.cardview.widget.CardView>
 
         <!--  Guidelines  -->
         <androidx.constraintlayout.widget.Guideline
@@ -29,5 +122,12 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="@dimen/defaultMargin" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="@dimen/defaultMargin" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

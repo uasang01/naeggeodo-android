@@ -15,9 +15,10 @@ import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentSearchBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.viewmodel.SearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
-
+@AndroidEntryPoint
 class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
     private val tagAdapter by lazy { TagAdapter(requireContext(), arrayListOf()) }
     private val chatListAdapter by lazy { ChatListAdapter(requireContext(), arrayListOf()) }

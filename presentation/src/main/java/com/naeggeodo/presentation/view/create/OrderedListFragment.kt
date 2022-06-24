@@ -1,12 +1,13 @@
-package com.naeggeodo.presentation.view.info
+package com.naeggeodo.presentation.view.create
 
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
-import com.naeggeodo.presentation.databinding.FragmentInfoBinding
+import com.naeggeodo.presentation.databinding.FragmentOrderedListBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
+class OrderedListFragment :
+    BaseFragment<FragmentOrderedListBinding>(R.layout.fragment_ordered_list) {
     override fun init() {
     }
 
@@ -18,4 +19,5 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
 
     override fun observeViewModels() {
     }
+
 }
