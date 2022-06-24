@@ -5,6 +5,11 @@
     android:id="@+id/navigation"
     app:startDestination="@id/home">
 
+<!--    <include app:graph="@navigation/home"/>-->
+<!--    <include app:graph="@navigation/search"/>-->
+<!--    <include app:graph="@navigation/create"/>-->
+<!--    <include app:graph="@navigation/chat"/>-->
+<!--    <include app:graph="@navigation/info"/>-->
     <fragment
         android:id="@+id/home"
         android:name="com.naeggeodo.presentation.view.home.HomeFragment"
