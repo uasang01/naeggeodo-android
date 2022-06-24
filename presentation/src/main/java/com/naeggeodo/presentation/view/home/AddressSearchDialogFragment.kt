@@ -19,6 +19,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.naeggeodo.presentation.databinding.FragmentAddressSearchDialogBinding
+import com.naeggeodo.presentation.di.NetworkModule
 import com.naeggeodo.presentation.viewmodel.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -121,7 +122,7 @@ class AddressSearchDialogFragment : DialogFragment() {
                     Timber.e("페이지 로딩 / $url")
                 }
             }
-            loadUrl("https://naeggeodo.com/api/postcode.html")
+            loadUrl("${NetworkModule.BASE_URL}postcode.html")
         }
     }
 
@@ -144,9 +145,6 @@ class AddressSearchDialogFragment : DialogFragment() {
                 Timber.e("address : $address, buildingCode : $buildingCode, apartment : $apartment")
 
                 locationViewModel.apply {
-//                    setAddress(address)
-//                    setBuildingCode(buildingCode)
-//                    setApartment(apartment)
                     setAddressInfo(Triple(address, buildingCode, apartment))
                 }
                 dialog?.dismiss()
