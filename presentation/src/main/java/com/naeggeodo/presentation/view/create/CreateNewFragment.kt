@@ -1,10 +1,18 @@
 package com.naeggeodo.presentation.view.create
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.provider.MediaStore
 import android.view.KeyEvent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentCreateNewBinding
@@ -12,6 +20,7 @@ import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 
 private const val PEOPLE_MAX = 5
@@ -22,9 +31,39 @@ class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragme
     val createChatViewModel: CreateChatViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
+    private lateinit var getPictureResult: ActivityResultLauncher<Intent>
 
     override fun init() {
 
+
+        getPictureResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    Timber.e("activity result ok\n${result.data?.dataString}")
+
+                    result.data?.let {
+                        val uri = result.data!!.data
+                        Timber.e(uri.toString())
+                        val bitmap = ImageDecoder
+                            .decodeBitmap(
+                                ImageDecoder.createSource(
+                                    requireContext().contentResolver,
+                                    uri!!
+                                )
+                            )
+                            .copy(Bitmap.Config.ARGB_8888, true)
+                        Glide.with(requireContext())
+                            .load(bitmap)
+                            .centerCrop()
+                            .into(binding.chatImage)
+
+                        // 사버에 전송하기위해 뷰모델에 사진 정보 저장 추가 구현하기.
+                    }
+
+                } else {
+                    Timber.e("activity result not ok")
+                }
+            }
     }
 
     override fun initView() {
@@ -116,6 +155,13 @@ class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragme
                     )
                 )
             }
+        }
+        binding.chatImage.setOnClickListener {
+            val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            getPictureResult.launch(pickPhoto)
+
+
         }
     }
 
