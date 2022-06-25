@@ -12,13 +12,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/defaultMargin">
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/restaurant_name_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/defaultMargin"
                 android:paddingVertical="20dp">
 
                 <TextView
@@ -52,8 +52,8 @@
                     android:background="@color/white"
                     android:hint="가게 이름을 입력해주세요"
                     android:inputType="text"
-                    android:textColor="@color/black"
                     android:nextFocusDown="@id/link_edit_text"
+                    android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/restaurant_name_text"
 
@@ -70,6 +70,7 @@
                 android:id="@+id/category_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/defaultMargin"
                 android:paddingVertical="20dp">
 
                 <TextView
@@ -101,6 +102,7 @@
                 android:id="@+id/link_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/defaultMargin"
                 android:paddingVertical="20dp">
 
                 <TextView
@@ -139,6 +141,7 @@
                 android:id="@+id/tag_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/defaultMargin"
                 android:paddingVertical="20dp">
 
                 <TextView
@@ -189,6 +192,7 @@
                 android:id="@+id/people_count_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/defaultMargin"
                 android:paddingVertical="20dp">
 
                 <TextView
@@ -222,13 +226,13 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+
                     <ImageButton
                         android:id="@+id/subtract_button"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:background="@drawable/bg_button"
-                        android:src="@drawable/ic_subtract_grey"
-                        />
+                        android:src="@drawable/ic_subtract_grey" />
 
 
                     <TextView
@@ -247,8 +251,7 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:background="@drawable/bg_button"
-                        android:src="@drawable/ic_add_black"
-                        />
+                        android:src="@drawable/ic_add_black" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -262,6 +265,7 @@
                 android:id="@+id/chat_image_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/defaultMargin"
                 android:paddingVertical="20dp">
 
                 <TextView

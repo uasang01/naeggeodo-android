@@ -1,9 +1,14 @@
 package com.naeggeodo.presentation.utils
 
+import android.app.Activity
 import android.content.Context
+import android.graphics.Insets
+import android.graphics.Point
 import android.net.ConnectivityManager
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
+import android.view.WindowMetrics
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
@@ -35,5 +40,11 @@ object Util {
             layout.visibility = View.GONE
             view.clearAnimation()
         }
+    }
+    fun getScreenSize(context: Context): Point {
+        val w = context.resources.displayMetrics.widthPixels
+        val h = context.resources.displayMetrics.heightPixels
+
+        return Point(w,h)
     }
 }
