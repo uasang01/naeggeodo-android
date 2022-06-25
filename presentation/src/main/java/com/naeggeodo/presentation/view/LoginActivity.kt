@@ -10,12 +10,15 @@ import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseActivity
 import com.naeggeodo.presentation.databinding.ActivityLoginBinding
 import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.utils.ScreenState
+import com.naeggeodo.presentation.utils.Util.loadingAnimation
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.viewmodel.LoginViewModel
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login) {
@@ -160,6 +163,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
         loginViewModel.loginResult.observe(this) { logIn ->
             App.prefs.accessToken = logIn.accessToken
             goToHome()
+        }
+        loginViewModel.mutableScreenState.observe(this) { state ->
+            val layout = binding.progressView.root
+            val view = binding.progressView.progressImage
+            when (state!!) {
+                ScreenState.LOADING -> loadingAnimation(applicationContext, layout, view, true)
+                ScreenState.RENDER -> loadingAnimation(applicationContext, layout, view, false)
+                ScreenState.ERROR -> loadingAnimation(applicationContext, layout, view, false)
+            }
         }
     }
 

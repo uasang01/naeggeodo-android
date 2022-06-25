@@ -22,6 +22,7 @@ class LoginViewModel @Inject constructor(
 
 
     fun logIn(platform: String, body: HashMap<String, String?>) = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
         val response = loginUseCase.execute(this@LoginViewModel, platform, body)
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
