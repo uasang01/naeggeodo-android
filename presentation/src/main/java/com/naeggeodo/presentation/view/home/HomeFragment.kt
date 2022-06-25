@@ -20,7 +20,7 @@ import timber.log.Timber
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val categoryAdapter by lazy { CategoryAdapter(requireContext(), arrayListOf()) }
     private val chatListAdapter by lazy { ChatListAdapter(requireContext(), arrayListOf()) }
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
 
     override fun init() {

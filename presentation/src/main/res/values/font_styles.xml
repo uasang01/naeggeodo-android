@@ -12,6 +12,7 @@
         <item name="android:textSize">18sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="font_bold_17">
         <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
         <item name="android:textSize">17sp</item>
@@ -29,14 +30,28 @@
         <item name="android:textSize">12sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="font_medium_15">
         <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
         <item name="android:textSize">15sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="font_medium_17">
         <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
         <item name="android:textSize">17sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_medium_20">
+        <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="font_medium_26">
+        <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
+        <item name="android:textSize">26sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
 
@@ -45,6 +60,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="font_regular_15">
         <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
         <item name="android:textSize">15sp</item>
@@ -61,16 +77,19 @@
         <item name="android:textSize">15sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="font_default_medium_18">
         <item name="android:fontWeight">700</item>
         <item name="android:textSize">18sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="font_default_medium_15">
         <item name="android:fontWeight">700</item>
         <item name="android:textSize">15sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
     <style name="font_default_15">
         <item name="android:textSize">15sp</item>
     </style>

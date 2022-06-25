@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naeggeodo.domain.model.Category
 import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.R
-import com.naeggeodo.presentation.databinding.ItemCategoryBinding
+import com.naeggeodo.presentation.databinding.ItemCategoryTabBinding
 
 class CategoryAdapter(private val context: Context, private var datas: ArrayList<Category>) :
     RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
@@ -16,13 +16,13 @@ class CategoryAdapter(private val context: Context, private var datas: ArrayList
     private var selected: Int = 0
     private var itemClickEvent: (Int) -> Unit = {}
 
-    inner class ViewHolder(val binding: ItemCategoryBinding) :
+    inner class ViewHolder(val binding: ItemCategoryTabBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_category, parent, false)
-        return ViewHolder(ItemCategoryBinding.bind(view))
+            .inflate(R.layout.item_category_tab, parent, false)
+        return ViewHolder(ItemCategoryTabBinding.bind(view))
     }
 
 
