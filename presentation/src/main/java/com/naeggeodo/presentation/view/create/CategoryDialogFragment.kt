@@ -8,14 +8,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.naeggeodo.domain.model.Category
 import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.FragmentCategoryDialogBinding
 import com.naeggeodo.presentation.utils.dpToPx
+import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -25,7 +26,9 @@ class CategoryDialogFragment(
     val binding get() = _binding!!
     private var _binding: FragmentCategoryDialogBinding? = null
 
-    private var selectedPos: Int? = null
+    private val createChatViewModel: CreateChatViewModel by activityViewModels()
+
+    private var selectedCategory: Category? = null
     private var selectedView: TextView? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -57,25 +60,27 @@ class CategoryDialogFragment(
             lp.topMargin = 10.dpToPx(requireContext())
             categoryView.layoutParams = lp
 
-            categoryView.setOnClickListener { clickEvent(textView, item.idx) }
+            categoryView.setOnClickListener { clickEvent(textView, item) }
 
             // 뷰 츄가
             binding.contentsBox.addView(categoryView)
         }
 
         binding.selectButton.setOnClickListener {
-
+            selectedCategory?.let {
+                createChatViewModel.setCategory(it)
+            }
             dismiss()
         }
     }
 
-    private fun clickEvent(view: TextView, pos: Int) {
+    private fun clickEvent(view: TextView, category: Category) {
+        val pos = category.idx
 
-        if (selectedPos == pos) return
+        if (selectedCategory?.idx == pos) return
 
-        Timber.e("clicked $view / $pos")
-        val prevPos = selectedPos
-        selectedPos = pos
+        val prevCategory = selectedCategory
+        selectedCategory = category
         val prevView = selectedView
         selectedView = view
 

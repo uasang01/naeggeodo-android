@@ -13,7 +13,6 @@ import com.naeggeodo.presentation.databinding.FragmentSetNewChatBinding
 import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class SetNewChatFragment : BaseFragment<FragmentSetNewChatBinding>(R.layout.fragment_set_new_chat) {
@@ -52,12 +51,25 @@ class SetNewChatFragment : BaseFragment<FragmentSetNewChatBinding>(R.layout.frag
 
     override fun observeViewModels() {
 
-        createChatViewModel.restaurantName.observe(viewLifecycleOwner){ str ->
+        createChatViewModel.chatTitle.observe(viewLifecycleOwner) {
+            createButtonEnable()
+        }
+        createChatViewModel.category.observe(viewLifecycleOwner) {
+            createButtonEnable()
+        }
+    }
 
-            if (str.isNotEmpty()){
+    private fun createButtonEnable() {
+        createChatViewModel.apply {
+            val isRequiresFilled = chatTitle.value != null
+                    && chatTitle.value!!.isNotEmpty()
+                    && category.value != null
+
+            if (isRequiresFilled) {
                 binding.createTextView.background = ColorDrawable(Color.BLACK)
-            }else{
-                binding.createTextView.background = ColorDrawable(ContextCompat.getColor(requireContext(), R.color.grey_E0E0E0))
+            } else {
+                binding.createTextView.background =
+                    ColorDrawable(ContextCompat.getColor(requireContext(), R.color.grey_E0E0E0))
             }
 
         }

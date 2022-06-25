@@ -14,6 +14,7 @@ import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentSearchBinding
 import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -58,6 +59,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
     }
 
     override fun initListener() {
+        // 엔터를 누르면 키보드 내림
         binding.searchBarText.setOnKeyListener { view, keyCode, event ->
             when (keyCode) {
                 KeyEvent.KEYCODE_ENTER -> {
@@ -110,11 +112,4 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         }
     }
 
-    private fun hideKeyboard(activity: Activity) {
-        activity.currentFocus?.let { view ->
-            val imm =
-                App.INSTANCE.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-    }
 }
