@@ -16,7 +16,7 @@ class CreatePagerAdapter(fm: FragmentManager, lifecycle: Lifecycle) :
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> CreateNewFragment()
-            1 -> ChatHistoriesFragment()
+            1 -> TabHistoriesFragment()
             else -> CreateNewFragment()
         }
     }

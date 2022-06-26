@@ -41,7 +41,7 @@
         tools:layout="@layout/fragment_info" />
     <fragment
         android:id="@+id/setNewChatFragment"
-        android:name="com.naeggeodo.presentation.view.create.SetNewChatFragment"
+        android:name="com.naeggeodo.presentation.view.create.CreateNewChatFragment"
         android:label="fragment_set_new_chat"
-        tools:layout="@layout/fragment_set_new_chat" />
+        tools:layout="@layout/fragment_create_new_chat" />
 </navigation>

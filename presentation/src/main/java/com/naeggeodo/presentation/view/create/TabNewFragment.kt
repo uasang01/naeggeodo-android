@@ -15,7 +15,7 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
-import com.naeggeodo.presentation.databinding.FragmentCreateNewBinding
+import com.naeggeodo.presentation.databinding.FragmentTabNewBinding
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.HomeViewModel
@@ -27,7 +27,7 @@ private const val PEOPLE_MAX = 5
 private const val PEOPLE_MIN = 2
 
 @AndroidEntryPoint
-class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragment_create_new) {
+class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_tab_new) {
     val createChatViewModel: CreateChatViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 

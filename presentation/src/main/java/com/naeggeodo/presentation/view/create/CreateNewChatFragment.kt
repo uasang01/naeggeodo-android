@@ -9,13 +9,14 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
-import com.naeggeodo.presentation.databinding.FragmentSetNewChatBinding
+import com.naeggeodo.presentation.databinding.FragmentCreateNewChatBinding
 import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SetNewChatFragment : BaseFragment<FragmentSetNewChatBinding>(R.layout.fragment_set_new_chat) {
+class CreateNewChatFragment :
+    BaseFragment<FragmentCreateNewChatBinding>(R.layout.fragment_create_new_chat) {
     private val createChatViewModel: CreateChatViewModel by activityViewModels()
 
     private val tabTitleArray = arrayOf("새로입력", "주문목록")
