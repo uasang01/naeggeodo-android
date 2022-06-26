@@ -10,15 +10,20 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentCreateNewChatBinding
+import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
+import com.naeggeodo.presentation.viewmodel.HomeViewModel
+import com.naeggeodo.presentation.viewmodel.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class CreateNewChatFragment :
     BaseFragment<FragmentCreateNewChatBinding>(R.layout.fragment_create_new_chat) {
     private val createChatViewModel: CreateChatViewModel by activityViewModels()
-
+//    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val locationViewModel: LocationViewModel by activityViewModels()
     private val tabTitleArray = arrayOf("새로입력", "주문목록")
     override fun init() {
 
@@ -48,6 +53,25 @@ class CreateNewChatFragment :
     }
 
     override fun initListener() {
+        binding.createTextView.setOnClickListener {
+            if(!checkFieldValidation()) return@setOnClickListener
+
+            Timber.e("buildingCode ${locationViewModel.addressInfo.value!!.second}")
+            Timber.e("userId ${App.prefs.userId}")
+//            Timber.e()
+
+//            val body = HashMap<String, Any>()
+//            body["buildingCode"] = locationViewModel.addressInfo.value!!.second
+//            body["category"] = createChatViewModel.category.value!!
+//            body["link"] = createChatViewModel.link.value!!
+//            body["place"] = createChatViewModel.place.value!!
+//            body["title"] = createChatViewModel.chatTitle.value!!
+//            body["user_id"] = App.prefs.userId
+//            body["tag"] = createChatViewModel.tag.value!!.split(",")
+//            body["orderTimeType"] = ""
+//            body["maxCount"] = createChatViewModel.maxPeopleNum.value!!
+//            createChatViewModel.createChat(body)
+        }
     }
 
     override fun observeViewModels() {
@@ -60,19 +84,18 @@ class CreateNewChatFragment :
         }
     }
 
+    private fun checkFieldValidation(): Boolean = createChatViewModel.let {
+        // how to check building code ?!?
+        it.chatTitle.value != null && it.chatTitle.value!!.isNotEmpty() && it.category.value != null
+    }
+
     private fun createButtonEnable() {
-        createChatViewModel.apply {
-            val isRequiresFilled = chatTitle.value != null
-                    && chatTitle.value!!.isNotEmpty()
-                    && category.value != null
-
-            if (isRequiresFilled) {
-                binding.createTextView.background = ColorDrawable(Color.BLACK)
-            } else {
-                binding.createTextView.background =
-                    ColorDrawable(ContextCompat.getColor(requireContext(), R.color.grey_E0E0E0))
-            }
-
+        if (checkFieldValidation()) {
+            binding.createTextView.background = ColorDrawable(Color.BLACK)
+        } else {
+            binding.createTextView.background =
+                ColorDrawable(ContextCompat.getColor(requireContext(), R.color.grey_E0E0E0))
         }
     }
+}
 }

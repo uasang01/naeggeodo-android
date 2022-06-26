@@ -10,7 +10,7 @@ data class LogIn(
     @SerializedName("type")
     val type: String,
     @SerializedName("user_id")
-    val user_id: String,
+    val userId: String,
     @SerializedName("address")
     val address: String?,
     @SerializedName("buildingCode")

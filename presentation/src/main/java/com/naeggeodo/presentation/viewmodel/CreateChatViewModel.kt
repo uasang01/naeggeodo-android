@@ -4,14 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naeggeodo.domain.model.Category
+import com.naeggeodo.domain.usecase.CategoryUseCase
+import com.naeggeodo.domain.usecase.CreateChatUseCase
+import com.naeggeodo.domain.usecase.SearchChatListByCategoryUseCase
 import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.base.BaseViewModel
+import com.naeggeodo.presentation.utils.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateChatViewModel @Inject constructor() : BaseViewModel() {
+class CreateChatViewModel @Inject constructor(
+    private val createChatUseCase: CreateChatUseCase,
+) : BaseViewModel() {
     private val _chatTitle: MutableLiveData<String> = MutableLiveData()
     val chatTitle: LiveData<String> get() = _chatTitle
     private val _category: MutableLiveData<Category> = MutableLiveData()
@@ -29,6 +35,10 @@ class CreateChatViewModel @Inject constructor() : BaseViewModel() {
     private val _chatImage: MutableLiveData<String> = MutableLiveData()
     val chatImage: LiveData<String> get() = _chatImage
 
+    private val _chatId: MutableLiveData<Int> = MutableLiveData()
+    val chatId: LiveData<Int> get() = _chatId
+
+
     fun setChatTitle(str: String) = _chatTitle.postValue(str)
     fun setCategory(category: Category?) {
         if (category == null) {
@@ -45,7 +55,19 @@ class CreateChatViewModel @Inject constructor() : BaseViewModel() {
     fun setMaxPeopleNum(num: Int) = _maxPeopleNum.postValue(num)
     fun setChatImage(str: String) = _chatImage.postValue(str)
 
-    fun getChatHistories(userId: String) = viewModelScope.launch {
+    fun createChat(body: HashMap<String, Any>) = viewModelScope.launch{
+        mutableScreenState.postValue(ScreenState.LOADING)
+        val response =
+            createChatUseCase.execute(this@CreateChatViewModel, body)
+        if (response == null) {
+            mutableScreenState.postValue(ScreenState.ERROR)
+        } else {
+            mutableScreenState.postValue(ScreenState.RENDER)
+            _chatId.postValue(response!!.chatMainId)
+        }
+    }
 
+    fun getChatHistories(userId: String) = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
     }
 }

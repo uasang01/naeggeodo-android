@@ -27,6 +27,7 @@ class HomeViewModel @Inject constructor(
 
 
     fun getCategories() = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
         val response = getCategoriesUseCase.execute(this@HomeViewModel)
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
@@ -37,6 +38,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getChatList(category: String?, buildingCode: String) = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
         val response =
             searchChatListByCategoryUseCase.execute(this@HomeViewModel, category, buildingCode)
         if (response == null) {

@@ -24,6 +24,7 @@ class SearchViewModel @Inject constructor(
     val chatList: LiveData<List<Chat>> get() = _chatList
 
     fun getTags() = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
         val response = getTagsUseCase.execute(this@SearchViewModel)
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
@@ -34,6 +35,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun searchChatList(searchType: String, keyWord: String) = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
         val response =
             searchChatListByKeyWordUseCase.execute(this@SearchViewModel, searchType, keyWord)
         if (response == null) {
