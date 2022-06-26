@@ -15,7 +15,7 @@
             android:background="@color/white"
             android:clipToPadding="true"
             app:layout_constraintStart_toStartOf="@id/guideline_left"
-            app:layout_constraintTop_toTopOf="@id/guideline_top"
+            app:layout_constraintTop_toTopOf="parent"
             app:tabIndicatorColor="@color/orange_EF6212"
             app:tabIndicatorFullWidth="false"
             app:tabPaddingEnd="0dp"
@@ -37,7 +37,6 @@
             android:id="@+id/create_button"
             android:layout_width="0dp"
             android:layout_height="52dp"
-
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"

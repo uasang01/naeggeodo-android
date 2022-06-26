@@ -2,10 +2,12 @@ package com.naeggeodo.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.naeggeodo.domain.model.Category
 import com.naeggeodo.domain.utils.CategoryType
 import com.naeggeodo.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,8 +36,7 @@ class CreateChatViewModel @Inject constructor() : BaseViewModel() {
         } else {
             _categoryKorean.postValue(enumValueOf<CategoryType>(category.category).korean)
         }
-        category?.let { _category.postValue(category) }
-
+        category?.let { _category.postValue(category!!) }
     }
 
     fun setPlace(str: String) = _place.postValue(str)
@@ -44,4 +45,7 @@ class CreateChatViewModel @Inject constructor() : BaseViewModel() {
     fun setMaxPeopleNum(num: Int) = _maxPeopleNum.postValue(num)
     fun setChatImage(str: String) = _chatImage.postValue(str)
 
+    fun getChatHistories(userId: String) = viewModelScope.launch {
+
+    }
 }
