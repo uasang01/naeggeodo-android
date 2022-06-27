@@ -1,12 +1,12 @@
-package com.naeggeodo.presentation.view.chat
+package com.naeggeodo.presentation.view.mychatlist
 
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
-import com.naeggeodo.presentation.databinding.FragmentChatBinding
+import com.naeggeodo.presentation.databinding.FragmentMyChatsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
+class MyChatsFragment : BaseFragment<FragmentMyChatsBinding>(R.layout.fragment_my_chats) {
     override fun init() {
 
     }

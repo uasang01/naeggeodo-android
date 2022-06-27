@@ -31,9 +31,9 @@
     </fragment>
     <fragment
         android:id="@+id/chat"
-        android:name="com.naeggeodo.presentation.view.chat.ChatFragment"
+        android:name="com.naeggeodo.presentation.view.mychatlist.MyChatsFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_my_chats" />
     <fragment
         android:id="@+id/info"
         android:name="com.naeggeodo.presentation.view.info.InfoFragment"
