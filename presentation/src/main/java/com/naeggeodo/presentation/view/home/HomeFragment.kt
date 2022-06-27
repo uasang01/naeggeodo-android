@@ -29,6 +29,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun onStart() {
         super.onStart()
         requestCategory()
+        App.prefs.buildingCode?.let {
+            locationViewModel.setAddressInfo(
+                Triple(
+                    App.prefs.address!!,
+                    App.prefs.buildingCode!!,
+                    App.prefs.apartment!!
+                )
+            )
+        }
     }
 
 

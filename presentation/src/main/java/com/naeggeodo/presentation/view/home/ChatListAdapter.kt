@@ -14,14 +14,12 @@ import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatListBinding
 import com.naeggeodo.presentation.utils.Util
+import com.naeggeodo.presentation.utils.Util.getTimeDiff
+import com.naeggeodo.presentation.utils.Util.getTimeStr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.util.*
-
 
 class ChatListAdapter(private val context: Context, private var datas: ArrayList<Chat>) :
     RecyclerView.Adapter<ChatListAdapter.ViewHolder>(), ImageLoaderFactory {
@@ -41,16 +39,9 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.run {
-            val d = datas[position].createDate
-            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN)
-            val date = sdf.parse(d)!!
+            val prevDate = datas[position].createDate
 
-            val sdf2 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN)
-            sdf.timeZone = TimeZone.getTimeZone(ZoneId.of("Asia/Seoul"))
-            val curDate = sdf2.parse(sdf.format(Date()))
-
-            val timeDiff = curDate!!.time - date.time
-            Timber.e("${datas[position].title}, $date, $curDate / ${timeDiff} ${timeDiff / 1000}")
+            val timeDiff = getTimeDiff(prevDate)
 
             title.text = datas[position].title
             time.text = getTimeStr(timeDiff)
@@ -92,29 +83,6 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
         }
     }
 
-    private fun getTimeStr(timeDiff: Long): String {
-        val seconds = timeDiff / 1000
-        val minutes = seconds / 60
-        val hours = minutes / 60
-        val days = hours / 24
-        val months = days / 30
-
-        return if (seconds < 0) {
-            "???"
-        } else if (seconds < 60) {
-            "방금 전"
-        } else if (minutes < 60) {
-            "${minutes}분 전"
-        } else if (hours < 24) {
-            "${hours}시간 전"
-        } else if (days < 30) {
-            "${days}일 전"
-        } else if (months < 30) {
-            "${months}달 전"
-        } else {
-            "오래 전"
-        }
-    }
 
     override fun getItemCount() = datas.size
     fun setData(chatList: ArrayList<Chat>) {

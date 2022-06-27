@@ -17,6 +17,10 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.*
 
 object Util {
     fun showShortToast(context: Context, msg: String) =
@@ -76,5 +80,43 @@ object Util {
             Timber.e(javaClass.simpleName, "Error writing bitmap / $e")
         }
         return imageFile
+    }
+
+    fun getTimeDiff(prevDate: String): Long {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN)
+        val prev = sdf.parse(prevDate)
+        val curDate = LocalDateTime.now(ZoneId.of("Asia/Seoul")).toString()
+        val curr = sdf.parse(curDate)
+
+        return if (prev != null && curr != null) {
+            curr.time - prev.time
+        } else {
+            0L
+        }
+    }
+
+
+    fun getTimeStr(timeDiff: Long): String {
+        val seconds = timeDiff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        val months = days / 30
+
+        return if (seconds < 0) {
+            "???"
+        } else if (seconds < 60) {
+            "방금 전"
+        } else if (minutes < 60) {
+            "${minutes}분 전"
+        } else if (hours < 24) {
+            "${hours}시간 전"
+        } else if (days < 30) {
+            "${days}일 전"
+        } else if (months < 30) {
+            "${months}달 전"
+        } else {
+            "오래 전"
+        }
     }
 }
