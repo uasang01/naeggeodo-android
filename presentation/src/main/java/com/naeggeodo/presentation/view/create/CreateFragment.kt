@@ -1,6 +1,7 @@
 package com.naeggeodo.presentation.view.create
 
 import androidx.navigation.fragment.findNavController
+import com.naeggeodo.domain.utils.OrderTimeType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentCreateBinding
@@ -14,19 +15,22 @@ class CreateFragment : BaseFragment<FragmentCreateBinding>(R.layout.fragment_cre
 
     override fun initListener() {
         binding.writeSelfButton.setOnClickListener {
-            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
-            findNavController().navigate(action)
+//            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+//            findNavController().navigate(action)
         }
         binding.oneHourButton.setOnClickListener {
-            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+            val action =
+                CreateFragmentDirections.actionCreateToSetNewChatFragment(OrderTimeType.ONE_HOUR.name)
             findNavController().navigate(action)
         }
         binding.quickButton.setOnClickListener {
-            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+            val action =
+                CreateFragmentDirections.actionCreateToSetNewChatFragment(OrderTimeType.QUICK.name)
             findNavController().navigate(action)
         }
         binding.freedomButton.setOnClickListener {
-            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
+            val action =
+                CreateFragmentDirections.actionCreateToSetNewChatFragment(OrderTimeType.FREEDOM.name)
             findNavController().navigate(action)
         }
     }

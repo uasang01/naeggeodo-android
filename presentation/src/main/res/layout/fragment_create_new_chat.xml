@@ -6,7 +6,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -33,6 +34,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:id="@+id/testImageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/create_button"/>
         <androidx.cardview.widget.CardView
             android:id="@+id/create_button"
             android:layout_width="0dp"
@@ -52,6 +59,7 @@
                 android:layout_marginBottom="20dp"
                 android:background="@color/grey_E0E0E0"
                 android:gravity="center"
+                android:enabled="false"
                 android:text="내꺼톡 생성하기"
                 android:textAlignment="center"
                 android:textColor="@color/white" />

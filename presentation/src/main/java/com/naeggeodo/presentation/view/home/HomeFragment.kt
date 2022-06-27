@@ -1,13 +1,13 @@
 package com.naeggeodo.presentation.view.home
 
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.naeggeodo.domain.utils.ApartmentFlag
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentHomeBinding
+import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.utils.Util.showShortSnackbar
@@ -34,7 +34,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     override fun initView() {
         // 채팅 바 텍스트
-        binding.searchBarText.text = getText(R.string.not_apartment)
+        Timber.e("adr ${App.prefs.address}")
+        if (App.prefs.address == null) {
+            binding.searchBarText.text = getText(R.string.not_apartment)
+        } else {
+            binding.searchBarText.text = App.prefs.address
+        }
 
         // 카테고리 텝
         binding.categoryRecyclerView.adapter = categoryAdapter
@@ -120,6 +125,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             val address = value.first
             val buildingCode = value.second
             val apartment = value.third
+
+            App.prefs.address = address
+            App.prefs.buildingCode = buildingCode
+            App.prefs.apartment = apartment
+
 
             val textview = binding.searchBarText
             if (apartment == ApartmentFlag.Y.name) {

@@ -48,6 +48,11 @@ dependencies {
     // Gson
     implementation "com.google.code.gson:gson:$gson_version"
 
+    // retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.okhttp3:okhttp:$logging_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$logging_version"
 
 
     testImplementation 'junit:junit:4.13.2'

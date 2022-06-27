@@ -8,7 +8,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LocationViewModel @Inject constructor() : BaseViewModel() {
-
     // first, second, third => address, buildingCode, apartment
     private val _addressInfo: MutableLiveData<Triple<String, String, String>> = MutableLiveData()
     val addressInfo: LiveData<Triple<String, String, String>> get() = _addressInfo

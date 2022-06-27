@@ -2,6 +2,7 @@ package com.naeggeodo.presentation.utils
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Point
 import android.net.ConnectivityManager
 import android.view.View
@@ -12,6 +13,10 @@ import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.di.App
+import timber.log.Timber
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
 object Util {
     fun showShortToast(context: Context, msg: String) =
@@ -54,5 +59,22 @@ object Util {
                 App.INSTANCE.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
+    }
+
+
+    fun persistImage(context: Context, bitmap: Bitmap, name: String): File {
+        val filesDir: File = context.filesDir
+        val imageFile = File(filesDir, name)
+
+        val os: OutputStream
+        try {
+            os = FileOutputStream(imageFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
+            os.flush()
+            os.close()
+        } catch (e: java.lang.Exception) {
+            Timber.e(javaClass.simpleName, "Error writing bitmap / $e")
+        }
+        return imageFile
     }
 }

@@ -42,5 +42,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         super.onDestroy()
 
         App.prefs.clearAccessToken()
+        App.prefs.clearUserId()
     }
 }

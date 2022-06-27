@@ -5,7 +5,10 @@ import com.damda.data.repository.home.remote.HomeRemoteDataSourceImpl
 import com.damda.data.repository.login.LoginRepositoryImpl
 import com.damda.data.repository.login.SearchRepositoryImpl
 import com.damda.data.repository.login.remote.LoginRemoteDataSourceImpl
+import com.naeggeodo.data.repository.create.CreateRepositoryImpl
+import com.naeggeodo.data.repository.create.remote.CreateRemoteDataSourceImpl
 import com.naeggeodo.data.repository.search.remote.SearchRemoteDataSourceImpl
+import com.naeggeodo.domain.repository.CreateRepository
 import com.naeggeodo.domain.repository.HomeRepository
 import com.naeggeodo.domain.repository.LoginRepository
 import com.naeggeodo.domain.repository.SearchRepository
@@ -40,5 +43,13 @@ class RepositoryModule {
         searchRemoteDataSourceImpl: SearchRemoteDataSourceImpl
     ): SearchRepository {
         return SearchRepositoryImpl(searchRemoteDataSourceImpl)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCreateRepository(
+        createRemoteDataSourceImpl: CreateRemoteDataSourceImpl
+    ): CreateRepository {
+        return CreateRepositoryImpl(createRemoteDataSourceImpl)
     }
 }

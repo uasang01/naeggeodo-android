@@ -1,5 +1,6 @@
 package com.naeggeodo.presentation.di
 
+import com.naeggeodo.domain.repository.CreateRepository
 import com.naeggeodo.domain.repository.HomeRepository
 import com.naeggeodo.domain.repository.LoginRepository
 import com.naeggeodo.domain.repository.SearchRepository
@@ -32,4 +33,8 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideSearchChatListByKeyWordUseCase(repository: SearchRepository) = SearchChatListByKeyWordUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideCreateChatUseCase(repository: CreateRepository) = CreateChatUseCase(repository)
 }

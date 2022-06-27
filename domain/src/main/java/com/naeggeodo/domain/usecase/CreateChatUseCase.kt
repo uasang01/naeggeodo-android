@@ -2,6 +2,8 @@ package com.naeggeodo.domain.usecase
 
 import com.naeggeodo.domain.repository.CreateRepository
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class CreateChatUseCase @Inject constructor(
@@ -9,6 +11,6 @@ class CreateChatUseCase @Inject constructor(
 ) {
     suspend fun execute(
         remoteErrorEmitter: RemoteErrorEmitter,
-        body: HashMap<String, Any>
-    ) = createRepository.createChat(remoteErrorEmitter, body)
+        files: List<MultipartBody.Part>
+    ) = createRepository.createChat(remoteErrorEmitter, files)
 }
