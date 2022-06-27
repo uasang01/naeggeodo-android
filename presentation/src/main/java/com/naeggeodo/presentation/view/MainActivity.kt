@@ -1,5 +1,7 @@
 package com.naeggeodo.presentation.view
 
+import androidx.core.view.WindowInsetsCompat.Type.ime
+import androidx.core.view.isGone
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
@@ -35,6 +37,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                 )
             }
             true
+        }
+
+        window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
+            binding.navBar.isGone = windowInsets.isVisible(ime())
+            view.onApplyWindowInsets(windowInsets)
         }
     }
 
