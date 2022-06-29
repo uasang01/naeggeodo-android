@@ -27,6 +27,18 @@ class Prefs(context: Context) {
             prefs.edit().putString("address", value).apply()
         }
 
+    var buildingCode: String?
+        get() = prefs.getString("buildingCode", null)
+        set(value) {
+            prefs.edit().putString("buildingCode", value).apply()
+        }
+
+    var apartment: String?
+        get() = prefs.getString("apartment", null)
+        set(value) {
+            prefs.edit().putString("apartment", value).apply()
+        }
+
 
     fun clearAll() {
         accessToken = null
@@ -37,5 +49,9 @@ class Prefs(context: Context) {
 
     fun clearAccessToken() {
         accessToken = null
+    }
+
+    fun clearUserId() {
+        userId = null
     }
 }

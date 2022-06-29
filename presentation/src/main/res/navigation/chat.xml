@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/chat"
-        android:name="com.naeggeodo.presentation.view.chat.ChatFragment"
+        android:name="com.naeggeodo.presentation.view.mychats.MyChatsFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_my_chats" />
 </navigation>

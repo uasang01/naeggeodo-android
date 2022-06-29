@@ -8,9 +8,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LocationViewModel @Inject constructor() : BaseViewModel() {
+    // first, second, third => address, buildingCode, apartment
+    companion object {
+        const val EVENT_ADDRESS_INFO_CHANGED = 111
+    }
 
     private val _addressInfo: MutableLiveData<Triple<String, String, String>> = MutableLiveData()
     val addressInfo: LiveData<Triple<String, String, String>> get() = _addressInfo
 
-    fun setAddressInfo(info: Triple<String, String, String>) = _addressInfo.postValue(info)
+    fun setAddressInfo(info: Triple<String, String, String>){
+        _addressInfo.postValue(info)
+        viewEvent(EVENT_ADDRESS_INFO_CHANGED)
+    }
 }

@@ -1,23 +1,25 @@
-package com.naeggeodo.presentation.view.create
+package com.naeggeodo.presentation.view.mychats
 
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
-import com.naeggeodo.presentation.databinding.FragmentOrderedListBinding
+import com.naeggeodo.presentation.databinding.FragmentMyChatsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class OrderedListFragment :
-    BaseFragment<FragmentOrderedListBinding>(R.layout.fragment_ordered_list) {
+class MyChatsFragment : BaseFragment<FragmentMyChatsBinding>(R.layout.fragment_my_chats) {
     override fun init() {
+
     }
 
     override fun initView() {
+
     }
 
     override fun initListener() {
+
     }
 
     override fun observeViewModels() {
-    }
 
+    }
 }

@@ -15,7 +15,7 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
-import com.naeggeodo.presentation.databinding.FragmentCreateNewBinding
+import com.naeggeodo.presentation.databinding.FragmentTabNewBinding
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.HomeViewModel
@@ -27,24 +27,28 @@ private const val PEOPLE_MAX = 5
 private const val PEOPLE_MIN = 2
 
 @AndroidEntryPoint
-class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragment_create_new) {
+class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_tab_new) {
     val createChatViewModel: CreateChatViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
     private lateinit var getPictureResult: ActivityResultLauncher<Intent>
 
-    override fun init() {
+    private var bitmap: Bitmap? = null
 
+    override fun init() {
+        binding.fragment = this
+        binding.createChatViewModel = createChatViewModel
+        // init people limit count
+        createChatViewModel.setMaxPeopleNum(2)
 
         getPictureResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
                     Timber.e("activity result ok\n${result.data?.dataString}")
-
                     result.data?.let {
                         val uri = result.data!!.data
                         Timber.e(uri.toString())
-                        val bitmap = ImageDecoder
+                        bitmap = ImageDecoder
                             .decodeBitmap(
                                 ImageDecoder.createSource(
                                     requireContext().contentResolver,
@@ -58,6 +62,7 @@ class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragme
                             .into(binding.chatImage)
 
                         // 사버에 전송하기위해 뷰모델에 사진 정보 저장 추가 구현하기.
+                        createChatViewModel.setChatImage(bitmap!!)
                     }
 
                 } else {
@@ -68,6 +73,34 @@ class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragme
 
     override fun initView() {
         binding.fragment = this
+
+        createChatViewModel.chatTitle.value?.let {
+            binding.chatTitleEditText.setText(it)
+        }
+
+//        createChatViewModel.categoryKorean.value?.let{
+//            binding.categoryTextView.text = it
+//        }
+
+        createChatViewModel.place.value?.let {
+
+            binding.placeEditText.setText(it)
+        }
+
+        createChatViewModel.link.value?.let {
+            binding.linkEditText.setText(it)
+        }
+
+        createChatViewModel.tag.value?.let {
+            binding.tagEditText.setText(it)
+        }
+        bitmap?.let {
+            Glide.with(requireContext())
+                .load(bitmap)
+                .centerCrop()
+                .into(binding.chatImage)
+        }
+
 
         createChatViewModel.setCategory(null)
         binding.createChatViewModel = createChatViewModel
@@ -121,7 +154,7 @@ class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragme
                 )
             }
             num += 1
-            binding.peopleCountTextView.text = num.toString()
+//            binding.peopleCountTextView.text = num.toString()
             createChatViewModel.setMaxPeopleNum(num)
             // 더하고 PEOPLE_MAX이상이 되면 더하기 버튼 비활성화
             if (num >= PEOPLE_MAX) {
@@ -145,7 +178,7 @@ class CreateNewFragment : BaseFragment<FragmentCreateNewBinding>(R.layout.fragme
                 )
             }
             num -= 1
-            binding.peopleCountTextView.text = num.toString()
+//            binding.peopleCountTextView.text = num.toString()
             createChatViewModel.setMaxPeopleNum(num)
             if (num <= PEOPLE_MIN) {
                 binding.subtractButton.setImageDrawable(

@@ -1,5 +1,7 @@
 package com.naeggeodo.presentation.view
 
+import androidx.core.view.WindowInsetsCompat.Type.ime
+import androidx.core.view.isGone
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
@@ -8,17 +10,20 @@ import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseActivity
 import com.naeggeodo.presentation.databinding.ActivityMainBinding
 import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.utils.Util
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private lateinit var navController: NavController
+    private var backKeyPressedTime = 0L
 
     override fun initView() {
         // init bottom navigation
         val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
+            supportFragmentManager.findFragmentById(binding.navHost.id) as NavHostFragment
         navController = navHostFragment.navController
 
         binding.navBar.setupWithNavController(navController)
@@ -36,11 +41,31 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             }
             true
         }
+
+        window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
+            binding.navBar.isGone = windowInsets.isVisible(ime())
+            view.onApplyWindowInsets(windowInsets)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         App.prefs.clearAccessToken()
+        App.prefs.clearUserId()
+    }
+
+    override fun onBackPressed() {
+        if (navController.backQueue.size > 2) {
+            navController.popBackStack()
+        } else {
+            if (System.currentTimeMillis() >= backKeyPressedTime + 2000) {
+                backKeyPressedTime = System.currentTimeMillis()
+                Util.showShortToast(applicationContext, "'뒤로'버튼을 한번 더 누르시면 종료됩니다")
+            } else {
+                Util.toast?.cancel()
+                finish()
+            }
+        }
     }
 }

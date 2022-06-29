@@ -162,6 +162,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     override fun observeViewModels() {
         loginViewModel.loginResult.observe(this) { logIn ->
             App.prefs.accessToken = logIn.accessToken
+            App.prefs.userId = logIn.userId
             goToHome()
         }
         loginViewModel.mutableScreenState.observe(this) { state ->
