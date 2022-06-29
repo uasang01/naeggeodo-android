@@ -23,11 +23,18 @@ import java.time.ZoneId
 import java.util.*
 
 object Util {
-    fun showShortToast(context: Context, msg: String) =
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    var toast: Toast? = null
+    fun showShortToast(context: Context, msg: String) {
+        toast?.cancel()
+        toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT)
+        toast!!.show()
+    }
 
-    fun showLongToast(context: Context, msg: String) =
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+    fun showLongToast(context: Context, msg: String){
+        toast?.cancel()
+        toast = Toast.makeText(context, msg, Toast.LENGTH_LONG)
+        toast!!.show()
+    }
 
     fun showShortSnackbar(rootView: View, msg: String) =
         Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT).show()

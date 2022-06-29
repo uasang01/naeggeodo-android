@@ -14,7 +14,15 @@
         android:id="@+id/home"
         android:name="com.naeggeodo.presentation.view.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_to_navigation_chat"
+            app:destination="@id/navigation_chat"
+            />
+        <action
+            android:id="@+id/action_home_to_chatActivity"
+            app:destination="@id/chatActivity" />
+    </fragment>
     <fragment
         android:id="@+id/search"
         android:name="com.naeggeodo.presentation.view.search.SearchFragment"
@@ -30,9 +38,9 @@
             app:destination="@id/setNewChatFragment" />
     </fragment>
     <fragment
-        android:id="@+id/chat"
-        android:name="com.naeggeodo.presentation.view.mychatlist.MyChatsFragment"
-        android:label="fragment_chat"
+        android:id="@+id/my_chats"
+        android:name="com.naeggeodo.presentation.view.mychats.MyChatsFragment"
+        android:label="fragment_my_chats"
         tools:layout="@layout/fragment_my_chats" />
     <fragment
         android:id="@+id/info"
@@ -48,4 +56,13 @@
             android:name="orderTimeType"
             app:argType="string" />
     </fragment>
+
+    <include
+        app:graph="@navigation/nav_graph_chat" />
+    <activity
+        android:id="@+id/chatActivity"
+        android:name="com.naeggeodo.presentation.view.chat.ChatActivity"
+        android:label="activity_chat"
+        tools:layout="@layout/activity_chat" />
+
 </navigation>

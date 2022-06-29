@@ -22,6 +22,7 @@ abstract class BaseActivity<T : ViewDataBinding>
 
         binding = DataBindingUtil.setContentView(this, layoutId)
 
+        init()
         initView()
         initViewModel()
         initListener()
@@ -29,6 +30,7 @@ abstract class BaseActivity<T : ViewDataBinding>
         afterOnCreate()
     }
 
+    protected open fun init() {}
     protected open fun beforeSetContentView() {}
     protected open fun initView() {}
     protected open fun initViewModel() {}
@@ -36,6 +38,9 @@ abstract class BaseActivity<T : ViewDataBinding>
     protected open fun observeViewModels() {}
     protected open fun afterOnCreate() {}
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
 //    protected fun shortShowToast(msg: String) =
 //        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()

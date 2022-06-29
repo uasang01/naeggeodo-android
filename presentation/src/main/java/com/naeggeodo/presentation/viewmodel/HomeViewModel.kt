@@ -10,7 +10,10 @@ import com.naeggeodo.domain.usecase.SearchChatListByCategoryUseCase
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.utils.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,6 +21,11 @@ class HomeViewModel @Inject constructor(
     private val getCategoriesUseCase: CategoryUseCase,
     private val searchChatListByCategoryUseCase: SearchChatListByCategoryUseCase
 ) : BaseViewModel() {
+
+    companion object {
+        const val EVENT_CATEGORIES_CHANGED = 222
+        const val EVENT_CHAT_LIST_CHANGED = 223
+    }
 
     private val _categories: MutableLiveData<Categories> = MutableLiveData()
     val categories: LiveData<Categories> get() = _categories
@@ -28,24 +36,30 @@ class HomeViewModel @Inject constructor(
 
     fun getCategories() = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
-        val response = getCategoriesUseCase.execute(this@HomeViewModel)
+        val response = withContext(Dispatchers.IO) {
+            getCategoriesUseCase.execute(this@HomeViewModel)
+        }
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
-            mutableScreenState.postValue(ScreenState.RENDER)
             _categories.postValue(response!!)
+            mutableScreenState.postValue(ScreenState.RENDER)
+            viewEvent(EVENT_CATEGORIES_CHANGED)
         }
     }
 
     fun getChatList(category: String?, buildingCode: String) = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
-        val response =
+        val response = withContext(Dispatchers.IO) {
             searchChatListByCategoryUseCase.execute(this@HomeViewModel, category, buildingCode)
+        }
+
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
-            mutableScreenState.postValue(ScreenState.RENDER)
             _chatList.postValue(response!!.chatList)
+            mutableScreenState.postValue(ScreenState.RENDER)
+            viewEvent(EVENT_CHAT_LIST_CHANGED)
         }
     }
 }

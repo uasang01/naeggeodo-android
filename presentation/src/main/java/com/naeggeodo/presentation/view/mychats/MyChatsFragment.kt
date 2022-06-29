@@ -1,4 +1,4 @@
-package com.naeggeodo.presentation.view.mychatlist
+package com.naeggeodo.presentation.view.mychats
 
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment

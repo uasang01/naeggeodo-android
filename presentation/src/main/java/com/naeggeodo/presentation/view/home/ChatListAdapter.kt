@@ -21,7 +21,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class ChatListAdapter(private val context: Context, private var datas: ArrayList<Chat>) :
+class ChatListAdapter(
+    private val context: Context,
+    private var datas: ArrayList<Chat>,
+    private var listener: (pos: Int) -> Unit = {}
+) :
     RecyclerView.Adapter<ChatListAdapter.ViewHolder>(), ImageLoaderFactory {
 
     val drawableList = hashMapOf<Int, Drawable>()
@@ -74,7 +78,7 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
                 }
 
                 enterContainer.setOnClickListener {
-                    Util.showShortSnackbar(holder.binding.root, "order together clicked")
+                    listener(position)
                 }
             } else {
                 Timber.e("position $position : ${drawableList[position]}")
@@ -105,5 +109,9 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
                 add(SvgDecoder.Factory())
             }
             .build()
+    }
+
+    fun setListener(l : (pos: Int) -> Unit){
+        listener = l
     }
 }
