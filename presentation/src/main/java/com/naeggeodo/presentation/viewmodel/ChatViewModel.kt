@@ -3,14 +3,20 @@ package com.naeggeodo.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.naeggeodo.domain.model.Categories
+import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.model.ChatHistory
 import com.naeggeodo.domain.model.Users
 import com.naeggeodo.domain.usecase.GetChatInfoUseCase
+import com.naeggeodo.domain.usecase.GetPrevChatHistoryUseCase
 import com.naeggeodo.domain.usecase.GetUsersInChatUseCase
 import com.naeggeodo.presentation.base.BaseViewModel
+import com.naeggeodo.presentation.data.Message
+import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,19 +30,42 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatInfoUseCase: GetChatInfoUseCase,
-    private val getUsersInChatUseCase: GetUsersInChatUseCase
+    private val getUsersInChatUseCase: GetUsersInChatUseCase,
+    private val getPrevChatHistoryUseCase: GetPrevChatHistoryUseCase
 ) : BaseViewModel() {
     companion object {
         const val EVENT_CHAT_INFO_CHANGED = 311
         const val EVENT_USERS_CHANGED = 312
+        const val EVENT_HISTORY_CHANGED = 313
+        const val EVENT_MESSAGE_RECEIVED_CHANGED = 314
     }
+
+
     var chatId: Int? = null
+
+    // http -> ws
+    // https -> wss
+    private val url = "wss://api.naeggeodo.com/api/chat" // 소켓에 연결하는 엔드포인트가 /socket일때 다음과 같음
+
+    // url 끝에 /websocket 은 꼭 붙여줘야한다.
+    val stompClient by lazy {
+        Stomp.over(
+            Stomp.ConnectionProvider.OKHTTP,
+            "$url/websocket"
+        )
+    }
+
 
     private val _chatInfo: MutableLiveData<Chat> = MutableLiveData()
     val chatInfo: LiveData<Chat> get() = _chatInfo
     private val _users: MutableLiveData<Users> = MutableLiveData()
     val users: LiveData<Users> get() = _users
+    private val _history: MutableLiveData<List<ChatHistory>> = MutableLiveData()
+    val history: LiveData<List<ChatHistory>> get() = _history
+    private val _message: MutableLiveData<Message> = MutableLiveData()
+    val message: LiveData<Message> get() = _message
 
+//    val message: Message? = null
 
     fun getChat() = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
@@ -51,6 +80,8 @@ class ChatViewModel @Inject constructor(
 //            viewEvent(HomeViewModel.EVENT_CHAT_INFO_CHANGED)
         }
     }
+
+
     fun getUsers() = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
         val response = withContext(Dispatchers.IO) {
@@ -65,62 +96,74 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-
-
-
-
-
-
-
-    fun runStomp(){
-        //    ### 커넥트 END Point
-        //    ⇒ https//api.naeggeodo.com/api/chat
-
-        //    Subscribe url
-        //    1.  ‘/topic/’+채팅방id   : 전체 메세지
-        //    2. ‘/user/queue/’+세션Id : 개인 메시지 ex)강퇴 , alert
-
-        //    SEND url
-        //    ⇒ prefix : ‘/app/chat’
-        //    1. 메세지 전송 : ‘/send’
-        //    2. 입장메시지 : ‘/enter’
-        //    3. 퇴장메시지 : ‘/exit’
-        //    4. 강퇴 : ‘/ban’
-
-
-        // http -> ws
-        // https -> wss
-        // url 끝에 /websocket 은 꼭 붙여줘야한다.
-        val url = "ws://api.naeggeodo.com/api/chat/websocket" // 소켓에 연결하는 엔드포인트가 /socket일때 다음과 같음
-        val stompClient =  Stomp.over(Stomp.ConnectionProvider.OKHTTP, url)
-
-        // 메세지를 받기위한 구독 설정
-        stompClient.topic("/topic/$chatId").subscribe { topicMessage ->
-            Timber.i("message Recieve", topicMessage.payload)
+    fun getChatHistory() = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
+        val response = withContext(Dispatchers.IO) {
+            getPrevChatHistoryUseCase.execute(this@ChatViewModel, chatId!!, App.prefs.userId!!)
         }
+        if (response == null) {
+            mutableScreenState.postValue(ScreenState.ERROR)
+        } else {
+            _history.postValue(response.messages)
+            mutableScreenState.postValue(ScreenState.RENDER)
+//            viewEvent(HomeViewModel.EVENT_USERS_CHANGED)
+        }
+    }
 
+
+    //    ### 커넥트 END Point
+    //    ⇒ https//api.naeggeodo.com/api/chat
+
+    //    Subscribe url
+    //    1.  ‘/topic/’+채팅방id   : 전체 메세지
+    //    2. ‘/user/queue/’+세션Id : 개인 메시지 ex)강퇴 , alert
+
+
+    var lifecycleDisposable: Disposable? = null
+    var msgReceiverDisposable: Disposable? = null
+    var msgSenderDisposable: Disposable? = null
+
+    fun runStomp() {
+        // init
+        val userId = App.prefs.userId
+        Timber.e("chatId : $chatId userId: $userId  ")
         // 필요한 헤더 추가
         val headerList = arrayListOf<StompHeader>()
-        headerList.add(StompHeader("inviteCode","test0912"))
-        headerList.add(StompHeader("positionType", "1"))
+        headerList.add(StompHeader("chatMain_id", "$chatId"))
+        headerList.add(StompHeader("sender", "${userId}"))
+        headerList.add(StompHeader("Authorization", "Bearer ${App.prefs.accessToken}"))
         stompClient.connect(headerList)
 
+
+        // 메세지를 받기위한 구독 설정
+        msgReceiverDisposable = stompClient.topic("/topic/$chatId")
+            .subscribe({ topicMessage ->
+//                Timber.i("message Recieve ${topicMessage.payload}")
+                val jsonObject = JsonParser.parseString(topicMessage.payload)
+                val msgInfo = Gson().fromJson(jsonObject, Message::class.java)
+                _message.postValue(msgInfo)
+//                viewEvent(EVENT_MESSAGE_RECEIVED_CHANGED)
+//                Timber.i("message Recieve ${msgInfo}")
+            }, { throwable ->
+                Timber.i("error occurred. cause: ${throwable.cause}, message: ${throwable.message}")
+            })
+
+
         // stomp의 lifecycle 구독
-        stompClient.lifecycle().subscribe { lifecycleEvent ->
+        lifecycleDisposable = stompClient.lifecycle().subscribe { lifecycleEvent ->
             when (lifecycleEvent.type) {
                 LifecycleEvent.Type.OPENED -> {
-                    Timber.i("OPEND", "!!")
+                    Timber.i("OPEND")
                 }
                 LifecycleEvent.Type.CLOSED -> {
-                    Timber.i("CLOSED", "!!")
-
+                    Timber.i("CLOSED")
                 }
                 LifecycleEvent.Type.ERROR -> {
-                    Timber.i("ERROR", "!!")
-                    Timber.e("CONNECT ERROR", lifecycleEvent.exception.toString())
+                    Timber.i("ERROR")
+                    Timber.e("CONNECT ERROR ${lifecycleEvent.exception}")
                 }
-                else ->{
-                    Timber.i("ELSE", lifecycleEvent.message)
+                else -> {
+                    Timber.i("ELSE ${lifecycleEvent.message}")
                 }
             }
         }
@@ -146,19 +189,49 @@ class ChatViewModel @Inject constructor(
 //        }
 
 
-        // 메세지 전송
-        val data = JSONObject()
-//        data.put("userKey", text.value)
-        data.put("positionType", "1")
-        data.put("content", "test")
-        data.put("messageType", "CHAT")
-        data.put("destRoomCode", "test0912")
-
-        stompClient.send("/stream/chat/send", data.toString()).subscribe()
+        //    SEND url
+        //    ⇒ prefix : ‘/app/chat’
+        //    1. 메세지 전송 : ‘/send’
+        //    2. 입장메시지 : ‘/enter’
+        //    3. 퇴장메시지 : ‘/exit’
+        //    4. 강퇴 : ‘/ban’
     }
 
 
-    fun setScreenState(state: ScreenState){
+    fun setScreenState(state: ScreenState) {
         mutableScreenState.postValue(state)
     }
+
+    fun sendMsg(msg: String) {
+
+        val prefix = "/app/chat"
+        val send = "/send"
+        val enter = "/enter"
+        val ban = "/ban"
+        val exit = "/exit"
+
+        // 메세지 전송
+        val data = JSONObject()
+        data.put("chatMain_id", chatId)
+        data.put("sender", App.prefs.userId)
+        data.put("contents", "$msg")
+        data.put("type", "TEXT")
+        data.put("nickname", "nickname test")
+
+        msgSenderDisposable = stompClient.send("$prefix$send", data.toString()).subscribe()
+    }
+
+    fun banUser() {}
+    fun exitChat() {
+
+    }
+
+    fun stopStomp() {
+        msgSenderDisposable?.dispose()
+        msgReceiverDisposable?.dispose()
+        lifecycleDisposable?.dispose()
+        stompClient.disconnect()
+    }
+
+
 }

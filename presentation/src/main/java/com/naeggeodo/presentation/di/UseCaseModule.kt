@@ -43,5 +43,9 @@ class UseCaseModule {
     @Singleton
     fun provideGetUsersInChatUseCase(repository: ChatRepository) = GetUsersInChatUseCase(repository)
 
+    @Provides
+    @Singleton
+    fun provideGetPrevChatHistoryUseCase(repository: ChatRepository) = GetPrevChatHistoryUseCase(repository)
+
 
 }

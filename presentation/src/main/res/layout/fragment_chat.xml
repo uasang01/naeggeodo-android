@@ -67,6 +67,7 @@
                 android:text="인원 2명 / 2명"
                 />
             <androidx.constraintlayout.utils.widget.ImageFilterView
+                android:id="@+id/hamberger_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_hamberger"
@@ -78,6 +79,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ScrollView
+            android:id="@+id/msg_scrollview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/grey_F2F2F8"

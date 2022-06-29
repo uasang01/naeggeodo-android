@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
             mutableScreenState.postValue(ScreenState.RENDER)
-            _loginResult.postValue(response)
+            _loginResult.postValue(response!!)
         }
         Timber.d("$platform signing response ${response}")
     }

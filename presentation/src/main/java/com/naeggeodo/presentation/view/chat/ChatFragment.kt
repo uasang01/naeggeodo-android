@@ -1,6 +1,7 @@
 package com.naeggeodo.presentation.view.chat
 
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -8,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentChatBinding
+import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.viewmodel.ChatViewModel
@@ -24,6 +26,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 
         chatViewModel.getChat()
         chatViewModel.getUsers()
+        chatViewModel.getChatHistory()
+
     }
 
     override fun initView() {
@@ -51,6 +55,14 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         addOthersMsgView(tempStr3)
     }
 
+    override fun initListener() {
+        binding.hambergerButton.setOnClickListener {
+            val msg = "testMsg"
+            chatViewModel.sendMsg(msg)
+            addMyMsgView(msg)
+        }
+    }
+
     override fun observeViewModels() {
         chatViewModel.mutableScreenState.observe(viewLifecycleOwner) { state ->
             val layout = binding.loadingView.root
@@ -63,18 +75,39 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         }
 
         chatViewModel.chatInfo.observe(viewLifecycleOwner) { chat ->
-            Timber.e("chat received")
-            Timber.e("chat received ${chat}")
+//            Timber.e("chat received")
+//            Timber.e("chat received ${chat}")
         }
 
         chatViewModel.users.observe(viewLifecycleOwner) {
             val s = it.users
-            Timber.e("users received ${it.users.size}")
+//            Timber.e("users received ${it.users.size}")
             it.users.forEach { user ->
-                Timber.e("users received ${user.toString()}")
+//                Timber.e("users received ${user.toString()}")
             }
+
+//            chatViewModel.runStomp()
+        }
+
+        chatViewModel.history.observe(viewLifecycleOwner) { historyList ->
+            Timber.e("history received size: ${historyList.size}")
+            historyList.forEach { h ->
+                Timber.e("history received ${h}")
+            }
+            chatViewModel.runStomp()
+        }
+
+        chatViewModel.message.observe(viewLifecycleOwner) { msg ->
+            // 다른 유저의 이미지 추가해야 함
+
+            // 내가 보낸 메세지는 추가하지 않음
+            if (msg.sender != App.prefs.userId) {
+                addOthersMsgView(msg.contents)
+            }
+            Timber.i("message Recieve ${msg}")
         }
     }
+
 
     private fun addMyMsgView(str: String) {
 
@@ -83,6 +116,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         val msgView = msgLayout.findViewById<TextView>(R.id.my_msg_view)
         msgView.text = str
         binding.msgContainer.addView(msgLayout)
+        binding.msgScrollview.apply { post { fullScroll(View.FOCUS_DOWN) } }
     }
 
     private fun addOthersMsgView(str: String, imagePath: String? = null) {
@@ -99,6 +133,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         )
         msgView.text = str
         binding.msgContainer.addView(msgLayout)
+        binding.msgScrollview.apply { post { fullScroll(View.FOCUS_DOWN) } }
     }
 
+    override fun onDestroyView() {
+        chatViewModel.stopStomp()
+
+        super.onDestroyView()
+    }
 }

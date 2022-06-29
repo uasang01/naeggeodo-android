@@ -2,6 +2,7 @@ package com.naeggeodo.data.repository.chat
 
 import com.naeggeodo.data.repository.chat.remote.ChatRemoteDataSource
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.model.ChatHistoryList
 import com.naeggeodo.domain.model.Users
 import com.naeggeodo.domain.repository.ChatRepository
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
@@ -19,5 +20,13 @@ class ChatRepositoryImpl @Inject constructor(
         chatId: Int
     ): Users? {
         return dataSource.getUsersInChat(remoteErrorEmitter, chatId)
+    }
+
+    override suspend fun getPrevChatHistory(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int,
+        userId: String
+    ): ChatHistoryList? {
+        return dataSource.getPrevChatHistory(remoteErrorEmitter, chatId, userId)
     }
 }

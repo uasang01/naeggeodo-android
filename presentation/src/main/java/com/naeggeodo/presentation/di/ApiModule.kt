@@ -63,5 +63,10 @@ class ApiModule {
     fun provideGetUsersInChatApiService(@Named("Auth") retrofit: Retrofit): GetUsersInChatApi {
         return retrofit.create(GetUsersInChatApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideGetPrevChatHistoryApiService(@Named("Auth") retrofit: Retrofit): GetPrevChatHistoryApi {
+        return retrofit.create(GetPrevChatHistoryApi::class.java)
+    }
 
 }

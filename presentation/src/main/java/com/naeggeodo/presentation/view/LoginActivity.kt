@@ -161,6 +161,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
     override fun observeViewModels() {
         loginViewModel.loginResult.observe(this) { logIn ->
+            Timber.e("accessToken : ${logIn.accessToken}")
             App.prefs.accessToken = logIn.accessToken
             App.prefs.userId = logIn.userId
             goToHome()
