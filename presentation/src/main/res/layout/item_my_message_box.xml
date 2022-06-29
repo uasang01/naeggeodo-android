@@ -1,101 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_box"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content"
+    android:gravity="end"
+    android:paddingVertical="10dp"
+    android:paddingStart="@dimen/padding_chat_end"
+    android:paddingEnd="@dimen/padding_chat_start"
+    tools:ignore="RtlSymmetry">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/my_chat_box"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/my_time_view"
+        style="@style/font_regular_15"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
-        >
+        android:layout_gravity="bottom"
+        android:layout_marginEnd="10dp"
+        android:text="오후 3:30"
+        android:textColor="@color/black"
+        tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:text="산본동아기참새"
-            android:textColor="@color/black"
-            android:gravity="center"
+    <TextView
+        android:id="@+id/my_msg_view"
+        style="@style/font_regular_15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_msg_box_my"
+        android:lineHeight="22dp"
 
-            style="@style/font_regular_12"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/profile_image_cardview"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/name"
-
-            >
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/bg_kakao"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:id="@+id/msg_box"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:paddingVertical="8dp"
-            android:paddingHorizontal="10dp"
-            android:background="@drawable/bg_msg_box_others"
-            android:layout_marginStart="5dp"
-            app:layout_constraintStart_toEndOf="@id/profile_image_cardview"
-            app:layout_constraintTop_toBottomOf="@id/name"
-            app:layout_constraintEnd_toStartOf="@id/time_view"
-            >
-            <TextView
-                android:id="@+id/msg_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="텍스트2414124124124124124\n214"
-                style="@style/font_regular_15"
-                android:textColor="@color/black"
-                android:lineHeight="22dp"
-                />
-
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/time_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="오후 3:30"
-            android:layout_marginStart="5dp"
-            style="@style/font_regular_15"
-            android:textColor="@color/black"
-            android:lineHeight="22dp"
-            app:layout_constraintStart_toEndOf="@id/msg_box"
-            app:layout_constraintBottom_toBottomOf="@id/msg_box"
-            />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_start"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="16dp" />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_end"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="42dp"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
+        android:text="텍스트 okf24\n214"
+        android:textColor="@color/white"
+        tools:ignore="HardcodedText" />
+</LinearLayout>

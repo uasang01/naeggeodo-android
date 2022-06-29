@@ -1,6 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/others_msg_box"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_chat_start"
+    android:paddingEnd="@dimen/padding_chat_end"
+    android:paddingVertical="10dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <TextView
+        android:id="@+id/others_name_view"
+        style="@style/font_regular_12"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:layout_marginStart="43dp"
+        android:text="산본동아기참새"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:layout_marginTop="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/others_name_view">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/others_profile_image_cardview"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bg_kakao" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/others_msg_view"
+            style="@style/font_regular_15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_msg_box_others"
+            android:lineHeight="22dp"
+            android:paddingHorizontal="10dp"
+
+            android:paddingVertical="8dp"
+            android:text="4124ewfwfeefwefwwefw\n214"
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/others_time_view"
+            style="@style/font_regular_15"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="10dp"
+            android:layout_weight="0"
+            android:lineHeight="22dp"
+            android:maxLines="1"
+            android:text="오후 3:30"
+            android:textColor="@color/black" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

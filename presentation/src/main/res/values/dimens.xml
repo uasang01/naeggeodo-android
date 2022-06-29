@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="defaultMargin">30dp</dimen>
+    <dimen name="padding_chat_start">16dp</dimen>
+    <dimen name="padding_chat_end">42dp</dimen>
 </resources>
