@@ -13,7 +13,6 @@ import coil.size.ViewSizeResolver
 import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatListBinding
-import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.utils.Util.getTimeDiff
 import com.naeggeodo.presentation.utils.Util.getTimeStr
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +45,8 @@ class ChatListAdapter(
             val prevDate = datas[position].createDate
 
             val timeDiff = getTimeDiff(prevDate)
+
+            Timber.e("werr ${datas[position].chatId} ${datas[position].idx}")
 
             title.text = datas[position].title
             time.text = getTimeStr(timeDiff)

@@ -12,7 +12,8 @@ data class Chat(
     val createDate: String,
     val currentCount: Int,
     val endDate: Any,
-    val id: Int,
+    @SerializedName("id")
+    val chatId: Int,
     val idx: Int,
     val imgPath: Any,
     val link: String,

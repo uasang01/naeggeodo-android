@@ -52,4 +52,16 @@ class ApiModule {
     fun provideCreateChatApiService(@Named("Auth") retrofit: Retrofit): CreateChatApi {
         return retrofit.create(CreateChatApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideGetChatInfoApiService(@Named("Auth") retrofit: Retrofit): GetChatInfoApi {
+        return retrofit.create(GetChatInfoApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideGetUsersInChatApiService(@Named("Auth") retrofit: Retrofit): GetUsersInChatApi {
+        return retrofit.create(GetUsersInChatApi::class.java)
+    }
+
 }

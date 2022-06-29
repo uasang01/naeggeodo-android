@@ -14,6 +14,7 @@ import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.utils.Util.showShortSnackbar
+import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.HomeViewModel
 import com.naeggeodo.presentation.viewmodel.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private var chatListAdapter: ChatListAdapter? = null
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
+    private val createChatViewModel: CreateChatViewModel by activityViewModels()
 
     override fun init() {
         if (chatListAdapter == null) {
@@ -75,10 +77,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 //            showShortSnackbar(binding.root, "$pos clicked")
 
             val chat = chatListAdapter!!.getData(pos)
+            chat.chatId
 
-            Timber.e("chat info : ${chat.id} ${chat.title} ${chat.userId}")
+            Timber.e("chat info : ${chat.chatId} ${chat.title} ${chat.userId}")
 
-            val action = HomeFragmentDirections.actionHomeToChatActivity()
+            val action = HomeFragmentDirections.actionHomeToChatActivity(chat.chatId)
 //            val action = HomeFragmentDirections.actionHomeToNavigationChat()
             findNavController().navigate(action)
         }

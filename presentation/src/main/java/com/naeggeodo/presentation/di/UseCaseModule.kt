@@ -1,9 +1,6 @@
 package com.naeggeodo.presentation.di
 
-import com.naeggeodo.domain.repository.CreateRepository
-import com.naeggeodo.domain.repository.HomeRepository
-import com.naeggeodo.domain.repository.LoginRepository
-import com.naeggeodo.domain.repository.SearchRepository
+import com.naeggeodo.domain.repository.*
 import com.naeggeodo.domain.usecase.*
 import dagger.Module
 import dagger.Provides
@@ -37,4 +34,14 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideCreateChatUseCase(repository: CreateRepository) = CreateChatUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetChatInfoUseCase(repository: ChatRepository) = GetChatInfoUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetUsersInChatUseCase(repository: ChatRepository) = GetUsersInChatUseCase(repository)
+
+
 }

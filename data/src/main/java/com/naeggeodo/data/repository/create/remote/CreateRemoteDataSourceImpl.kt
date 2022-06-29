@@ -2,7 +2,7 @@ package com.naeggeodo.data.repository.create.remote
 
 import com.damda.data.base.BaseRepository
 import com.naeggeodo.data.api.CreateChatApi
-import com.naeggeodo.domain.model.ChatId
+import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import okhttp3.MultipartBody
 import timber.log.Timber
@@ -15,7 +15,7 @@ class CreateRemoteDataSourceImpl @Inject constructor(
     override suspend fun createChat(
         remoteErrorEmitter: RemoteErrorEmitter,
         files: List<MultipartBody.Part>
-    ): ChatId? {
+    ): Chat? {
         val res = safeApiCall(remoteErrorEmitter) {
             createChatApi.createChat(files)
         }

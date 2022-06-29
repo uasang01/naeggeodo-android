@@ -1,6 +1,6 @@
 package com.naeggeodo.data.api
 
-import com.naeggeodo.domain.model.ChatId
+import com.naeggeodo.domain.model.Chat
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Multipart
@@ -12,5 +12,5 @@ interface CreateChatApi {
     @POST("chat-rooms")
     suspend fun createChat(
         @Part files: List<MultipartBody.Part>
-    ): Response<ChatId>
+    ): Response<Chat>
 }

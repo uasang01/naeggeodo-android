@@ -63,7 +63,7 @@ class CreateChatViewModel @Inject constructor(
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
             mutableScreenState.postValue(ScreenState.RENDER)
-            _chatId.postValue(response!!.chatMainId)
+            _chatId.postValue(response!!.chatId)
         }
     }
 
