@@ -74,11 +74,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         chatListAdapter?.setListener { pos ->
 //            showShortSnackbar(binding.root, "$pos clicked")
 
+            val chat = chatListAdapter!!.getData(pos)
+
+            Timber.e("chat info : ${chat.id} ${chat.title} ${chat.userId}")
+
             val action = HomeFragmentDirections.actionHomeToChatActivity()
 //            val action = HomeFragmentDirections.actionHomeToNavigationChat()
             findNavController().navigate(action)
-
-//            startActivity(Intent(context, ChatActivity::class.java))
         }
 
         binding.searchBarText.setOnClickListener {
@@ -147,8 +149,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                         Timber.e("event triggered / EVENT_CHAT_LIST_CHANGED")
                         binding.chatListRecyclerView.postDelayed({
                             homeViewModel.chatList.value?.let { value ->
-                                chatListAdapter!!.setData(ArrayList(value))
+                                chatListAdapter!!.setDatas(ArrayList(value))
                             }
+                            homeViewModel.setScreenState(ScreenState.RENDER)
                         }, 100)
                     }
 //                    HomeViewModel.EVENT_CATEGORIES_CHANGED -> {
@@ -203,6 +206,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
             binding.categoryRecyclerView.post {
                 categoryAdapter.setData(ArrayList(value.categories))
+            }
+        }
+
+        homeViewModel.mutableScreenState.observe(viewLifecycleOwner){state ->
+            val layout = binding.loadingView.root
+            val view = binding.loadingView.progressImage
+            when (state!!) {
+                ScreenState.LOADING -> Util.loadingAnimation(requireContext(), layout, view, true)
+                ScreenState.RENDER -> Util.loadingAnimation(requireContext(), layout, view, false)
+                ScreenState.ERROR -> Util.loadingAnimation(requireContext(), layout, view, false)
+            }
+        }
+        locationViewModel.mutableScreenState.observe(viewLifecycleOwner){ state ->
+            val layout = binding.loadingView.root
+            val view = binding.loadingView.progressImage
+            when (state!!) {
+                ScreenState.LOADING -> Util.loadingAnimation(requireContext(), layout, view, true)
+                ScreenState.RENDER -> Util.loadingAnimation(requireContext(), layout, view, false)
+                ScreenState.ERROR -> Util.loadingAnimation(requireContext(), layout, view, false)
             }
         }
 

@@ -166,8 +166,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             goToHome()
         }
         loginViewModel.mutableScreenState.observe(this) { state ->
-            val layout = binding.progressView.root
-            val view = binding.progressView.progressImage
+            val layout = binding.loadingView.root
+            val view = binding.loadingView.progressImage
             when (state!!) {
                 ScreenState.LOADING -> loadingAnimation(applicationContext, layout, view, true)
                 ScreenState.RENDER -> loadingAnimation(applicationContext, layout, view, false)

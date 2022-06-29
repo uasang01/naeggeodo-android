@@ -58,8 +58,12 @@ class HomeViewModel @Inject constructor(
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
             _chatList.postValue(response!!.chatList)
-            mutableScreenState.postValue(ScreenState.RENDER)
+
             viewEvent(EVENT_CHAT_LIST_CHANGED)
         }
+    }
+
+    fun setScreenState(state: ScreenState){
+        mutableScreenState.postValue(state)
     }
 }

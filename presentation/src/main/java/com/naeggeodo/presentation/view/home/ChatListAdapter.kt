@@ -89,11 +89,13 @@ class ChatListAdapter(
 
 
     override fun getItemCount() = datas.size
-    fun setData(chatList: ArrayList<Chat>) {
+    fun setDatas(chatList: ArrayList<Chat>) {
         clearData()
         datas.addAll(chatList)
         notifyItemRangeInserted(0, chatList.size)
     }
+
+    fun getData(pos: Int) = datas[pos]
 
     fun clearData() {
         val size = datas.size

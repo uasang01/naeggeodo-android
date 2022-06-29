@@ -46,8 +46,8 @@ object Util {
                 connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
     }
 
-    fun loadingAnimation(context: Context, layout: ViewGroup, view: View, start: Boolean) {
-        if (start) {
+    fun loadingAnimation(context: Context, layout: ViewGroup, view: View, show: Boolean) {
+        if (show) {
             val anim = AnimationUtils.loadAnimation(context, R.anim.rotate)
             layout.visibility = View.VISIBLE
             view.startAnimation(anim)

@@ -8,6 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <include
+            android:id="@+id/loading_view"
+            layout="@layout/view_loading"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 <!--        <include-->
 <!--            android:id="@+id/search_bar_layout"-->
 <!--            layout="@layout/layout_search_bar"-->
@@ -89,10 +97,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_list_recycler_view"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_recycler_view" />
+            app:layout_constraintTop_toBottomOf="@+id/category_recycler_view"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 
         <!--  Guidelines  -->
