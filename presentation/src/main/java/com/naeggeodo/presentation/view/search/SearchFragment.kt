@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -15,6 +16,7 @@ import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentSearchBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
+import com.naeggeodo.presentation.view.home.HomeFragmentDirections
 import com.naeggeodo.presentation.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -45,13 +47,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         lm.flexDirection = FlexDirection.ROW
         lm.justifyContent = JustifyContent.FLEX_START
         binding.tagRecyclerView.layoutManager = lm
-//        val dump = arrayListOf<Tag>()
-//        for (i in 0..40) {
-//            dump.add(Tag(1,"치킨치킨치킨${i * -10}"))
-//            dump.add(Tag(1,"치${i * -10}"))
-//        }
-//
-//        tagAdapter.setData(dump)
 
         // chats recyclerview
         binding.chatListRecyclerView.adapter = chatListAdapter
@@ -86,6 +81,17 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
                 Timber.e("view:$view isFocused:$isFocused")
 
             }
+
+        chatListAdapter.setListener { pos ->
+            val chat = chatListAdapter.getData(pos)
+            chat.chatId
+
+            Timber.e("chat info : ${chat.chatId} ${chat.title} ${chat.userId}")
+
+            val action = SearchFragmentDirections.actionSearchToChatActivity(chat.chatId)
+//            val action = HomeFragmentDirections.actionHomeToNavigationChat()
+            findNavController().navigate(action)
+        }
     }
 
     override fun observeViewModels() {

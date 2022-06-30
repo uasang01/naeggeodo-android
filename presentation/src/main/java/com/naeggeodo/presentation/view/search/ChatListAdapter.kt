@@ -11,16 +11,17 @@ import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatListBinding
 import com.naeggeodo.presentation.utils.Util
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 
 
-class ChatListAdapter(private val context: Context, private var datas: ArrayList<Chat>) :
+class ChatListAdapter(
+    private val context: Context,
+    private var datas: ArrayList<Chat>,
+    private var listener: (pos: Int) -> Unit = {}
+) :
     RecyclerView.Adapter<ChatListAdapter.ViewHolder>() {
 
     val drawableList = hashMapOf<Int, Drawable>()
@@ -54,13 +55,18 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
 
             val uri = Uri.parse(datas[position].imgPath)
             if (uri.toString().split((".")).last() == "svg") {
-                svgRequestBuilder.load(uri).into(image)
+                svgRequestBuilder.load(uri)
+                    .centerCrop()
+                    .into(image)
             } else {
                 Glide.with(context)
                     .load(uri)
                     .error(R.drawable.ic_error)
                     .centerCrop()
                     .into(image)
+            }
+            enterContainer.setOnClickListener {
+                listener(position)
             }
         }
     }
@@ -101,5 +107,13 @@ class ChatListAdapter(private val context: Context, private var datas: ArrayList
         datas.clear()
         drawableList.clear()
         notifyItemRangeRemoved(0, size)
+    }
+
+    fun setListener(l: (pos: Int) -> Unit) {
+        listener = l
+    }
+
+    fun getData(pos: Int): Chat {
+        return datas[pos]
     }
 }

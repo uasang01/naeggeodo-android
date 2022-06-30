@@ -27,7 +27,11 @@
         android:id="@+id/search"
         android:name="com.naeggeodo.presentation.view.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_search_to_chatActivity"
+            app:destination="@id/chatActivity" />
+    </fragment>
     <fragment
         android:id="@+id/create"
         android:name="com.naeggeodo.presentation.view.create.CreateFragment"
