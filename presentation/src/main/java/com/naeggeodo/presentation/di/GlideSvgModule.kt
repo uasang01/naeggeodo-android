@@ -13,7 +13,7 @@ import com.naeggeodo.presentation.utils.svg.SvgDrawableTranscoder
 import java.io.InputStream
 
 @GlideModule
-class MyAppGlideModule : AppGlideModule() {
+class GlideSvgModule : AppGlideModule() {
     override fun registerComponents(
         context: Context, glide: Glide, registry: Registry
     ) {
