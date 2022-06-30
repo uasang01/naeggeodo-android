@@ -52,6 +52,7 @@ class ChatListAdapter(
             if (uri.toString().split((".")).last() == "svg") {
                 svgRequestBuilder.load(uri)
                     .centerCrop()
+                    .error(R.drawable.ic_error)
                     .into(image)
             } else {
                 Glide.with(context)
