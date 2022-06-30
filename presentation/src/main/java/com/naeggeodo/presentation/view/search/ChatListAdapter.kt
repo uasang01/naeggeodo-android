@@ -56,6 +56,7 @@ class ChatListAdapter(
             val uri = Uri.parse(datas[position].imgPath)
             if (uri.toString().split((".")).last() == "svg") {
                 svgRequestBuilder.load(uri)
+                    .error(R.drawable.ic_error)
                     .centerCrop()
                     .into(image)
             } else {

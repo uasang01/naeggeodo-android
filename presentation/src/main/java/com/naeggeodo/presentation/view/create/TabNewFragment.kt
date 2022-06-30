@@ -58,6 +58,7 @@ class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_
                             .copy(Bitmap.Config.ARGB_8888, true)
                         Glide.with(requireContext())
                             .load(bitmap)
+                            .error(R.drawable.ic_error)
                             .centerCrop()
                             .into(binding.chatImage)
 

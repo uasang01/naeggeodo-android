@@ -16,7 +16,6 @@ class SvgDecoder : ResourceDecoder<InputStream?, SVG?> {
     override fun handles(source: InputStream, options: Options): Boolean {
         return true
     }
-
     override fun decode(
         source: InputStream,
         width: Int,

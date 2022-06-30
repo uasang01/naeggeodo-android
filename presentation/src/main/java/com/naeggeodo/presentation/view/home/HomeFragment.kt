@@ -27,6 +27,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
     private val createChatViewModel: CreateChatViewModel by activityViewModels()
+    private var refreshedTime = System.currentTimeMillis()
 
     override fun init() {
         if (chatListAdapter == null) {
@@ -134,11 +135,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 // 스크롤이 처음에 도달했는지 확인
                 val firstVisibleItemPosition =
                     (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
-                if (homeViewModel.mutableScreenState.value != ScreenState.LOADING &&
-                    !recyclerView.canScrollVertically(-1) && firstVisibleItemPosition == 0
+                if (homeViewModel.mutableScreenState.value != ScreenState.LOADING
+                    && !recyclerView.canScrollVertically(-1)
+                    && firstVisibleItemPosition == 0
                 ) {
 //                    Timber.d("touched chat list top")
-                    refreshChatList()
+//                    refreshChatList()
                 }
             }
         })
@@ -176,7 +178,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     LocationViewModel.EVENT_ADDRESS_INFO_CHANGED -> {
                         Timber.e("event triggered / EVENT_ADDRESS_INFO_CHANGED")
                         Handler(Looper.getMainLooper()).postDelayed({
-                            val v = locationViewModel.addressInfo.value?.let{v ->
+                            val v = locationViewModel.addressInfo.value?.let { v ->
                                 Timber.e("address $v")
                                 val address = v.first
                                 val buildingCode = v.second
@@ -198,7 +200,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                     textview.text = getText(R.string.not_apartment)
                                 }
                             }
-                        },100)
+                        }, 100)
                     }
                 }
             }
@@ -212,7 +214,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
         }
 
-        homeViewModel.mutableScreenState.observe(viewLifecycleOwner){state ->
+        homeViewModel.mutableScreenState.observe(viewLifecycleOwner) { state ->
             val layout = binding.loadingView.root
             val view = binding.loadingView.progressImage
             when (state!!) {
@@ -221,7 +223,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 ScreenState.ERROR -> Util.loadingAnimation(requireContext(), layout, view, false)
             }
         }
-        locationViewModel.mutableScreenState.observe(viewLifecycleOwner){ state ->
+        locationViewModel.mutableScreenState.observe(viewLifecycleOwner) { state ->
             val layout = binding.loadingView.root
             val view = binding.loadingView.progressImage
             when (state!!) {
@@ -260,7 +262,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun refreshChatList() {
+        // swipe listener를 이용하여 구현해야 할 것 같음
         Timber.e("Refresh chat list")
+        if (chatListAdapter == null && App.prefs.buildingCode == null) return
+
+        val diff = System.currentTimeMillis() - refreshedTime
+        Timber.e("diffffff $diff")
+        if (diff > 2000) {
+            Util.toast?.cancel()
+
+            refreshedTime = System.currentTimeMillis()
+            binding.chatListRecyclerView.post {
+                chatListAdapter!!.clearData()
+            }
+            requestChatList(
+                category = categoryAdapter.getSelectedCategory(),
+                buildingCode = App.prefs.buildingCode!!
+            )
+        }
+//        else {
+//            Util.showShortToast(requireContext(), "잠시 후 다시 시도해주세요")
+//        }
+
     }
 
     private fun requestChatList(category: String? = null, buildingCode: String) {
