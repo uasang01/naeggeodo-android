@@ -11,6 +11,7 @@ import com.naeggeodo.domain.model.Users
 import com.naeggeodo.domain.usecase.GetChatInfoUseCase
 import com.naeggeodo.domain.usecase.GetPrevChatHistoryUseCase
 import com.naeggeodo.domain.usecase.GetUsersInChatUseCase
+import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.data.Message
 import com.naeggeodo.presentation.di.App
@@ -38,6 +39,10 @@ class ChatViewModel @Inject constructor(
         const val EVENT_USERS_CHANGED = 312
         const val EVENT_HISTORY_CHANGED = 313
         const val EVENT_MESSAGE_RECEIVED_CHANGED = 314
+        const val EVENT_ENTER_CHAT = 315
+        const val EVENT_EXIT_CHAT = 316
+        const val EVENT_BAN_USER = 317
+//        const val EVENT = 316
     }
 
 
@@ -202,7 +207,7 @@ class ChatViewModel @Inject constructor(
         mutableScreenState.postValue(state)
     }
 
-    fun sendMsg(msg: String) {
+    fun sendMsg(msg: String, type: ChatDetailType) {
 
         val prefix = "/app/chat"
         val send = "/send"
@@ -210,21 +215,43 @@ class ChatViewModel @Inject constructor(
         val ban = "/ban"
         val exit = "/exit"
 
-        // 메세지 전송
         val data = JSONObject()
-        data.put("chatMain_id", chatId)
-        data.put("sender", App.prefs.userId)
-        data.put("contents", "$msg")
-        data.put("type", "TEXT")
-        data.put("nickname", "nickname test")
+        var destination = prefix
+        when (type) {
+            ChatDetailType.TEXT -> {
 
-        msgSenderDisposable = stompClient.send("$prefix$send", data.toString()).subscribe()
+                data.put("chatMain_id", chatId)
+                data.put("sender", App.prefs.userId)
+                data.put("contents", "$msg")
+                data.put("type", ChatDetailType.TEXT.name)
+                data.put("nickname", "nickname test")
+                destination += send
+            }
+//            ChatDetailType.WELCOME -> {
+//
+//            }
+//            ChatDetailType.EXIT -> {
+//
+//            }
+//            ChatDetailType.WELCOME -> {
+//
+//            }
+//            ChatDetailType.WELCOME -> {
+//
+//            }
+            else -> {
+                return
+            }
+        }
+        msgSenderDisposable = stompClient.send(destination, data.toString()).subscribe()
+
+        // 메세지 전송
+
+
     }
 
     fun banUser() {}
-    fun exitChat() {
-
-    }
+    fun exitChat() {}
 
     fun stopStomp() {
         msgSenderDisposable?.dispose()

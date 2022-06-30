@@ -1,11 +1,15 @@
 package com.naeggeodo.presentation.view.chat
 
+import android.app.Activity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentChatBinding
@@ -38,9 +42,26 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 
     override fun initListener() {
         binding.hambergerButton.setOnClickListener {
-            val msg = "testMsg"
-            chatViewModel.sendMsg(msg)
-            addMyMsgView(msg)
+        }
+
+        binding.messageEdittext.setOnKeyListener { view, keyCode, event ->
+//            when (keyCode) {
+//                KeyEvent.KEYCODE_ENTER -> {
+////                    if(event.action == KeyEvent.ACTION_DOWN){
+////                        Timber.e("wehfiowfhiowfo")
+////                        sendMessage()
+////                    }
+//                    return@setOnKeyListener true
+//                }
+//                else -> return@setOnKeyListener false
+//            }
+            false
+        }
+        binding.sendMessageButton.setOnClickListener{
+            sendMessage(ChatDetailType.TEXT)
+        }
+        binding.showDrawerButton.setOnClickListener {
+
         }
     }
 
@@ -119,6 +140,14 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         chatViewModel.stopStomp()
 
         super.onDestroyView()
+    }
+
+    private fun sendMessage(type: ChatDetailType){
+        val msg = binding.messageEdittext.text.toString()
+        if(msg.isEmpty()) return
+        chatViewModel.sendMsg(msg, type)
+        addMyMsgView(msg)
+        binding.messageEdittext.text.clear()
     }
 
 
