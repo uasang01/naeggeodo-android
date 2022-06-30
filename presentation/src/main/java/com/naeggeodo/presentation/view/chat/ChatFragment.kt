@@ -33,26 +33,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
     override fun initView() {
         super.initView()
 
-        val tempStr = "ewnklfnwelkflwefnlkfnwkeflnwlfk\nfwenlwkf"
-        val tempStr2 = "ewnklfnwfnwkefwlfk\nfwenlwkf"
-        val tempStr3 = "ewnklfnwelkflwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkekgnowengwkengwgpeflnwlfk\n" +
-                "fwenlwkf"
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr2)
-        addOthersMsgView(tempStr3)
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr)
-        addOthersMsgView(tempStr2)
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr3)
-        addOthersMsgView(tempStr)
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr2)
-        addOthersMsgView(tempStr3)
+//        initTestView()
     }
 
     override fun initListener() {
@@ -85,8 +66,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
             it.users.forEach { user ->
 //                Timber.e("users received ${user.toString()}")
             }
-
-//            chatViewModel.runStomp()
         }
 
         chatViewModel.history.observe(viewLifecycleOwner) { historyList ->
@@ -141,4 +120,31 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 
         super.onDestroyView()
     }
+
+
+
+
+    private fun initTestView() {
+        val tempStr = "ewnklfnwelkflwefnlkfnwkeflnwlfk\nfwenlwkf"
+        val tempStr2 = "ewnklfnwfnwkefwlfk\nfwenlwkf"
+        val tempStr3 = "ewnklfnwelkflwefnlkfnwkeflnwlfk\n" +
+                "fwenllwefnlkfnwkeflnwlfk\n" +
+                "fwenllwefnlkfnwkeflnwlfk\n" +
+                "fwenllwefnlkfnwkeflnwlfk\n" +
+                "fwenllwefnlkfnwkekgnowengwkengwgpeflnwlfk\n" +
+                "fwenlwkf"
+        addMyMsgView(tempStr)
+        addMyMsgView(tempStr2)
+        addOthersMsgView(tempStr3)
+        addMyMsgView(tempStr)
+        addMyMsgView(tempStr)
+        addOthersMsgView(tempStr2)
+        addMyMsgView(tempStr)
+        addMyMsgView(tempStr3)
+        addOthersMsgView(tempStr)
+        addMyMsgView(tempStr)
+        addMyMsgView(tempStr2)
+        addOthersMsgView(tempStr3)
+    }
+
 }

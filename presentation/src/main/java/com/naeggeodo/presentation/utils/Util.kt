@@ -4,15 +4,20 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.graphics.drawable.PictureDrawable
 import android.net.ConnectivityManager
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.di.GlideApp
+import com.naeggeodo.presentation.utils.svg.SvgSoftwareLayerSetter
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -24,6 +29,15 @@ import java.util.*
 
 object Util {
     var toast: Toast? = null
+
+    fun getSvgRequestBuilder(context: Context): RequestBuilder<PictureDrawable> =
+        GlideApp.with(context)
+            .`as`(PictureDrawable::class.java)
+//            .placeholder(R.drawable.ic_error)
+            .error(R.drawable.ic_error)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .listener(SvgSoftwareLayerSetter())
+
     fun showShortToast(context: Context, msg: String) {
         toast?.cancel()
         toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT)

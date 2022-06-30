@@ -5,18 +5,11 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
-import coil.size.ViewSizeResolver
 import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatHistoryBinding
 import com.naeggeodo.presentation.utils.Util
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.naeggeodo.presentation.utils.Util.getSvgRequestBuilder
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -24,10 +17,10 @@ import java.util.*
 
 
 class ChatHistoryAdapter(private val context: Context, private var datas: ArrayList<Chat>) :
-    RecyclerView.Adapter<ChatHistoryAdapter.ViewHolder>(), ImageLoaderFactory {
+    RecyclerView.Adapter<ChatHistoryAdapter.ViewHolder>() {
 
     private val drawableList = hashMapOf<Int, Drawable>()
-    private val imageLoader by lazy { newImageLoader() }
+    private val svgRequestBuilder = getSvgRequestBuilder(context)
 
     inner class ViewHolder(val binding: ItemChatHistoryBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -56,38 +49,8 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
             time.text = getTimeStr(timeDiff)
             count.text = "인원 ${datas[position].currentCount}명 / ${datas[position].maxCount}명"
 
-            // 이미지를 한번 불러왔다면 또 url로부터 로드하지 않고 사용
-            if (drawableList[position] == null) {
-                val imgRequest = ImageRequest
-                    .Builder(context)
-                    .data(datas[position].imgPath)
-                    .size(ViewSizeResolver(image))
-                    .target { drawable ->
-                        CoroutineScope(Dispatchers.Main).launch {
-                            image.setImageDrawable(drawable)
-                        }
-                    }
-                    .listener(
-                        onSuccess = { _, result ->
-                            Timber.e("imageLoad Success. pos:$position")
-                            drawableList[position] = result.drawable
-                        },
-                        onError = { a, result ->
-                            Timber.e("imageLoad Fail. pos:$position")
-                        }
-                    )
-                    .build()
-                CoroutineScope(Dispatchers.IO).launch {
-                    val a = imageLoader.execute(imgRequest)
-                    Timber.e("position $position : ${a.request.listener}")
-                }
-
-                favoriteButton.setOnClickListener {
-                    Util.showShortSnackbar(holder.binding.root, "favorite clicked")
-                }
-            } else {
-                Timber.e("position $position : ${drawableList[position]}")
-                image.setImageDrawable(drawableList[position])
+            favoriteButton.setOnClickListener {
+                Util.showShortSnackbar(holder.binding.root, "favorite clicked")
             }
         }
     }
@@ -130,12 +93,4 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
         notifyItemRangeRemoved(0, size)
     }
 
-
-    override fun newImageLoader(): ImageLoader {
-        return ImageLoader.Builder(context)
-            .components {
-                add(SvgDecoder.Factory())
-            }
-            .build()
-    }
 }
