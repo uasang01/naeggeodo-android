@@ -14,18 +14,17 @@
             android:layout_height="65dp"
             android:background="@color/black"
             android:paddingVertical="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_arrow_left"
                 android:layout_marginStart="10dp"
-                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_arrow_left"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/image_card_view"
@@ -34,47 +33,48 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
 
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/back_button"
-                >
+                app:layout_constraintTop_toTopOf="parent">
+
                 <ImageView
                     android:id="@+id/chat_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_loading_logo"/>
+                    android:src="@drawable/ic_loading_logo" />
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/image_card_view"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="10dp"
+                android:id="@+id/chat_title_text"
                 style="@style/font_medium_15"
-                android:textColor="@color/white"
-                android:text="버거킹 백석 이마트점"
-                />
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/image_card_view"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginStart="10dp"
-                style="@style/font_regular_12"
+                android:text="버거킹 백석 이마트점"
                 android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/image_card_view"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/num_of_people"
+                style="@style/font_regular_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:text="인원 2명 / 2명"
-                />
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image_card_view" />
+
             <androidx.constraintlayout.utils.widget.ImageFilterView
                 android:id="@+id/hamberger_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_hamberger"
                 android:layout_marginEnd="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_hamberger"
                 app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ScrollView
@@ -82,54 +82,63 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/grey_F2F2F8"
-            app:layout_constraintTop_toBottomOf="@id/header_container"
             app:layout_constraintBottom_toTopOf="@id/bottom_input_text_container"
-            >
+            app:layout_constraintTop_toBottomOf="@id/header_container">
+
             <LinearLayout
                 android:id="@+id/msg_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-            </LinearLayout>
+                android:orientation="vertical"></LinearLayout>
         </ScrollView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_input_text_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toTopOf="@+id/gallery_recyclerview">
 
             <ImageView
                 android:id="@+id/show_drawer_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_show_drawer"
-
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_arrow_top"
+                android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/show_gallery_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_get_picture"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/show_drawer_button"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:backgroundTint="@color/grey_F2F2F8"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
-                android:backgroundTint="@color/grey_F2F2F8"
-                app:layout_constraintStart_toEndOf="@+id/show_drawer_button"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/send_message_button"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintStart_toEndOf="@+id/show_gallery_button"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <EditText
                     android:id="@+id/message_edittext"
-                    android:paddingHorizontal="10dp"
-                    android:inputType="textMultiLine"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/transparent"/>
+                    android:background="@color/transparent"
+                    android:inputType="textMultiLine"
+                    android:paddingHorizontal="10dp" />
             </androidx.cardview.widget.CardView>
 
             <ImageView
@@ -143,6 +152,12 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gallery_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
         <include
             android:id="@+id/loading_view"
             layout="@layout/view_loading"
@@ -151,7 +166,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

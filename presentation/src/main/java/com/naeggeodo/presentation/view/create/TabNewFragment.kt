@@ -194,8 +194,6 @@ class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_
             val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             getPictureResult.launch(pickPhoto)
-
-
         }
     }
 

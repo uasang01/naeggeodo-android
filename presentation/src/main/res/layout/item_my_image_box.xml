@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/my_message_box"
+    android:id="@+id/my_image_box"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="end"
@@ -21,17 +21,10 @@
         android:textColor="@color/grey_696969"
         tools:ignore="HardcodedText" />
 
-    <TextView
-        android:id="@+id/my_msg_view"
-        style="@style/font_regular_15"
+    <ImageView
+        android:id="@+id/my_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_msg_box_my"
-        android:lineHeight="22dp"
-
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="8dp"
-        android:text="텍스트 okf24\n214"
-        android:textColor="@color/white"
-        tools:ignore="HardcodedText" />
+        android:src="@drawable/ic_send_message"
+        tools:ignore="ContentDescription" />
 </LinearLayout>

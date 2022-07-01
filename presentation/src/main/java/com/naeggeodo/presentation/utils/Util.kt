@@ -6,11 +6,14 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.drawable.PictureDrawable
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
@@ -38,13 +41,29 @@ object Util {
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(SvgSoftwareLayerSetter())
 
+    fun loadImageAndSetView(context: Context, imagePath: String, view: ImageView) {
+        val uri = Uri.parse(imagePath)
+        if (uri.toString().split((".")).last() == "svg") {
+            getSvgRequestBuilder(context).load(uri)
+                .error(R.drawable.ic_error)
+                .centerCrop()
+                .into(view)
+        } else {
+            Glide.with(context)
+                .load(uri)
+                .error(R.drawable.ic_error)
+                .centerCrop()
+                .into(view)
+        }
+    }
+
     fun showShortToast(context: Context, msg: String) {
         toast?.cancel()
         toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT)
         toast!!.show()
     }
 
-    fun showLongToast(context: Context, msg: String){
+    fun showLongToast(context: Context, msg: String) {
         toast?.cancel()
         toast = Toast.makeText(context, msg, Toast.LENGTH_LONG)
         toast!!.show()

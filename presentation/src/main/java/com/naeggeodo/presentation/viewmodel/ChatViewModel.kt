@@ -1,5 +1,8 @@
 package com.naeggeodo.presentation.viewmodel
 
+import android.app.Activity
+import android.net.Uri
+import android.provider.MediaStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -38,10 +41,11 @@ class ChatViewModel @Inject constructor(
         const val EVENT_CHAT_INFO_CHANGED = 311
         const val EVENT_USERS_CHANGED = 312
         const val EVENT_HISTORY_CHANGED = 313
-        const val EVENT_MESSAGE_RECEIVED_CHANGED = 314
-        const val EVENT_ENTER_CHAT = 315
-        const val EVENT_EXIT_CHAT = 316
-        const val EVENT_BAN_USER = 317
+        const val EVENT_MESSAGE_RECEIVED = 314
+        const val EVENT_IMAGE_RECEIVED = 315
+        const val EVENT_ENTER_CHAT = 316
+        const val EVENT_EXIT_CHAT = 317
+        const val EVENT_BAN_USER = 318
 //        const val EVENT = 316
     }
 
@@ -129,6 +133,11 @@ class ChatViewModel @Inject constructor(
     var msgSenderDisposable: Disposable? = null
 
     fun runStomp() {
+        if(stompClient.isConnected){
+            Timber.e("STOMP ALREADY CONNECTED")
+            return
+        }
+
         // init
         val userId = App.prefs.userId
         Timber.e("chatId : $chatId userId: $userId  ")
@@ -146,8 +155,9 @@ class ChatViewModel @Inject constructor(
 //                Timber.i("message Recieve ${topicMessage.payload}")
                 val jsonObject = JsonParser.parseString(topicMessage.payload)
                 val msgInfo = Gson().fromJson(jsonObject, Message::class.java)
+
                 _message.postValue(msgInfo)
-//                viewEvent(EVENT_MESSAGE_RECEIVED_CHANGED)
+//                viewEvent(EVENT_MESSAGE_RECEIVED)
 //                Timber.i("message Recieve ${msgInfo}")
             }, { throwable ->
                 Timber.i("error occurred. cause: ${throwable.cause}, message: ${throwable.message}")
@@ -162,6 +172,8 @@ class ChatViewModel @Inject constructor(
                 }
                 LifecycleEvent.Type.CLOSED -> {
                     Timber.i("CLOSED")
+                    stopStomp()
+                    runStomp()
                 }
                 LifecycleEvent.Type.ERROR -> {
                     Timber.i("ERROR")
@@ -207,10 +219,11 @@ class ChatViewModel @Inject constructor(
         mutableScreenState.postValue(state)
     }
 
-    fun sendMsg(msg: String, type: ChatDetailType) {
+    fun sendMsg(content: String, type: ChatDetailType) {
 
         val prefix = "/app/chat"
         val send = "/send"
+        val image = "/image"
         val enter = "/enter"
         val ban = "/ban"
         val exit = "/exit"
@@ -222,10 +235,18 @@ class ChatViewModel @Inject constructor(
 
                 data.put("chatMain_id", chatId)
                 data.put("sender", App.prefs.userId)
-                data.put("contents", "$msg")
+                data.put("contents", "$content")
                 data.put("type", ChatDetailType.TEXT.name)
                 data.put("nickname", "nickname test")
                 destination += send
+            }
+            ChatDetailType.IMAGE -> {
+                data.put("chatMain_id", chatId)
+                data.put("sender", App.prefs.userId)
+                data.put("contents", "$content")
+                data.put("type", ChatDetailType.IMAGE.name)
+                data.put("nickname", "nickname test")
+                destination += image
             }
 //            ChatDetailType.WELCOME -> {
 //
@@ -236,14 +257,19 @@ class ChatViewModel @Inject constructor(
 //            ChatDetailType.WELCOME -> {
 //
 //            }
-//            ChatDetailType.WELCOME -> {
-//
-//            }
             else -> {
                 return
             }
         }
-        msgSenderDisposable = stompClient.send(destination, data.toString()).subscribe()
+        msgSenderDisposable = stompClient
+            .send(destination, data.toString())
+            .subscribe(
+                {
+                    //onComplete
+                },
+                { error ->
+                    Timber.e("ERROR OCCURRED ON SEND MESSAGE\nmessage: ${error.message} / cause: ${error.cause}")
+                })
 
         // 메세지 전송
 
@@ -258,6 +284,29 @@ class ChatViewModel @Inject constructor(
         msgReceiverDisposable?.dispose()
         lifecycleDisposable?.dispose()
         stompClient.disconnect()
+    }
+
+    fun getAllImagePaths(activity: Activity): ArrayList<String> {
+        val listOfAllImages = ArrayList<String>()
+        var absolutePathOfImage: String? = null
+        val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val projection = arrayOf(
+            MediaStore.MediaColumns.DATA,
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+        )
+        val cursor = activity.contentResolver.query(
+            uri, projection, null,
+            null, null
+        )
+        val columnIndexData: Int = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
+
+        cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+
+        while (cursor.moveToNext()) {
+            absolutePathOfImage = cursor.getString(columnIndexData)
+            listOfAllImages.add(absolutePathOfImage)
+        }
+        return listOfAllImages
     }
 
 
