@@ -170,6 +170,8 @@ class ChatViewModel @Inject constructor(
             when (lifecycleEvent.type) {
                 LifecycleEvent.Type.OPENED -> {
                     Timber.i("OPEND")
+                    // 연결 시 입장 메세지 전송
+                    sendMsg("님이 입장하셨습니다.", ChatDetailType.WELCOME)
                 }
                 LifecycleEvent.Type.CLOSED -> {
                     Timber.i("CLOSED")
@@ -238,7 +240,7 @@ class ChatViewModel @Inject constructor(
                 data.put("chatMain_id", chatId)
                 data.put("sender", App.prefs.userId)
                 data.put("contents", "$content")
-                data.put("type", ChatDetailType.TEXT.name)
+                data.put("type", type.name)
                 data.put("nickname", "nickname test")
                 destination += send
             }
@@ -246,16 +248,26 @@ class ChatViewModel @Inject constructor(
                 data.put("chatMain_id", chatId)
                 data.put("sender", App.prefs.userId)
                 data.put("contents", "$content")
-                data.put("type", ChatDetailType.IMAGE.name)
+                data.put("type", type.name)
                 data.put("nickname", "nickname test")
                 destination += send
             }
-//            ChatDetailType.WELCOME -> {
-//
-//            }
-//            ChatDetailType.EXIT -> {
-//
-//            }
+            ChatDetailType.WELCOME -> {
+                data.put("chatMain_id", chatId)
+                data.put("sender", App.prefs.userId)
+                data.put("contents", "$content")
+                data.put("type", type.name)
+                data.put("nickname", "nickname test")
+                destination += enter
+            }
+            ChatDetailType.EXIT -> {
+                data.put("chatMain_id", chatId)
+                data.put("sender", App.prefs.userId)
+                data.put("contents", "$content")
+                data.put("type", type.name)
+                data.put("nickname", "nickname test")
+                destination += exit
+            }
 //            ChatDetailType.WELCOME -> {
 //
 //            }

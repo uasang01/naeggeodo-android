@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.gson.JsonParser
 import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -26,6 +27,7 @@ import com.naeggeodo.presentation.utils.Util.loadImageAndSetView
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.ChatViewModel
+import org.json.JSONObject
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -198,6 +200,27 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
             Timber.e("history received size: ${historyList.size}")
             historyList.forEach { h ->
                 Timber.e("history received ${h}")
+                if(h.userId == App.prefs.userId){
+                    when(h.type){
+                        ChatDetailType.TEXT.name -> {
+                            addMyMsgView(h.contents,LocalDateTime.parse(h.regDate))
+                        }
+                        ChatDetailType.IMAGE.name -> {
+
+                        }
+                        ChatDetailType.WELCOME.name, ChatDetailType.EXIT.name -> {
+                            addNoticeView(h.contents)
+                        }
+//                        ChatDetailType.BAN -> {
+//
+//                        }
+//                        ChatDetailType.TEXT.name -> {
+//
+//                        }
+                    }
+                }else{
+                    addOthersMsgView(h.contents,LocalDateTime.parse(h.regDate))
+                }
             }
 
             chatViewModel.runStomp()
@@ -205,11 +228,18 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 
         chatViewModel.message.observe(viewLifecycleOwner) { msgInfo ->
             // 다른 유저의 이미지 추가해야 함
-
             when (msgInfo.type) {
                 ChatDetailType.CNT.name -> {
                     // CNT 타입의 메세지를 받으면 1명 추가하기.
                     Timber.e("type cnt message received $msgInfo")
+                    val currentCount = JSONObject(msgInfo.contents).get("currentCount")
+                    binding.numOfPeople.text = "인원 ${currentCount}명 / ${chatViewModel.chatInfo.value?.maxCount}명"
+                }
+                ChatDetailType.WELCOME.name -> {
+                    addNoticeView("${msgInfo.nickname} 님이 입장하셨습니다")
+                }
+                ChatDetailType.EXIT.name -> {
+                    addNoticeView("${msgInfo.nickname} 님이 퇴장하셨습니다")
                 }
                 ChatDetailType.TEXT.name -> {
                     // 내가 보낸 메세지는 추가하지 않음
@@ -261,7 +291,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
     }
 
 
-    private fun addMyMsgView(str: String) {
+    private fun addMyMsgView(str: String, time: LocalDateTime? = null) {
 
         val inflater = LayoutInflater.from(requireContext())
         val msgLayout = inflater.inflate(R.layout.item_my_message_box, null)
@@ -270,12 +300,13 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 
         msgView.text = str
         val curTime = TimeZone.getTimeZone(ZoneId.of("Asia/Seoul"))
-        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+
+        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         binding.msgContainer.addView(msgLayout)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
 
-    private fun addMyImageView(encodedString: String) {
+    private fun addMyImageView(encodedString: String, time: LocalDateTime? = null) {
         val inflater = LayoutInflater.from(requireContext())
         val imageLayout = inflater.inflate(R.layout.item_my_image_box, null)
         val imageView = imageLayout.findViewById<ImageView>(R.id.my_image_view)
@@ -292,7 +323,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         imageView.layoutParams = imgLp
         Timber.e("${((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()} / ${bitmap.width}")
 
-        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         Glide.with(requireContext())
             .load(bitmap)
             .into(imageView)
@@ -305,7 +336,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         }
     }
 
-    private fun addOthersImageView(encodedString: String) {
+    private fun addOthersImageView(encodedString: String, time: LocalDateTime? = null) {
         // view, image
         val inflater = LayoutInflater.from(requireContext())
         val imageLayout = inflater.inflate(R.layout.item_others_image_box, null)
@@ -322,7 +353,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         imgLp.width = imageWith
         imageView.layoutParams = imgLp
 
-        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         Glide.with(requireContext())
             .load(bitmap)
             .into(imageView)
@@ -336,7 +367,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
     }
 
 
-    private fun addOthersMsgView(str: String, imagePath: String? = null) {
+    private fun addOthersMsgView(str: String, time: LocalDateTime? = null) {
         // view, image
         val inflater = LayoutInflater.from(requireContext())
         val msgLayout = inflater.inflate(R.layout.item_others_message_box, null)
@@ -351,8 +382,22 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
             )
         )
 
-        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         msgView.text = str
+        binding.msgContainer.addView(msgLayout)
+        binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
+    }
+
+
+
+    private fun addNoticeView(str: String) {
+        // view, image
+        val inflater = LayoutInflater.from(requireContext())
+        val msgLayout = inflater.inflate(R.layout.item_chat_notice, null)
+        val noticeView = msgLayout.findViewById<TextView>(R.id.notice_textview)
+
+        noticeView.text = str
+
         binding.msgContainer.addView(msgLayout)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
@@ -379,6 +424,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
     }
 
     override fun onDestroy() {
+
+//        chatViewModel.sendMsg("님이 퇴장하셨습니다.", ChatDetailType.EXIT)
         chatViewModel.stopStomp()
         super.onDestroy()
     }
