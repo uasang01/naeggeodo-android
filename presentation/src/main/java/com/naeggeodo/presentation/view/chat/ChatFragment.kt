@@ -1,19 +1,13 @@
 package com.naeggeodo.presentation.view.chat
 
-import android.app.Activity
 import android.content.ContentResolver
-import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.provider.MediaStore
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,55 +19,29 @@ import com.naeggeodo.presentation.databinding.FragmentChatBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.Util
+import com.naeggeodo.presentation.utils.Util.decodeString
+import com.naeggeodo.presentation.utils.Util.encodeImage
+import com.naeggeodo.presentation.utils.Util.getMessageTimeString
 import com.naeggeodo.presentation.utils.Util.loadImageAndSetView
+import com.naeggeodo.presentation.utils.Util.showShortToast
+import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.ChatViewModel
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import java.io.File
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.*
 
 
 class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
     private val chatViewModel: ChatViewModel by activityViewModels()
-    private lateinit var getPictureResult: ActivityResultLauncher<Intent>
-    private var bitmap: Bitmap? = null
     private val galleryAdapter by lazy { GalleryAdapter(requireContext(), arrayListOf()) }
+
+    private var imageLoadStart = false
+    private var totalImageSize = -1
+    private var encodedImageString = ""
 
     private var isGalleryVisible = false
     override fun init() {
-//        Timber.e("${chatViewModel.chatId} test")
-
-        getPictureResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    Timber.e("activity result ok\n${result.data?.dataString}")
-                    result.data?.let {
-                        val uri = result.data!!.data
-                        Timber.e(uri.toString())
-                        bitmap = ImageDecoder
-                            .decodeBitmap(
-                                ImageDecoder.createSource(
-                                    requireContext().contentResolver,
-                                    uri!!
-                                )
-                            )
-                            .copy(Bitmap.Config.ARGB_8888, true)
-
-
-                        val stream = ByteArrayOutputStream()
-                        bitmap!!.compress(Bitmap.CompressFormat.PNG, 50, stream)
-                        val imageByteArray = stream.toByteArray()
-//                        Timber.e("byte array as string : ${String(imageByteArray)}")
-                        sendMessage(imageByteArray.toString(charset("UTF-8")), ChatDetailType.IMAGE)
-//                        Glide.with(requireContext())
-//                            .load(bitmap)
-//                            .error(R.drawable.ic_error)
-//                            .centerCrop()
-//                            .into(binding.chatImage)
-                    }
-                } else {
-                    Timber.e("activity result not ok")
-                }
-            }
     }
 
     override fun onStart() {
@@ -82,7 +50,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         chatViewModel.getChat()
         chatViewModel.getUsers()
         chatViewModel.getChatHistory()
-
     }
 
     override fun initView() {
@@ -93,6 +60,9 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         lm.orientation = LinearLayoutManager.HORIZONTAL
         binding.galleryRecyclerview.layoutManager = lm
 
+
+        // make recycler view not flickering
+        binding.galleryRecyclerview.itemAnimator?.changeDuration = 0L
 
 
 //        initTestView()
@@ -116,20 +86,43 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 //            }
             false
         }
+
         binding.sendMessageButton.setOnClickListener {
-            if(isGalleryVisible){
+            if (isGalleryVisible) {
                 //send image
                 val uriString = galleryAdapter.getSelectedPicture()
-                if(uriString != null){
-                    val file = File(uriString)
-//                    sendMessage()
+                if (uriString != null) {
 
+                    val encodedString =
+                        encodeImage(uriString).replace("\n", "")    // encoded with Base64
+                    val chopSize = 10240
+                    val loopCount = encodedString.length / chopSize + 1
+                    sendMessage(
+                        encodedString.length.toString(),
+                        ChatDetailType.IMAGE
+                    )
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        for (i in 0 until loopCount) {
+                            if (i != loopCount - 1) {
+                                sendMessage(
+                                    encodedString.slice(i * chopSize until (i + 1) * chopSize),
+                                    ChatDetailType.IMAGE
+                                )
+                            } else {
+                                sendMessage(
+                                    encodedString.slice(i * chopSize until encodedString.length),
+                                    ChatDetailType.IMAGE
+                                )
+                            }
+                        }
+                    }, 100)
                     galleryAdapter.clearSelected()
                     binding.galleryRecyclerview.visibility = View.GONE
 
                     return@setOnClickListener
                 }
             }
+            // send text
             sendMessage(binding.messageEdittext.text.toString(), ChatDetailType.TEXT)
         }
         binding.showGalleryButton.setOnClickListener {
@@ -137,31 +130,44 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 //            val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 //            val photoPickerIntent = Intent(Intent.ACTION_GET_CONTENT)
 //            photoPickerIntent.type = "image/*"
-
 //            getPictureResult.launch(pickPhoto)
-//
 
             if (isGalleryVisible) {
-                isGalleryVisible = false
                 binding.galleryRecyclerview.visibility = View.GONE
-                galleryAdapter.clearData()
-                galleryAdapter.clearSelected()
+                isGalleryVisible = false
             } else {
-                isGalleryVisible = true
                 val list = chatViewModel.getAllImagePaths(requireActivity())
-                binding.galleryRecyclerview.visibility = View.VISIBLE
-                galleryAdapter.setData(list)
                 Timber.e("list $list")
-            }
+                if (list.isEmpty()) {
+                    showShortToast(requireContext(), "사진이 없습니다")
+                    return@setOnClickListener
+                }
 
+                binding.galleryRecyclerview.post {
+                    galleryAdapter.setData(list)
+                    binding.galleryRecyclerview.visibility = View.VISIBLE
+                }
+                isGalleryVisible = true
+            }
         }
         galleryAdapter.setItemClickEvent { pos ->
+            // 없어도 됨
             val uri = galleryAdapter.getSelectedPicture()
             Timber.e("uri $uri")
         }
     }
 
+
     override fun observeViewModels() {
+        chatViewModel.viewEvent.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { event ->
+                when (event) {
+                    ChatViewModel.ERROR_OCCURRED -> {
+                        requireActivity().finish()
+                    }
+                }
+            }
+        }
         chatViewModel.mutableScreenState.observe(viewLifecycleOwner) { state ->
             val layout = binding.loadingView.root
             val view = binding.loadingView.progressImage
@@ -183,8 +189,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         chatViewModel.users.observe(viewLifecycleOwner) {
             val s = it.users
 //            Timber.e("users received ${it.users.size}")
+//            Timber.e("users received ${user.toString()}")
             it.users.forEach { user ->
-//                Timber.e("users received ${user.toString()}")
             }
         }
 
@@ -203,7 +209,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
             when (msgInfo.type) {
                 ChatDetailType.CNT.name -> {
                     // CNT 타입의 메세지를 받으면 1명 추가하기.
-                    Timber.e("fweiofhewoifhweiofhweiofhewiofhewiofhiweofioewfhiowefhioewhfiowehfi")
+                    Timber.e("type cnt message received $msgInfo")
                 }
                 ChatDetailType.TEXT.name -> {
                     // 내가 보낸 메세지는 추가하지 않음
@@ -212,22 +218,45 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
                     } else {
                         addMyMsgView(msgInfo.contents)
                     }
-                    Timber.i("message Recieve ${msgInfo}")
+//                    Timber.i("message Recieve ${msgInfo}")
                 }
                 ChatDetailType.IMAGE.name -> {
-                    // 내가 보낸 메세지는 추가하지 않음
-//                    if (msg.sender != App.prefs.userId) {
-//                        addOthersMsgView(msg.contents)
-//                    }
+                    if (!imageLoadStart) {
+                        Timber.e("load image start")
+                        imageLoadStart = true
+                        totalImageSize = msgInfo.contents.toInt()
+                    } else {
+                        try {
+                            if (totalImageSize < 0) {
+                                imageLoadStart = false
+                                totalImageSize = -1
+                                encodedImageString = ""
+                                return@observe
+                            }
+                            Timber.e("loading  image ${encodedImageString.length}/$totalImageSize ")
+                            encodedImageString += msgInfo.contents
+                            if (encodedImageString.length >= totalImageSize) {
+                                Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
+                                imageLoadStart = false
+                                totalImageSize = -1
 
-                    addMyImageView(msgInfo.contents)
-                    Timber.i("image Recieve ${msgInfo}")
+                                if (msgInfo.sender != App.prefs.userId) {
+                                    addOthersImageView(encodedImageString)
+                                } else {
+                                    addMyImageView(encodedImageString)
+                                }
+
+                                encodedImageString = ""
+                            }
+                        } catch (e: Exception) {
+                            showShortToast(requireContext(), "에러")
+                        }
+                    }
                 }
                 else -> {
 
                 }
             }
-
         }
     }
 
@@ -237,29 +266,83 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         val inflater = LayoutInflater.from(requireContext())
         val msgLayout = inflater.inflate(R.layout.item_my_message_box, null)
         val msgView = msgLayout.findViewById<TextView>(R.id.my_msg_view)
+        val timeView = msgLayout.findViewById<TextView>(R.id.my_time_view)
+
         msgView.text = str
+        val curTime = TimeZone.getTimeZone(ZoneId.of("Asia/Seoul"))
+        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         binding.msgContainer.addView(msgLayout)
-        binding.msgScrollview.apply { post { fullScroll(View.FOCUS_DOWN) } }
+        binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
 
-    private fun addMyImageView(str: String) {
+    private fun addMyImageView(encodedString: String) {
         val inflater = LayoutInflater.from(requireContext())
         val imageLayout = inflater.inflate(R.layout.item_my_image_box, null)
         val imageView = imageLayout.findViewById<ImageView>(R.id.my_image_view)
-        val imageByteArray = str.toByteArray(charset("UTF-8"))
-        val bitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
+        val byteArray = decodeString(encodedString)
+        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        val timeView = imageLayout.findViewById<TextView>(R.id.my_time_view)
+
+        // scale image size
+        val screenSize = Util.getScreenSize(requireContext())
+        val maxWidth = ((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()
+        val imageWith = if (bitmap.width > maxWidth) maxWidth else bitmap.width
+        val imgLp = imageView.layoutParams
+        imgLp.width = imageWith
+        imageView.layoutParams = imgLp
+        Timber.e("${((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()} / ${bitmap.width}")
+
+        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         Glide.with(requireContext())
             .load(bitmap)
             .into(imageView)
         binding.msgContainer.addView(imageLayout)
-        binding.msgScrollview.apply { post { fullScroll(View.FOCUS_DOWN) } }
+        binding.msgScrollview.apply {
+            postDelayed(
+                { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) },
+                100
+            )
+        }
     }
 
+    private fun addOthersImageView(encodedString: String) {
+        // view, image
+        val inflater = LayoutInflater.from(requireContext())
+        val imageLayout = inflater.inflate(R.layout.item_others_image_box, null)
+        val imageView = imageLayout.findViewById<ImageView>(R.id.others_image_view)
+        val byteArray = decodeString(encodedString)
+        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        val timeView = imageLayout.findViewById<TextView>(R.id.others_time_view)
+
+        // scale image size
+        val screenSize = Util.getScreenSize(requireContext())
+        val maxWidth = ((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()
+        val imageWith = if (bitmap.width > maxWidth) maxWidth else bitmap.width
+        val imgLp = imageView.layoutParams
+        imgLp.width = imageWith
+        imageView.layoutParams = imgLp
+
+        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+        Glide.with(requireContext())
+            .load(bitmap)
+            .into(imageView)
+        binding.msgContainer.addView(imageLayout)
+        binding.msgScrollview.apply {
+            postDelayed(
+                { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) },
+                100
+            )
+        }
+    }
+
+
     private fun addOthersMsgView(str: String, imagePath: String? = null) {
+        // view, image
         val inflater = LayoutInflater.from(requireContext())
         val msgLayout = inflater.inflate(R.layout.item_others_message_box, null)
         val profileView = msgLayout.findViewById<ImageView>(R.id.profile_image)
         val msgView = msgLayout.findViewById<TextView>(R.id.others_msg_view)
+        val timeView = msgLayout.findViewById<TextView>(R.id.others_time_view)
 
         profileView.setImageDrawable(
             ContextCompat.getDrawable(
@@ -267,23 +350,15 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
                 R.drawable.ic_hamberger
             )
         )
+
+        timeView.text = getMessageTimeString(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         msgView.text = str
         binding.msgContainer.addView(msgLayout)
-        binding.msgScrollview.apply { post { fullScroll(View.FOCUS_DOWN) } }
-    }
-
-    override fun onDestroyView() {
-
-
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        chatViewModel.stopStomp()
-        super.onDestroy()
+        binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
 
     private fun sendMessage(content: String, type: ChatDetailType) {
+        Timber.e("content: $content")
         if (content.isEmpty()) return
         when (type) {
             ChatDetailType.TEXT -> {
@@ -297,26 +372,14 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         }
     }
 
-    private fun initTestView() {
-        val tempStr = "ewnklfnwelkflwefnlkfnwkeflnwlfk\nfwenlwkf"
-        val tempStr2 = "ewnklfnwfnwkefwlfk\nfwenlwkf"
-        val tempStr3 = "ewnklfnwelkflwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkeflnwlfk\n" +
-                "fwenllwefnlkfnwkekgnowengwkengwgpeflnwlfk\n" +
-                "fwenlwkf"
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr2)
-        addOthersMsgView(tempStr3)
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr)
-        addOthersMsgView(tempStr2)
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr3)
-        addOthersMsgView(tempStr)
-        addMyMsgView(tempStr)
-        addMyMsgView(tempStr2)
-        addOthersMsgView(tempStr3)
+    override fun onDestroyView() {
+
+
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        chatViewModel.stopStomp()
+        super.onDestroy()
     }
 }

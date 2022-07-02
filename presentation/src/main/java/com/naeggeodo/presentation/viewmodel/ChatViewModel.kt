@@ -46,6 +46,7 @@ class ChatViewModel @Inject constructor(
         const val EVENT_ENTER_CHAT = 316
         const val EVENT_EXIT_CHAT = 317
         const val EVENT_BAN_USER = 318
+        const val ERROR_OCCURRED = 31
 //        const val EVENT = 316
     }
 
@@ -133,7 +134,7 @@ class ChatViewModel @Inject constructor(
     var msgSenderDisposable: Disposable? = null
 
     fun runStomp() {
-        if(stompClient.isConnected){
+        if (stompClient.isConnected) {
             Timber.e("STOMP ALREADY CONNECTED")
             return
         }
@@ -172,12 +173,13 @@ class ChatViewModel @Inject constructor(
                 }
                 LifecycleEvent.Type.CLOSED -> {
                     Timber.i("CLOSED")
-                    stopStomp()
-                    runStomp()
+//                    stopStomp()
+//                    runStomp()
                 }
                 LifecycleEvent.Type.ERROR -> {
                     Timber.i("ERROR")
                     Timber.e("CONNECT ERROR ${lifecycleEvent.exception}")
+                    viewEvent(ERROR_OCCURRED)
                 }
                 else -> {
                     Timber.i("ELSE ${lifecycleEvent.message}")
@@ -246,7 +248,7 @@ class ChatViewModel @Inject constructor(
                 data.put("contents", "$content")
                 data.put("type", ChatDetailType.IMAGE.name)
                 data.put("nickname", "nickname test")
-                destination += image
+                destination += send
             }
 //            ChatDetailType.WELCOME -> {
 //
@@ -288,15 +290,21 @@ class ChatViewModel @Inject constructor(
 
     fun getAllImagePaths(activity: Activity): ArrayList<String> {
         val listOfAllImages = ArrayList<String>()
-        var absolutePathOfImage: String? = null
+
+        var absolutePathOfImage: String?
         val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val projection = arrayOf(
             MediaStore.MediaColumns.DATA,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME
-        )
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media.DATE_MODIFIED,
+
+            )
         val cursor = activity.contentResolver.query(
-            uri, projection, null,
-            null, null
+            uri,
+            projection,
+            null,
+            null,
+            "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
         )
         val columnIndexData: Int = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
 
@@ -306,8 +314,31 @@ class ChatViewModel @Inject constructor(
             absolutePathOfImage = cursor.getString(columnIndexData)
             listOfAllImages.add(absolutePathOfImage)
         }
+        cursor.close()
+
         return listOfAllImages
     }
+
+//    fun getImageFilePath(uri: Uri, activity: Activity): String? {
+//        val file = File(uri.toString())
+//        val filePath: Array<String> = file.getPath().split(":")
+//        val image_id = filePath[filePath.size - 1]
+//        val cursor = activity.contentResolver.query(
+//            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//            null,
+//            MediaStore.Images.Media._ID + " = ? ",
+//            arrayOf(image_id),
+//            null
+//        )
+//        if (cursor != null) {
+//            cursor.moveToFirst()
+//            val imagePath: String =
+//                cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
+//            cursor.close()
+//            return imagePath
+//        }
+//        return null
+//    }
 
 
 }

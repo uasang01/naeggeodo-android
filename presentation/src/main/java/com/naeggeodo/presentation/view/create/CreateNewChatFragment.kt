@@ -13,6 +13,7 @@ import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentCreateNewChatBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util.persistImage
+import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.LocationViewModel
@@ -68,7 +69,7 @@ class CreateNewChatFragment :
 
             val addr = if (locationViewModel.addressInfo.value == null) {
                 if (App.prefs.buildingCode == null) {
-                    showShortToast("위치 정보가 없습니다")
+                    showShortToast(requireContext(), "위치 정보가 없습니다")
                     return@setOnClickListener
                 } else {
                     App.prefs.buildingCode!!
@@ -77,7 +78,7 @@ class CreateNewChatFragment :
                 locationViewModel.addressInfo.value!!.second
             }
             if (App.prefs.userId == null) {
-                showShortToast("user id not found error")
+                showShortToast(requireContext(), "user id not found error")
                 return@setOnClickListener
             }
 
@@ -113,7 +114,7 @@ class CreateNewChatFragment :
                 createChatViewModel.createChat(parts)
 
             } catch (e: Exception) {
-                showShortToast("Error occurred")
+                showShortToast(requireContext(), "Error occurred")
                 Timber.e("error occurred on request CreateChatApi / $e")
             }
         }

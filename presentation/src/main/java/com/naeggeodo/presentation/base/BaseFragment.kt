@@ -47,10 +47,4 @@ abstract class BaseFragment<B : ViewDataBinding>(
         Timber.e("onDestroyView called")
         _binding = null
     }
-
-    protected fun showShortToast(msg: String) =
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-
-    protected fun longShowToast(msg: String) =
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
 }

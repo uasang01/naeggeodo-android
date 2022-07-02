@@ -3,10 +3,12 @@ package com.naeggeodo.presentation.utils
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.graphics.drawable.PictureDrawable
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.util.Base64
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -22,9 +24,11 @@ import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.di.GlideApp
 import com.naeggeodo.presentation.utils.svg.SvgSoftwareLayerSetter
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -122,6 +126,18 @@ object Util {
         return imageFile
     }
 
+
+    fun encodeImage(path: String): String {
+        val bitmap = BitmapFactory.decodeFile(path)
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
+//        Timber.e("before ${stream.toByteArray().size} ${stream.size()} bitmap byte count: ${bitmap.byteCount} row bytes: ${bitmap.rowBytes} ${bitmap.rowBytes * bitmap.height}")
+        return Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
+    }
+
+    fun decodeString(data: String): ByteArray = Base64.decode(data, Base64.DEFAULT)
+
+
     fun getTimeDiff(prevDate: String): Long {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN)
         val prev = sdf.parse(prevDate)
@@ -158,5 +174,20 @@ object Util {
         } else {
             "오래 전"
         }
+    }
+
+    fun getMessageTimeString(dateTime: LocalDateTime): String {
+        val hour = dateTime.hour
+        val minute = dateTime.minute
+
+        val f = DecimalFormat("00")
+
+        var result = ""
+        result += if (hour >= 12) "오후 " else "오전 "
+        result += if (hour > 12) "${hour - 12}:" else if (hour == 0) "12:" else "${hour}:"
+        result += f.format(minute)
+
+        Timber.e("time $result")
+        return result
     }
 }

@@ -67,16 +67,19 @@ class GalleryAdapter(private val context: Context, private var datas: ArrayList<
     fun getSelectedPicture() = if (selected != null) datas[selected!!] else null
 
     fun setData(categories: ArrayList<String>) {
-        clearData()
+        val prevSize = datas.size
+        datas.clear()
+        selected = null
         datas.addAll(categories)
-        notifyItemRangeChanged(0, categories.size)
+        val size = if (datas.size > prevSize) datas.size else prevSize
+        notifyItemRangeChanged(0, size)
     }
 
     fun clearData() {
         val size = datas.size
         datas.clear()
-        notifyItemRangeChanged(0, size)
         selected = null
+        notifyItemRangeChanged(0, size)
     }
 
     fun setItemClickEvent(pos: (Int) -> Unit) {
@@ -84,9 +87,9 @@ class GalleryAdapter(private val context: Context, private var datas: ArrayList<
     }
 
     fun clearSelected() {
-        selected?.let{ p ->
-            notifyItemChanged(p)
+        selected?.let { p ->
             selected = null
+            notifyItemChanged(p)
         }
     }
 }
