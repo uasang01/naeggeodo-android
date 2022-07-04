@@ -14,14 +14,21 @@ import timber.log.Timber
 class ChatActivity : BaseActivity<ActivityChatBinding>(R.layout.activity_chat) {
     private lateinit var navController: NavController
     private val chatViewModel: ChatViewModel by viewModels()
+
+    lateinit var navHostFragment: NavHostFragment
+
+    interface OnBackPressedListener {
+        fun onBackPressed()
+    }
+
     override fun init() {
         val chatId = intent.getIntExtra("chatId", -1)
-        if(chatId<0){
+        if (chatId < 0) {
             finish()
             Timber.e("chatId is wrong. / $chatId")
         }
         chatViewModel.chatId = chatId
-        val navHostFragment =
+        navHostFragment =
             supportFragmentManager.findFragmentById(binding.navHostChat.id) as NavHostFragment
         navController = navHostFragment.navController
 
@@ -35,12 +42,20 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(R.layout.activity_chat) {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-
-        if (navController.backQueue.size <= 2) {
-            finish()
-        } else {
-            navController.popBackStack(R.id.navigation, false)
+        navHostFragment.childFragmentManager.primaryNavigationFragment?.let { fragment ->
+            when (fragment) {
+                is ChatFragment -> {
+                    (fragment as OnBackPressedListener).onBackPressed()
+                }
+                else -> {
+//                    if (navController.backQueue.size <= 2) {
+//                        finish()
+//                    } else {
+//                        navController.popBackStack(R.id.navigation, false)
+//                    }
+                    super.onBackPressed()
+                }
+            }
         }
     }
 }

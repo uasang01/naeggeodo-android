@@ -3,12 +3,13 @@ package com.naeggeodo.presentation.view.chat
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -33,9 +34,11 @@ import java.time.ZoneId
 import java.util.*
 
 
-class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
+class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
+    ChatActivity.OnBackPressedListener {
     private val chatViewModel: ChatViewModel by activityViewModels()
     private val galleryAdapter by lazy { GalleryAdapter(requireContext(), arrayListOf()) }
+
 
     private var imageLoadStart = false
     private var totalImageSize = -1
@@ -64,33 +67,30 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 
         // make recycler view not flickering
         binding.galleryRecyclerview.itemAnimator?.changeDuration = 0L
-
-
-//        initTestView()
     }
 
     override fun initListener() {
         binding.hambergerButton.setOnClickListener {
-            val mDrawerLayout = binding.drawerLayout
-            if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
-                mDrawerLayout.closeDrawer(Gravity.END);
+            val drawerLayout = binding.drawerLayout
+            if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                drawerLayout.closeDrawer(GravityCompat.END);
             } else {
-                mDrawerLayout.openDrawer(Gravity.END);
+                drawerLayout.openDrawer(GravityCompat.END);
             }
         }
 
-        binding.messageEdittext.setOnKeyListener { view, keyCode, event ->
-//            when (keyCode) {
-//                KeyEvent.KEYCODE_ENTER -> {
-////                    if(event.action == KeyEvent.ACTION_DOWN){
-////                        Timber.e("wehfiowfhiowfo")
-////                        sendMessage()
-////                    }
-//                    return@setOnKeyListener true
-//                }
-//                else -> return@setOnKeyListener false
-//            }
-            false
+        binding.drawer.exitChatButton.setOnClickListener {
+            val exitDialog = AlertDialog.Builder(requireContext())
+            exitDialog.setTitle("나가기")
+            exitDialog.setMessage("정말 나가시겠습니까?")
+            exitDialog.setPositiveButton("나가기") { _, _ ->
+                chatViewModel.sendMsg("님이 퇴장하셨습니다.", ChatDetailType.EXIT)
+                requireActivity().finish()
+            }
+            exitDialog.setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            exitDialog.show()
         }
 
         binding.sendMessageButton.setOnClickListener {
@@ -239,6 +239,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
                     val currentCount = JSONObject(msgInfo.contents).get("currentCount")
                     binding.numOfPeople.text =
                         "인원 ${currentCount}명 / ${chatViewModel.chatInfo.value?.maxCount}명"
+//                    val users = JSONObject(msgInfo.contents).get("users")
                 }
                 ChatDetailType.WELCOME.name -> {
                     addNoticeView("${msgInfo.nickname} 님이 입장하셨습니다")
@@ -432,5 +433,14 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 //        chatViewModel.sendMsg("님이 퇴장하셨습니다.", ChatDetailType.EXIT)
         chatViewModel.stopStomp()
         super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+        val drawerLayout = binding.drawerLayout
+        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.closeDrawer(GravityCompat.END);
+        } else {
+            requireActivity().finish()
+        }
     }
 }

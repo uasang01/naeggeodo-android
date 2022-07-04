@@ -42,8 +42,6 @@ class ChatListAdapter(
 
             val timeDiff = getTimeDiff(prevDate)
 
-            Timber.e("werr ${datas[position].chatId} ${datas[position].idx}")
-
             title.text = datas[position].title
             time.text = getTimeStr(timeDiff)
             count.text = "인원 ${datas[position].currentCount}명 / ${datas[position].maxCount}명"

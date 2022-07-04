@@ -175,16 +175,14 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/navigation"
-            android:name="com.naeggeodo.presentation.view.chat.ChatInfoDrawerFragment"
+        <include
+            android:id="@+id/drawer"
+            layout="@layout/layout_drawer_chat"
             android:layout_width="260dp"
             android:layout_height="match_parent"
-            android:layout_gravity="end"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout="@layout/fragment_chat_info_drawer" />
+            android:layout_gravity="end" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
-
+<!---->
 </layout>
