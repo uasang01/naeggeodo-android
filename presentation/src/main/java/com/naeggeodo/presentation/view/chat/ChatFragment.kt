@@ -1,9 +1,9 @@
 package com.naeggeodo.presentation.view.chat
 
-import android.content.ContentResolver
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.google.gson.JsonParser
 import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -72,7 +71,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 
     override fun initListener() {
         binding.hambergerButton.setOnClickListener {
-            Timber.e("ContentResolver.SCHEME_ANDROID_RESOURCE: ${ContentResolver.SCHEME_ANDROID_RESOURCE} / getPackageName(): ${requireContext().packageName}")
+            val mDrawerLayout = binding.drawerLayout
+            if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
+                mDrawerLayout.closeDrawer(Gravity.END);
+            } else {
+                mDrawerLayout.openDrawer(Gravity.END);
+            }
         }
 
         binding.messageEdittext.setOnKeyListener { view, keyCode, event ->
@@ -200,10 +204,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
             Timber.e("history received size: ${historyList.size}")
             historyList.forEach { h ->
                 Timber.e("history received ${h}")
-                if(h.userId == App.prefs.userId){
-                    when(h.type){
+                if (h.userId == App.prefs.userId) {
+                    when (h.type) {
                         ChatDetailType.TEXT.name -> {
-                            addMyMsgView(h.contents,LocalDateTime.parse(h.regDate))
+                            addMyMsgView(h.contents, LocalDateTime.parse(h.regDate))
                         }
                         ChatDetailType.IMAGE.name -> {
 
@@ -218,8 +222,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
 //
 //                        }
                     }
-                }else{
-                    addOthersMsgView(h.contents,LocalDateTime.parse(h.regDate))
+                } else {
+                    addOthersMsgView(h.contents, LocalDateTime.parse(h.regDate))
                 }
             }
 
@@ -233,7 +237,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
                     // CNT 타입의 메세지를 받으면 1명 추가하기.
                     Timber.e("type cnt message received $msgInfo")
                     val currentCount = JSONObject(msgInfo.contents).get("currentCount")
-                    binding.numOfPeople.text = "인원 ${currentCount}명 / ${chatViewModel.chatInfo.value?.maxCount}명"
+                    binding.numOfPeople.text =
+                        "인원 ${currentCount}명 / ${chatViewModel.chatInfo.value?.maxCount}명"
                 }
                 ChatDetailType.WELCOME.name -> {
                     addNoticeView("${msgInfo.nickname} 님이 입장하셨습니다")
@@ -387,7 +392,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat) {
         binding.msgContainer.addView(msgLayout)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
-
 
 
     private fun addNoticeView(str: String) {
