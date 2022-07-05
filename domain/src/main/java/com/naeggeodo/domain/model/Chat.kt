@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName
 
 data class Chat(
     val address: String,
-    val bookmarks: Any,
+    var bookmarks: Any,
     val bookmarksDate: Any,
     val buildingCode: String,
     val category: String,
     val createDate: String,
     val currentCount: Int,
-    val endDate: Any,
+    val endDate: Any?,
     @SerializedName("id")
     val chatId: Int,
     val idx: Int,

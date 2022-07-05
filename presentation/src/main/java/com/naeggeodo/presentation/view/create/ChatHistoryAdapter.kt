@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.utils.Bookmarks
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatHistoryBinding
 import com.naeggeodo.presentation.utils.Util
@@ -21,6 +23,9 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
 
     private val drawableList = hashMapOf<Int, Drawable>()
     private val svgRequestBuilder = getSvgRequestBuilder(context)
+    private var favoriteListener: (pos: Int) -> Unit = {}
+    private var deleteListener: (pos: Int) -> Unit = {}
+    private var selectedItemPos: Int? = null
 
     inner class ViewHolder(val binding: ItemChatHistoryBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -47,10 +52,53 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
 
             title.text = datas[position].title
             time.text = getTimeStr(timeDiff)
-            count.text = "인원 ${datas[position].currentCount}명 / ${datas[position].maxCount}명"
 
-            favoriteButton.setOnClickListener {
-                Util.showShortSnackbar(holder.binding.root, "favorite clicked")
+            // 배경(아이템 선택 여부)
+            if (selectedItemPos != position) {
+                chatCreationHistoryContainer.background =
+                    ContextCompat.getDrawable(context, R.color.white)
+            } else {
+                chatCreationHistoryContainer.background =
+                    ContextCompat.getDrawable(context, R.color.grey_F5F5F5)
+            }
+
+            // 북마크
+            val bookmarkDrawable = if (datas[position].bookmarks == Bookmarks.Y.name) {
+                R.drawable.ic_star_filled
+            } else {
+                R.drawable.ic_star_border
+            }
+            bookmarkButton.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,
+                    bookmarkDrawable
+                )
+            )
+
+            // profile
+            Util.loadImageAndSetView(context, datas[position].imgPath, image)
+
+
+            // listeners
+            chatCreationHistoryContainer.setOnClickListener {
+                val prevPos = selectedItemPos
+                selectedItemPos = if (selectedItemPos == position) {
+                    null
+                } else {
+                    position
+                }
+
+                prevPos?.let { notifyItemChanged(it) }
+                notifyItemChanged(position)
+            }
+
+
+            bookmarkButton.setOnClickListener {
+                favoriteListener(position)
+            }
+
+            deleteButton.setOnClickListener {
+                deleteListener(position)
             }
         }
     }
@@ -80,10 +128,24 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
     }
 
     override fun getItemCount() = datas.size
+    fun getSelectedItemPos() = selectedItemPos
     fun setData(chatList: ArrayList<Chat>) {
         clearData()
         datas.addAll(chatList)
         notifyItemRangeInserted(0, chatList.size)
+    }
+
+    fun getData(pos: Int): Chat {
+        return datas[pos]
+    }
+
+    fun updateBookmark(pos: Int) {
+        if (datas[pos].bookmarks == Bookmarks.Y.name) {
+            datas[pos].bookmarks = Bookmarks.N.name
+        } else {
+            datas[pos].bookmarks = Bookmarks.Y.name
+        }
+        notifyItemChanged(pos)
     }
 
     fun clearData() {
@@ -91,6 +153,14 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
         datas.clear()
         drawableList.clear()
         notifyItemRangeRemoved(0, size)
+    }
+
+    fun setFavoriteListener(listener: (p: Int) -> Unit) {
+        favoriteListener = listener
+    }
+
+    fun setDeleteListener(listener: (p: Int) -> Unit) {
+        deleteListener = listener
     }
 
 }

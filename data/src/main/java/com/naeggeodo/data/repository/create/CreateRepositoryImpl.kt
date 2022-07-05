@@ -2,6 +2,7 @@ package com.naeggeodo.data.repository.create
 
 import com.naeggeodo.data.repository.create.remote.CreateRemoteDataSource
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.model.ChatList
 import com.naeggeodo.domain.repository.CreateRepository
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import okhttp3.MultipartBody
@@ -17,4 +18,18 @@ class CreateRepositoryImpl @Inject constructor(
         return createRemoteDataSource.createChat(remoteErrorEmitter, files)
     }
 
+    override suspend fun getChatCreationHistory(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        userId: String
+    ): ChatList? {
+        return createRemoteDataSource.getChatCreationHistory(remoteErrorEmitter, userId)
+    }
+
+    override suspend fun bookmarking(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int,
+        userId: String
+    ): Boolean {
+        return createRemoteDataSource.bookmarking(remoteErrorEmitter, chatId, userId)
+    }
 }

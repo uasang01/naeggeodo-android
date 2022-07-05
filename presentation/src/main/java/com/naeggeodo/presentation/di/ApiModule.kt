@@ -41,11 +41,6 @@ class ApiModule {
     fun provideSearchChatListByKeyWordApiService(@Named("Auth") retrofit: Retrofit): SearchChatListByKeyWordApi {
         return retrofit.create(SearchChatListByKeyWordApi::class.java)
     }
-    @Provides
-    @Singleton
-    fun provideGetChatHistoriesByKeyWordApiService(@Named("Auth") retrofit: Retrofit): GetChatHistoriesApi {
-        return retrofit.create(GetChatHistoriesApi::class.java)
-    }
 
     @Provides
     @Singleton
@@ -67,6 +62,16 @@ class ApiModule {
     @Singleton
     fun provideGetPrevChatHistoryApiService(@Named("Auth") retrofit: Retrofit): GetPrevChatHistoryApi {
         return retrofit.create(GetPrevChatHistoryApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideGetChatCreationHistoryApiService(@Named("Auth") retrofit: Retrofit): GetChatCreationHistoryApi {
+        return retrofit.create(GetChatCreationHistoryApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideBookmarkingApiService(@Named("Auth") retrofit: Retrofit): BookmarkingApi {
+        return retrofit.create(BookmarkingApi::class.java)
     }
 
 }

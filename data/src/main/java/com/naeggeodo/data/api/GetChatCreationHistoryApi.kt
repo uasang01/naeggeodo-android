@@ -1,13 +1,13 @@
 package com.naeggeodo.data.api
 
-import com.naeggeodo.domain.model.Categories
+import com.naeggeodo.domain.model.ChatList
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface GetChatHistoriesApi {
+interface GetChatCreationHistoryApi {
     @GET("chat-rooms/order-list/{user_id}")
-    suspend fun getChatHistories(
+    suspend fun getChatCreationHistoryApi(
         @Path("user_id") userId: String
-    ): Response<Categories>
+    ): Response<ChatList>
 }

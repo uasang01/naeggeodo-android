@@ -205,10 +205,6 @@
                 android:layout_height="1dp"
                 android:background="@color/grey_F2F2F8" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey_F2F2F8" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/place_box"
@@ -242,6 +238,11 @@
 
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_F2F2F8" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/link_box"
