@@ -6,13 +6,17 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.marginTop
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -38,7 +42,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     ChatActivity.OnBackPressedListener {
     private val chatViewModel: ChatViewModel by activityViewModels()
     private val galleryAdapter by lazy { GalleryAdapter(requireContext(), arrayListOf()) }
-
 
     private var imageLoadStart = false
     private var totalImageSize = -1
@@ -131,6 +134,25 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             // send text
             sendMessage(binding.messageEdittext.text.toString(), ChatDetailType.TEXT)
         }
+
+        binding.showDrawerButton.setOnClickListener {
+            val bottomSheetView = layoutInflater.inflate(R.layout.layout_chat_dialog_bottom_sheet, null)
+            val bottomSheetDialog = BottomSheetDialog(requireContext())
+            val phrasesContainer = bottomSheetView.findViewById<LinearLayout>(R.id.phrases_container)
+            val phraseView = layoutInflater.inflate(R.layout.item_phrase, null)
+//            val lp = phraseView.layoutParams
+//            lp.height = 52.dpToPx(requireContext())
+//            phraseView.layoutParams = lp
+            val editButton = bottomSheetView.findViewById<LinearLayout>(R.id.edit_button)
+            editButton.setOnClickListener {
+                showShortToast(requireContext(), "toast")
+            }
+            (phraseView as TextView).text = "testtest"
+            phrasesContainer.addView(phraseView)
+            bottomSheetDialog.setContentView(bottomSheetView)
+            bottomSheetDialog.show()
+        }
+
         binding.showGalleryButton.setOnClickListener {
 //            val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 //            val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -187,6 +209,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         chatViewModel.chatInfo.observe(viewLifecycleOwner) { chat ->
 //            Timber.e("chat received")
 //            Timber.e("chat received ${chat}")
+            chat.userId // 방장 유저 아이
             binding.chatTitleText.text = chat.title
             loadImageAndSetView(requireContext(), chat.imgPath, binding.chatImage)
             binding.numOfPeople.text = "인원 ${chat.currentCount}명 / ${chat.maxCount}명"
@@ -195,8 +218,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         chatViewModel.users.observe(viewLifecycleOwner) {
             val s = it.users
 //            Timber.e("users received ${it.users.size}")
-//            Timber.e("users received ${user.toString()}")
             it.users.forEach { user ->
+                Timber.e("users received ${user.toString()}")
             }
         }
 
