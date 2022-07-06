@@ -10,10 +10,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.naeggeodo.domain.model.Chat
 import com.naeggeodo.domain.model.ChatHistory
+import com.naeggeodo.domain.model.QuickChat
 import com.naeggeodo.domain.model.Users
-import com.naeggeodo.domain.usecase.GetChatInfoUseCase
-import com.naeggeodo.domain.usecase.GetPrevChatHistoryUseCase
-import com.naeggeodo.domain.usecase.GetUsersInChatUseCase
+import com.naeggeodo.domain.usecase.*
 import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.data.Message
@@ -35,7 +34,9 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val getChatInfoUseCase: GetChatInfoUseCase,
     private val getUsersInChatUseCase: GetUsersInChatUseCase,
-    private val getPrevChatHistoryUseCase: GetPrevChatHistoryUseCase
+    private val getPrevChatHistoryUseCase: GetPrevChatHistoryUseCase,
+    private val getQuickChatUseCase: GetQuickChatUseCase,
+    private val patchQuickChatUseCase: PatchQuickChatUseCase
 ) : BaseViewModel() {
     companion object {
         const val EVENT_CHAT_INFO_CHANGED = 311
@@ -74,10 +75,12 @@ class ChatViewModel @Inject constructor(
     val history: LiveData<List<ChatHistory>> get() = _history
     private val _message: MutableLiveData<Message> = MutableLiveData()
     val message: LiveData<Message> get() = _message
+    private val _quickChat: MutableLiveData<List<QuickChat>> = MutableLiveData()
+    val quickChat: LiveData<List<QuickChat>> get() = _quickChat
 
 //    val message: Message? = null
 
-    fun getChat() = viewModelScope.launch {
+    fun getChatInfo() = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
         val response = withContext(Dispatchers.IO) {
             getChatInfoUseCase.execute(this@ChatViewModel, chatId!!)
@@ -120,6 +123,32 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    fun getQuickChats(userId: String) = viewModelScope.launch {
+        mutableScreenState.postValue(ScreenState.LOADING)
+        val response = withContext(Dispatchers.IO) {
+            getQuickChatUseCase.execute(this@ChatViewModel, userId)
+        }
+        if (response == null) {
+            mutableScreenState.postValue(ScreenState.ERROR)
+        } else {
+            _quickChat.postValue(response.quickChats)
+            mutableScreenState.postValue(ScreenState.RENDER)
+        }
+    }
+
+    fun updateQuickChats(userId: String, body: HashMap<String, List<String?>>) =
+        viewModelScope.launch {
+            mutableScreenState.postValue(ScreenState.LOADING)
+            val response = withContext(Dispatchers.IO) {
+                patchQuickChatUseCase.execute(this@ChatViewModel, userId, body)
+            }
+            if (response == null) {
+                mutableScreenState.postValue(ScreenState.ERROR)
+            } else {
+                _quickChat.postValue(response.quickChats)
+                mutableScreenState.postValue(ScreenState.RENDER)
+            }
+        }
 
     //    ### 커넥트 END Point
     //    ⇒ https//api.naeggeodo.com/api/chat
@@ -177,6 +206,7 @@ class ChatViewModel @Inject constructor(
                     Timber.i("CLOSED")
 //                    stopStomp()
 //                    runStomp()
+                    viewEvent(ERROR_OCCURRED)
                 }
                 LifecycleEvent.Type.ERROR -> {
                     Timber.i("ERROR")
@@ -330,27 +360,4 @@ class ChatViewModel @Inject constructor(
 
         return listOfAllImages
     }
-
-//    fun getImageFilePath(uri: Uri, activity: Activity): String? {
-//        val file = File(uri.toString())
-//        val filePath: Array<String> = file.getPath().split(":")
-//        val image_id = filePath[filePath.size - 1]
-//        val cursor = activity.contentResolver.query(
-//            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//            null,
-//            MediaStore.Images.Media._ID + " = ? ",
-//            arrayOf(image_id),
-//            null
-//        )
-//        if (cursor != null) {
-//            cursor.moveToFirst()
-//            val imagePath: String =
-//                cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-//            cursor.close()
-//            return imagePath
-//        }
-//        return null
-//    }
-
-
 }

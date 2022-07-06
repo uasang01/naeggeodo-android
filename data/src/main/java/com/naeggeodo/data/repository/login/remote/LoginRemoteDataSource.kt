@@ -1,4 +1,4 @@
-package com.damda.data.repository.login.remote
+package com.naeggeodo.data.repository.login.remote
 
 import com.naeggeodo.domain.model.LogIn
 import com.naeggeodo.domain.utils.RemoteErrorEmitter

@@ -3,20 +3,17 @@ package com.naeggeodo.presentation.view.chat
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.view.marginTop
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -46,17 +43,20 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     private var imageLoadStart = false
     private var totalImageSize = -1
     private var encodedImageString = ""
-
+    private var quickChatDialog: QuickChatBottomDialogFragment? = null
     private var isGalleryVisible = false
+
     override fun init() {
+
     }
 
     override fun onStart() {
         super.onStart()
 
-        chatViewModel.getChat()
+        chatViewModel.getChatInfo()
         chatViewModel.getUsers()
         chatViewModel.getChatHistory()
+        chatViewModel.getQuickChats(App.prefs.userId!!)
     }
 
     override fun initView() {
@@ -70,6 +70,22 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
         // make recycler view not flickering
         binding.galleryRecyclerview.itemAnimator?.changeDuration = 0L
+
+        // initialize bottom sheet dialog
+        val phraseClickListener: (String) -> Unit = { str ->
+            Timber.e("hihi $str")
+            sendMessage(str, ChatDetailType.TEXT)
+        }
+        val updateListener: (List<String?>) -> Unit = { list ->
+            Timber.e("hihi $list")
+            val body = HashMap<String, List<String?>>()
+            body["quickChat"] = list
+            chatViewModel.updateQuickChats(App.prefs.userId!!, body)
+        }
+        quickChatDialog = QuickChatBottomDialogFragment(
+            phraseClickListener = phraseClickListener,
+            updateListener = updateListener
+        )
     }
 
     override fun initListener() {
@@ -135,31 +151,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             sendMessage(binding.messageEdittext.text.toString(), ChatDetailType.TEXT)
         }
 
-        binding.showDrawerButton.setOnClickListener {
-            val bottomSheetView = layoutInflater.inflate(R.layout.layout_chat_dialog_bottom_sheet, null)
-            val bottomSheetDialog = BottomSheetDialog(requireContext())
-            val phrasesContainer = bottomSheetView.findViewById<LinearLayout>(R.id.phrases_container)
-            val phraseView = layoutInflater.inflate(R.layout.item_phrase, null)
-//            val lp = phraseView.layoutParams
-//            lp.height = 52.dpToPx(requireContext())
-//            phraseView.layoutParams = lp
-            val editButton = bottomSheetView.findViewById<LinearLayout>(R.id.edit_button)
-            editButton.setOnClickListener {
-                showShortToast(requireContext(), "toast")
-            }
-            (phraseView as TextView).text = "testtest"
-            phrasesContainer.addView(phraseView)
-            bottomSheetDialog.setContentView(bottomSheetView)
-            bottomSheetDialog.show()
+        binding.quickChatDrawerButton.setOnClickListener {
+            quickChatDialog!!.show(parentFragmentManager, "QuickChatDialog")
+            quickChatDialog!!.dialog?.window?.attributes?.gravity = Gravity.BOTTOM
         }
 
         binding.showGalleryButton.setOnClickListener {
-//            val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//            val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//            val photoPickerIntent = Intent(Intent.ACTION_GET_CONTENT)
-//            photoPickerIntent.type = "image/*"
-//            getPictureResult.launch(pickPhoto)
-
             if (isGalleryVisible) {
                 binding.galleryRecyclerview.visibility = View.GONE
                 isGalleryVisible = false
@@ -252,6 +249,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
             chatViewModel.runStomp()
         }
+//
+//        chatViewModel.quickChat.observe(viewLifecycleOwner) { _ ->
+//            initQuickChatDialog()
+//        }
 
         chatViewModel.message.observe(viewLifecycleOwner) { msgInfo ->
             // 다른 유저의 이미지 추가해야 함
@@ -318,7 +319,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             }
         }
     }
-
 
     private fun addMyMsgView(str: String, time: LocalDateTime? = null) {
 
@@ -445,15 +445,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
     }
 
-    override fun onDestroyView() {
-
-
-        super.onDestroyView()
-    }
-
     override fun onDestroy() {
-
-//        chatViewModel.sendMsg("님이 퇴장하셨습니다.", ChatDetailType.EXIT)
         chatViewModel.stopStomp()
         super.onDestroy()
     }

@@ -50,8 +50,8 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideGetChatInfoApiService(@Named("Auth") retrofit: Retrofit): GetChatInfoApi {
-        return retrofit.create(GetChatInfoApi::class.java)
+    fun provideChatRoomApiService(@Named("Auth") retrofit: Retrofit): ChatRoomApi {
+        return retrofit.create(ChatRoomApi::class.java)
     }
     @Provides
     @Singleton
@@ -72,6 +72,11 @@ class ApiModule {
     @Singleton
     fun provideBookmarkingApiService(@Named("Auth") retrofit: Retrofit): BookmarkingApi {
         return retrofit.create(BookmarkingApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideQuickChatApiService(@Named("Auth") retrofit: Retrofit): QuickChatApi {
+        return retrofit.create(QuickChatApi::class.java)
     }
 
 }

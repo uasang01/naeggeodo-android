@@ -1,6 +1,5 @@
 package com.naeggeodo.presentation.utils
 
-import android.util.Log
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable
 import androidx.lifecycle.LifecycleOwner

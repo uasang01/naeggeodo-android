@@ -1,6 +1,6 @@
-package com.damda.data.repository.home
+package com.naeggeodo.data.repository.home
 
-import com.damda.data.repository.home.remote.HomeRemoteDataSource
+import com.naeggeodo.data.repository.home.remote.HomeRemoteDataSource
 import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.ChatList
 import com.naeggeodo.domain.repository.HomeRepository

@@ -1,6 +1,6 @@
-package com.damda.data.repository.login
+package com.naeggeodo.data.repository.login
 
-import com.damda.data.repository.login.remote.LoginRemoteDataSource
+import com.naeggeodo.data.repository.login.remote.LoginRemoteDataSource
 import com.naeggeodo.data.repository.search.remote.SearchRemoteDataSource
 import com.naeggeodo.domain.model.ChatList
 import com.naeggeodo.domain.model.LogIn

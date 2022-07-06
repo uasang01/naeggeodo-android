@@ -1,8 +1,8 @@
-package com.damda.data.repository.home.remote
+package com.naeggeodo.data.repository.home.remote
 
 import com.naeggeodo.data.api.CategoryApi
 import com.naeggeodo.data.api.SearchChatListByCategoryApi
-import com.damda.data.base.BaseRepository
+import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.ChatList
 import com.naeggeodo.domain.utils.RemoteErrorEmitter

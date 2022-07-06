@@ -1,6 +1,6 @@
 package com.naeggeodo.data.repository.create.remote
 
-import com.damda.data.base.BaseRepository
+import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.data.api.BookmarkingApi
 import com.naeggeodo.data.api.CreateChatApi
 import com.naeggeodo.data.api.GetChatCreationHistoryApi

@@ -1,4 +1,4 @@
-package com.damda.data.repository.home.remote
+package com.naeggeodo.data.repository.home.remote
 
 import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.ChatList

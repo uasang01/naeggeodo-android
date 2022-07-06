@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.usecase.BookmarkingUserCase
+import com.naeggeodo.domain.usecase.BookmarkingUseCase
 import com.naeggeodo.domain.usecase.GetChatCreationHistoryUseCase
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.utils.ScreenState
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateHistoryViewModel @Inject constructor(
     private val getChatCreationHistoryUseCase: GetChatCreationHistoryUseCase,
-    private val bookmarkingUserCase: BookmarkingUserCase
+    private val bookmarkingUseCase: BookmarkingUseCase
 ) : BaseViewModel() {
 
 
@@ -50,7 +50,7 @@ class CreateHistoryViewModel @Inject constructor(
         mutableScreenState.postValue(ScreenState.LOADING)
         async {
             val response =
-                bookmarkingUserCase.execute(this@CreateHistoryViewModel, chatId, userId = userId)
+                bookmarkingUseCase.execute(this@CreateHistoryViewModel, chatId, userId = userId)
             mutableScreenState.postValue(if (response) ScreenState.RENDER else ScreenState.ERROR)
             response
         }

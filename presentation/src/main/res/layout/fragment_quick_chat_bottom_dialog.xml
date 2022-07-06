@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_chat"
+    android:paddingHorizontal="@dimen/defaultMargin"
+    android:paddingVertical="10dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/grab_bar"
+        android:layout_width="50dp"
+        android:layout_height="4dp"
+        android:backgroundTint="@color/grey_c9c9c9"
+        app:cardCornerRadius="2dp"
+
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/header"
+        style="@style/font_bold_15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="자주쓰는 문구 "
+        android:textColor="@color/main_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/grab_bar" />
+
+    <TextView
+        style="@style/font_regular_15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="(최대 5개)"
+        android:textColor="@color/main_color"
+        app:layout_constraintStart_toEndOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/grab_bar" />
+
+    <LinearLayout
+        android:id="@+id/phrases_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"></LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add_phrase_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phrases_container">
+
+        <EditText
+            android:id="@+id/phrase_edit_text"
+            style="@style/font_regular_15"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_weight="10"
+            android:background="@color/white"
+            android:focusedByDefault="false"
+            android:hint="자주쓰는 문구를 추가하세요"
+            android:inputType="text" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/add_phrase_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="0dp">
+
+            <TextView
+                style="@style/font_regular_15"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/grey_F5F5F5"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:text="추가하기"
+                android:textColor="@color/black" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

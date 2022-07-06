@@ -1,6 +1,6 @@
 package com.naeggeodo.data.repository.search.remote
 
-import com.damda.data.base.BaseRepository
+import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.data.api.GetTagsApi
 import com.naeggeodo.data.api.SearchChatListByKeyWordApi
 import com.naeggeodo.domain.model.ChatList

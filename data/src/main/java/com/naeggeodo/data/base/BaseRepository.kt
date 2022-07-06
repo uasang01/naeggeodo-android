@@ -1,4 +1,4 @@
-package com.damda.data.base
+package com.naeggeodo.data.base
 
 import com.naeggeodo.domain.utils.ErrorType
 import com.naeggeodo.domain.utils.RemoteErrorEmitter

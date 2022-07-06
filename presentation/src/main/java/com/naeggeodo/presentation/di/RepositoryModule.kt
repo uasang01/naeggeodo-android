@@ -1,10 +1,10 @@
 package com.naeggeodo.presentation.di
 
-import com.damda.data.repository.home.HomeRepositoryImpl
-import com.damda.data.repository.home.remote.HomeRemoteDataSourceImpl
-import com.damda.data.repository.login.LoginRepositoryImpl
-import com.damda.data.repository.login.SearchRepositoryImpl
-import com.damda.data.repository.login.remote.LoginRemoteDataSourceImpl
+import com.naeggeodo.data.repository.home.HomeRepositoryImpl
+import com.naeggeodo.data.repository.home.remote.HomeRemoteDataSourceImpl
+import com.naeggeodo.data.repository.login.LoginRepositoryImpl
+import com.naeggeodo.data.repository.login.SearchRepositoryImpl
+import com.naeggeodo.data.repository.login.remote.LoginRemoteDataSourceImpl
 import com.naeggeodo.data.repository.chat.ChatRepositoryImpl
 import com.naeggeodo.data.repository.chat.remote.ChatRemoteDataSourceImpl
 import com.naeggeodo.data.repository.create.CreateRepositoryImpl
