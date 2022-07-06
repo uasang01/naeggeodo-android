@@ -6,9 +6,12 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.activityViewModels
@@ -206,18 +209,20 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         chatViewModel.chatInfo.observe(viewLifecycleOwner) { chat ->
 //            Timber.e("chat received")
 //            Timber.e("chat received ${chat}")
-            chat.userId // 방장 유저 아이
+
+
+            // 헤더 뷰 설정
             binding.chatTitleText.text = chat.title
             loadImageAndSetView(requireContext(), chat.imgPath, binding.chatImage)
             binding.numOfPeople.text = "인원 ${chat.currentCount}명 / ${chat.maxCount}명"
         }
 
         chatViewModel.users.observe(viewLifecycleOwner) {
-            val s = it.users
-//            Timber.e("users received ${it.users.size}")
-            it.users.forEach { user ->
+            it.forEach { user ->
                 Timber.e("users received ${user.toString()}")
             }
+            // drawer view
+            initDrawerView()
         }
 
         chatViewModel.history.observe(viewLifecycleOwner) { historyList ->
@@ -317,6 +322,35 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
                 }
             }
+        }
+    }
+
+    private fun initDrawerView() {
+
+        val inflater = LayoutInflater.from(requireContext())
+        chatViewModel.apply {
+            if (chatInfo.value == null || users.value == null) {
+                Timber.e("something's not loaded")
+                return
+            }
+        }
+
+        chatViewModel.users.value!!.forEach {
+            val userView = inflater.inflate(R.layout.item_participant, null)
+            val profileView = userView.findViewById<ImageView>(R.id.profile_image_view)
+            val nicknameView = userView.findViewById<TextView>(R.id.nickname_text_view)
+            val masterView = userView.findViewById<CardView>(R.id.me_text_view)
+            val masterId = chatViewModel.chatInfo.value!!.userId
+
+            nicknameView.text = it.nickname
+
+            if (masterId != it.userId) {
+                masterView.visibility = View.GONE
+            }
+            val lp = LinearLayout.LayoutParams(MATCH_PARENT, 40.dpToPx(requireContext()))
+            lp.topMargin = 4.dpToPx(requireContext())
+            userView.layoutParams = lp
+            binding.drawer.participantContainer.addView(userView)
         }
     }
 

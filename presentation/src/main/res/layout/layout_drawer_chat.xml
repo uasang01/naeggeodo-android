@@ -116,8 +116,8 @@
                 android:src="@drawable/ic_arrow_right" />
         </RelativeLayout>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/participant_layout"
+        <LinearLayout
+            android:id="@+id/participant_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -131,7 +131,7 @@
             <!--                    layout="@layout/item_participant" />-->
             <!--                <include-->
             <!--                    layout="@layout/item_participant" />-->
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

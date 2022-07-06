@@ -8,10 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonParser
-import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.model.ChatHistory
-import com.naeggeodo.domain.model.QuickChat
-import com.naeggeodo.domain.model.Users
+import com.naeggeodo.domain.model.*
 import com.naeggeodo.domain.usecase.*
 import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.base.BaseViewModel
@@ -69,8 +66,8 @@ class ChatViewModel @Inject constructor(
 
     private val _chatInfo: MutableLiveData<Chat> = MutableLiveData()
     val chatInfo: LiveData<Chat> get() = _chatInfo
-    private val _users: MutableLiveData<Users> = MutableLiveData()
-    val users: LiveData<Users> get() = _users
+    private val _users: MutableLiveData<List<User>> = MutableLiveData()
+    val users: LiveData<List<User>> get() = _users
     private val _history: MutableLiveData<List<ChatHistory>> = MutableLiveData()
     val history: LiveData<List<ChatHistory>> get() = _history
     private val _message: MutableLiveData<Message> = MutableLiveData()
@@ -103,7 +100,7 @@ class ChatViewModel @Inject constructor(
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
-            _users.postValue(response!!)
+            _users.postValue(response!!.users)
             mutableScreenState.postValue(ScreenState.RENDER)
 //            viewEvent(HomeViewModel.EVENT_USERS_CHANGED)
         }
