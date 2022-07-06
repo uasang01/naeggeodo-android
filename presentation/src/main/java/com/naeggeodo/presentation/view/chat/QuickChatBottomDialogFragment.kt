@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.FragmentQuickChatBottomDialogBinding
@@ -95,16 +97,13 @@ class QuickChatBottomDialogFragment(
             }
             deleteButton.setOnClickListener {
                 val newList = chatViewModel.quickChat.value!!.mapIndexed { i, v ->
-                    if (i == idx) {
-                        null
-                    } else {
-                        v.msg
-                    }
+                    if (i == idx) null else v.msg
                 }
                 updateListener(newList)
             }
 
             binding.phrasesContainer.addView(phraseView)
+            (dialog as BottomSheetDialog).behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
 }
