@@ -23,7 +23,7 @@ abstract class BaseViewModel : ViewModel(), RemoteErrorEmitter {
         get() = _viewEvent
 
     fun viewEvent(content: Any) {
-        _viewEvent.value = Event(content)
+        _viewEvent.postValue(Event(content))
     }
 
     override fun onError(errorType: ErrorType) {

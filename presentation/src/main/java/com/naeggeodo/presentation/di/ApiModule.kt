@@ -78,5 +78,12 @@ class ApiModule {
     fun provideQuickChatApiService(@Named("Auth") retrofit: Retrofit): QuickChatApi {
         return retrofit.create(QuickChatApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideMyInfoApiService(@Named("Auth") retrofit: Retrofit): MyInfoApi {
+        return retrofit.create(MyInfoApi::class.java)
+    }
+
+
 
 }

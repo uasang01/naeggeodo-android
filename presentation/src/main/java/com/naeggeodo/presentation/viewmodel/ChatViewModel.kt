@@ -182,10 +182,20 @@ class ChatViewModel @Inject constructor(
 //                Timber.i("message Recieve ${topicMessage.payload}")
                 val jsonObject = JsonParser.parseString(topicMessage.payload)
                 val msgInfo = Gson().fromJson(jsonObject, Message::class.java)
-
                 _message.postValue(msgInfo)
-//                viewEvent(EVENT_MESSAGE_RECEIVED)
-//                Timber.i("message Recieve ${msgInfo}")
+
+                when (msgInfo.type) {
+                    ChatDetailType.CNT.name -> {
+                        // CNT 타입의 메세지를 받으면 1명 추가하기.
+                        val currentCount = JSONObject(msgInfo.contents).get("currentCount")
+                        val users = Gson().fromJson(
+                            "{\"users\":${JSONObject(msgInfo.contents).get("users")}}",
+                            Users::class.java
+                        )
+                        _users.postValue(users.users)
+                    }
+                }
+
             }, { throwable ->
                 Timber.i("error occurred. cause: ${throwable.cause}, message: ${throwable.message}")
             })
@@ -197,12 +207,13 @@ class ChatViewModel @Inject constructor(
                 LifecycleEvent.Type.OPENED -> {
                     Timber.i("OPEND")
                     // 연결 시 입장 메세지 전송
-                    sendMsg("님이 입장하셨습니다.", ChatDetailType.WELCOME)
+                    sendMsg("", ChatDetailType.WELCOME)
                 }
                 LifecycleEvent.Type.CLOSED -> {
                     Timber.i("CLOSED")
 //                    stopStomp()
 //                    runStomp()
+
                     viewEvent(ERROR_OCCURRED)
                 }
                 LifecycleEvent.Type.ERROR -> {
@@ -251,7 +262,6 @@ class ChatViewModel @Inject constructor(
     }
 
     fun sendMsg(content: String, type: ChatDetailType) {
-
         val prefix = "/app/chat"
         val send = "/send"
         val image = "/image"
@@ -261,38 +271,38 @@ class ChatViewModel @Inject constructor(
 
         val data = JSONObject()
         var destination = prefix
+        val nickname = App.prefs.nickname
         when (type) {
             ChatDetailType.TEXT -> {
-
                 data.put("chatMain_id", chatId)
                 data.put("sender", App.prefs.userId)
-                data.put("contents", "$content")
+                data.put("contents", content)
                 data.put("type", type.name)
-                data.put("nickname", "nickname test")
+                data.put("nickname", nickname)
                 destination += send
             }
             ChatDetailType.IMAGE -> {
                 data.put("chatMain_id", chatId)
                 data.put("sender", App.prefs.userId)
-                data.put("contents", "$content")
+                data.put("contents", content)
                 data.put("type", type.name)
-                data.put("nickname", "nickname test")
+                data.put("nickname", nickname)
                 destination += send
             }
             ChatDetailType.WELCOME -> {
                 data.put("chatMain_id", chatId)
                 data.put("sender", App.prefs.userId)
-                data.put("contents", "$content")
+                data.put("contents", "${nickname}님이 입장하셨습니다")
                 data.put("type", type.name)
-                data.put("nickname", "nickname test")
+                data.put("nickname", nickname)
                 destination += enter
             }
             ChatDetailType.EXIT -> {
                 data.put("chatMain_id", chatId)
                 data.put("sender", App.prefs.userId)
-                data.put("contents", "$content")
+                data.put("contents", "${nickname}님이 퇴장하셨습니다")
                 data.put("type", type.name)
-                data.put("nickname", "nickname test")
+                data.put("nickname", nickname)
                 destination += exit
             }
 //            ChatDetailType.WELCOME -> {
@@ -310,6 +320,7 @@ class ChatViewModel @Inject constructor(
                 },
                 { error ->
                     Timber.e("ERROR OCCURRED ON SEND MESSAGE\nmessage: ${error.message} / cause: ${error.cause}")
+                    viewEvent(ERROR_OCCURRED)
                 })
 
         // 메세지 전송

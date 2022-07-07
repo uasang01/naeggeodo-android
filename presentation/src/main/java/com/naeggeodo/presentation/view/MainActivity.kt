@@ -12,7 +12,6 @@ import com.naeggeodo.presentation.databinding.ActivityMainBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -53,6 +52,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
         App.prefs.clearAccessToken()
         App.prefs.clearUserId()
+        App.prefs.clearNickname()
     }
 
     override fun onBackPressed() {

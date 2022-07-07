@@ -3,6 +3,7 @@ package com.naeggeodo.data.repository.home
 import com.naeggeodo.data.repository.home.remote.HomeRemoteDataSource
 import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.ChatList
+import com.naeggeodo.domain.model.MyInfo
 import com.naeggeodo.domain.repository.HomeRepository
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import javax.inject.Inject
@@ -22,5 +23,12 @@ class HomeRepositoryImpl @Inject constructor(
         buildingCode: String
     ): ChatList? {
         return homeRemoteDataSource.getChatList(remoteErrorEmitter, category, buildingCode)
+    }
+
+    override suspend fun getMyInfo(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        userId: String
+    ): MyInfo? {
+        return homeRemoteDataSource.getMyInfo(remoteErrorEmitter, userId)
     }
 }

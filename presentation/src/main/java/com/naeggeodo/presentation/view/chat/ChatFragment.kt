@@ -17,9 +17,12 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.naeggeodo.domain.model.ChatHistory
+import com.naeggeodo.domain.model.User
 import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
+import com.naeggeodo.presentation.data.Message
 import com.naeggeodo.presentation.databinding.FragmentChatBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
@@ -41,6 +44,7 @@ import java.util.*
 class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     ChatActivity.OnBackPressedListener {
     private val chatViewModel: ChatViewModel by activityViewModels()
+
     private val galleryAdapter by lazy { GalleryAdapter(requireContext(), arrayListOf()) }
 
     private var imageLoadStart = false
@@ -57,7 +61,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         super.onStart()
 
         chatViewModel.getChatInfo()
-        chatViewModel.getUsers()
+//        chatViewModel.getUsers()
         chatViewModel.getChatHistory()
         chatViewModel.getQuickChats(App.prefs.userId!!)
     }
@@ -106,7 +110,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             exitDialog.setTitle("나가기")
             exitDialog.setMessage("정말 나가시겠습니까?")
             exitDialog.setPositiveButton("나가기") { _, _ ->
-                chatViewModel.sendMsg("님이 퇴장하셨습니다.", ChatDetailType.EXIT)
+                chatViewModel.sendMsg("", ChatDetailType.EXIT)
                 requireActivity().finish()
             }
             exitDialog.setNegativeButton("취소") { dialog, _ ->
@@ -191,6 +195,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             it.getContentIfNotHandled()?.let { event ->
                 when (event) {
                     ChatViewModel.ERROR_OCCURRED -> {
+                        showShortToast(requireContext(), "Error Occurred")
                         requireActivity().finish()
                     }
                 }
@@ -217,12 +222,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             binding.numOfPeople.text = "인원 ${chat.currentCount}명 / ${chat.maxCount}명"
         }
 
-        chatViewModel.users.observe(viewLifecycleOwner) {
-            it.forEach { user ->
-                Timber.e("users received ${user.toString()}")
-            }
-            // drawer view
-            initDrawerView()
+        chatViewModel.users.observe(viewLifecycleOwner) { users ->
+            initDrawerView(users)
         }
 
         chatViewModel.history.observe(viewLifecycleOwner) { historyList ->
@@ -235,11 +236,14 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                             addMyMsgView(h.contents, LocalDateTime.parse(h.regDate))
                         }
                         ChatDetailType.IMAGE.name -> {
-
+                            imageReceiver(h)
                         }
                         ChatDetailType.WELCOME.name, ChatDetailType.EXIT.name -> {
                             addNoticeView(h.contents)
                         }
+//                        ChatDetailType.BAN -> {
+//
+//                        }
 //                        ChatDetailType.BAN -> {
 //
 //                        }
@@ -248,7 +252,26 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 //                        }
                     }
                 } else {
-                    addOthersMsgView(h.contents, LocalDateTime.parse(h.regDate))
+                    when (h.type) {
+                        ChatDetailType.TEXT.name -> {
+                            addOthersMsgView(h.contents, h.userId, LocalDateTime.parse(h.regDate))
+                        }
+                        ChatDetailType.IMAGE.name -> {
+                            imageReceiver(h)
+                        }
+                        ChatDetailType.WELCOME.name, ChatDetailType.EXIT.name -> {
+                            addNoticeView(h.contents)
+                        }
+//                        ChatDetailType.BAN -> {
+//
+//                        }
+//                        ChatDetailType.BAN -> {
+//
+//                        }
+//                        ChatDetailType.TEXT.name -> {
+//
+//                        }
+                    }
                 }
             }
 
@@ -263,60 +286,30 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             // 다른 유저의 이미지 추가해야 함
             when (msgInfo.type) {
                 ChatDetailType.CNT.name -> {
-                    // CNT 타입의 메세지를 받으면 1명 추가하기.
+                    // 총인원, 현재인원, 유저리스트
                     Timber.e("type cnt message received $msgInfo")
                     val currentCount = JSONObject(msgInfo.contents).get("currentCount")
+                    sendMessage("", ChatDetailType.WELCOME)
                     binding.numOfPeople.text =
                         "인원 ${currentCount}명 / ${chatViewModel.chatInfo.value?.maxCount}명"
-//                    val users = JSONObject(msgInfo.contents).get("users")
                 }
-                ChatDetailType.WELCOME.name -> {
-                    addNoticeView("${msgInfo.nickname} 님이 입장하셨습니다")
+                ChatDetailType.WELCOME.name, ChatDetailType.EXIT.name -> {
+                    addNoticeView(msgInfo.contents)
                 }
-                ChatDetailType.EXIT.name -> {
-                    addNoticeView("${msgInfo.nickname} 님이 퇴장하셨습니다")
-                }
+//                ChatDetailType.EXIT.name -> {
+//                    addNoticeView("${msgInfo.nickname} 님이 퇴장하셨습니다")
+//                }
                 ChatDetailType.TEXT.name -> {
                     // 내가 보낸 메세지는 추가하지 않음
                     if (msgInfo.sender != App.prefs.userId) {
-                        addOthersMsgView(msgInfo.contents)
+                        addOthersMsgView(msgInfo.contents, msgInfo.sender)
                     } else {
                         addMyMsgView(msgInfo.contents)
                     }
 //                    Timber.i("message Recieve ${msgInfo}")
                 }
                 ChatDetailType.IMAGE.name -> {
-                    if (!imageLoadStart) {
-                        Timber.e("load image start")
-                        imageLoadStart = true
-                        totalImageSize = msgInfo.contents.toInt()
-                    } else {
-                        try {
-                            if (totalImageSize < 0) {
-                                imageLoadStart = false
-                                totalImageSize = -1
-                                encodedImageString = ""
-                                return@observe
-                            }
-                            Timber.e("loading  image ${encodedImageString.length}/$totalImageSize ")
-                            encodedImageString += msgInfo.contents
-                            if (encodedImageString.length >= totalImageSize) {
-                                Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
-                                imageLoadStart = false
-                                totalImageSize = -1
-
-                                if (msgInfo.sender != App.prefs.userId) {
-                                    addOthersImageView(encodedImageString)
-                                } else {
-                                    addMyImageView(encodedImageString)
-                                }
-
-                                encodedImageString = ""
-                            }
-                        } catch (e: Exception) {
-                            showShortToast(requireContext(), "에러")
-                        }
-                    }
+                    imageReceiver(msgInfo)
                 }
                 else -> {
 
@@ -325,17 +318,79 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
     }
 
-    private fun initDrawerView() {
+    private fun imageReceiver(msgInfo: Message) {
+        if (!imageLoadStart) {
+            Timber.e("load image start")
+            imageLoadStart = true
+            totalImageSize = msgInfo.contents.toInt()
+        } else {
+            try {
+                if (totalImageSize < 0) {
+                    imageLoadStart = false
+                    totalImageSize = -1
+                    encodedImageString = ""
+                    return
+                }
+                Timber.e("loading  image ${encodedImageString.length}/$totalImageSize ")
+                encodedImageString += msgInfo.contents
+                if (encodedImageString.length >= totalImageSize) {
+                    Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
+                    imageLoadStart = false
+                    totalImageSize = -1
 
-        val inflater = LayoutInflater.from(requireContext())
-        chatViewModel.apply {
-            if (chatInfo.value == null || users.value == null) {
-                Timber.e("something's not loaded")
-                return
+                    if (msgInfo.sender != App.prefs.userId) {
+                        addOthersImageView(encodedImageString, msgInfo.sender)
+                    } else {
+                        addMyImageView(encodedImageString)
+                    }
+
+                    encodedImageString = ""
+                }
+            } catch (e: Exception) {
+                showShortToast(requireContext(), "에러")
             }
         }
+    }
 
-        chatViewModel.users.value!!.forEach {
+    private fun imageReceiver(chatHistory: ChatHistory) {
+        if (!imageLoadStart) {
+            Timber.e("load image start")
+            imageLoadStart = true
+            totalImageSize = chatHistory.contents.toInt()
+        } else {
+            try {
+                if (totalImageSize < 0) {
+                    imageLoadStart = false
+                    totalImageSize = -1
+                    encodedImageString = ""
+                    return
+                }
+                Timber.e("loading  image ${encodedImageString.length}/$totalImageSize ")
+                encodedImageString += chatHistory.contents
+                if (encodedImageString.length >= totalImageSize) {
+                    Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
+                    imageLoadStart = false
+                    totalImageSize = -1
+
+                    if (chatHistory.userId != App.prefs.userId) {
+                        addOthersImageView(encodedImageString, chatHistory.userId)
+                    } else {
+                        addMyImageView(encodedImageString)
+                    }
+
+                    encodedImageString = ""
+                }
+            } catch (e: Exception) {
+                showShortToast(requireContext(), "에러")
+            }
+        }
+    }
+
+    private fun initDrawerView(users: List<User>) {
+
+        val inflater = LayoutInflater.from(requireContext())
+        binding.drawer.participantContainer.removeAllViews()
+        users.forEach {
             val userView = inflater.inflate(R.layout.item_participant, null)
             val profileView = userView.findViewById<ImageView>(R.id.profile_image_view)
             val nicknameView = userView.findViewById<TextView>(R.id.nickname_text_view)
@@ -344,8 +399,23 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
             nicknameView.text = it.nickname
 
-            if (masterId != it.userId) {
+            if (App.prefs.userId != it.userId) {
                 masterView.visibility = View.GONE
+            }
+            if (masterId == it.userId) {
+                profileView.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_king
+                    )
+                )
+            } else {
+                profileView.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_user
+                    )
+                )
             }
             val lp = LinearLayout.LayoutParams(MATCH_PARENT, 40.dpToPx(requireContext()))
             lp.topMargin = 4.dpToPx(requireContext())
@@ -399,7 +469,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
     }
 
-    private fun addOthersImageView(encodedString: String, time: LocalDateTime? = null) {
+    private fun addOthersImageView(encodedString: String, id: String, time: LocalDateTime? = null) {
         // view, image
         val inflater = LayoutInflater.from(requireContext())
         val imageLayout = inflater.inflate(R.layout.item_others_image_box, null)
@@ -407,6 +477,15 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         val byteArray = decodeString(encodedString)
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         val timeView = imageLayout.findViewById<TextView>(R.id.others_time_view)
+        val profileView = imageLayout.findViewById<ImageView>(R.id.profile_image)
+
+        val masterId = chatViewModel.chatInfo.value?.userId
+        profileView.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                if (id == masterId) R.drawable.ic_king else R.drawable.ic_user
+            )
+        )
 
         // scale image size
         val screenSize = Util.getScreenSize(requireContext())
@@ -430,7 +509,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
 
-    private fun addOthersMsgView(str: String, time: LocalDateTime? = null) {
+    private fun addOthersMsgView(str: String, id: String, time: LocalDateTime? = null) {
         // view, image
         val inflater = LayoutInflater.from(requireContext())
         val msgLayout = inflater.inflate(R.layout.item_others_message_box, null)
@@ -438,10 +517,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         val msgView = msgLayout.findViewById<TextView>(R.id.others_msg_view)
         val timeView = msgLayout.findViewById<TextView>(R.id.others_time_view)
 
+        val masterId = chatViewModel.chatInfo.value?.userId
+
         profileView.setImageDrawable(
             ContextCompat.getDrawable(
                 requireContext(),
-                R.drawable.ic_hamberger
+                if (id == masterId) R.drawable.ic_king else R.drawable.ic_user
             )
         )
 

@@ -14,6 +14,7 @@ import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.utils.Util.showShortSnackbar
+import com.naeggeodo.presentation.viewmodel.ChatViewModel
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.HomeViewModel
 import com.naeggeodo.presentation.viewmodel.LocationViewModel
@@ -25,6 +26,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val categoryAdapter by lazy { CategoryAdapter(requireContext(), arrayListOf()) }
     private var chatListAdapter: ChatListAdapter? = null
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val chatViewModel: ChatViewModel by activityViewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
     private val createChatViewModel: CreateChatViewModel by activityViewModels()
     private var refreshedTime = System.currentTimeMillis()
@@ -48,6 +50,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 )
             )
         }
+
+        homeViewModel.getMyInfo(App.prefs.userId!!)
     }
 
 
@@ -65,10 +69,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         val lm = LinearLayoutManager(requireContext())
         lm.orientation = LinearLayoutManager.HORIZONTAL
         binding.categoryRecyclerView.layoutManager = lm
+        binding.categoryRecyclerView.itemAnimator = null
 
         // 채팅방 리스트
         binding.chatListRecyclerView.adapter = chatListAdapter
         binding.chatListRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.chatListRecyclerView.itemAnimator = null
     }
 
     override fun initListener() {
@@ -167,6 +173,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 //                    }
                 }
             }
+        }
+        homeViewModel.myInfo.observe(viewLifecycleOwner) {
+            App.prefs.nickname = it.nickname
         }
 
 

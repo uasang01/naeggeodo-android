@@ -21,6 +21,11 @@ class Prefs(context: Context) {
         set(value) {
             prefs.edit().putString("userId", value).apply()
         }
+    var nickname: String?
+        get() = prefs.getString("nickname", null)
+        set(value) {
+            prefs.edit().putString("nickname", value).apply()
+        }
     var address: String?
         get() = prefs.getString("address", null)
         set(value) {
@@ -45,6 +50,11 @@ class Prefs(context: Context) {
         refreshToken = null
         userId = null
         address = null
+        nickname= null
+    }
+
+    fun clearNickname() {
+        nickname= null
     }
 
     fun clearAccessToken() {
