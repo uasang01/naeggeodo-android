@@ -179,15 +179,18 @@ object Util {
     fun getMessageTimeString(dateTime: LocalDateTime): String {
         val hour = dateTime.hour
         val minute = dateTime.minute
+        val day = dateTime.dayOfMonth
+        val month = dateTime.month.value
 
         val f = DecimalFormat("00")
 
         var result = ""
+        result += "$month/$day "
         result += if (hour >= 12) "오후 " else "오전 "
         result += if (hour > 12) "${hour - 12}:" else if (hour == 0) "12:" else "${hour}:"
         result += f.format(minute)
 
-        Timber.e("time $result")
+        Timber.e("time $result $day $month")
         return result
     }
 }

@@ -60,6 +60,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     override fun onStart() {
         super.onStart()
 
+        binding.msgContainer.removeAllViews()
+
         chatViewModel.getChatInfo()
 //        chatViewModel.getUsers()
         chatViewModel.getChatHistory()
@@ -220,6 +222,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             binding.chatTitleText.text = chat.title
             loadImageAndSetView(requireContext(), chat.imgPath, binding.chatImage)
             binding.numOfPeople.text = "인원 ${chat.currentCount}명 / ${chat.maxCount}명"
+
+            val masterId = chatViewModel.chatInfo.value!!.userId
+            if (masterId == App.prefs.userId) {
+                binding.checkDepositButton.visibility = View.VISIBLE
+            }
         }
 
         chatViewModel.users.observe(viewLifecycleOwner) { users ->
@@ -326,28 +333,25 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         } else {
             try {
                 if (totalImageSize < 0) {
-                    imageLoadStart = false
-                    totalImageSize = -1
-                    encodedImageString = ""
+                    initImageLoadVariables()
                     return
                 }
                 Timber.e("loading  image ${encodedImageString.length}/$totalImageSize ")
                 encodedImageString += msgInfo.contents
                 if (encodedImageString.length >= totalImageSize) {
                     Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
-                    imageLoadStart = false
-                    totalImageSize = -1
 
                     if (msgInfo.sender != App.prefs.userId) {
                         addOthersImageView(encodedImageString, msgInfo.sender)
                     } else {
                         addMyImageView(encodedImageString)
                     }
-
-                    encodedImageString = ""
+                    initImageLoadVariables()
                 }
             } catch (e: Exception) {
-                showShortToast(requireContext(), "에러")
+                showShortToast(requireContext(), "이미지 로드 에러")
+                Timber.e("이미지 로드 에러 / $e")
+                initImageLoadVariables()
             }
         }
     }
@@ -360,30 +364,34 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         } else {
             try {
                 if (totalImageSize < 0) {
-                    imageLoadStart = false
-                    totalImageSize = -1
-                    encodedImageString = ""
+                    initImageLoadVariables()
                     return
                 }
                 Timber.e("loading  image ${encodedImageString.length}/$totalImageSize ")
                 encodedImageString += chatHistory.contents
                 if (encodedImageString.length >= totalImageSize) {
                     Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
-                    imageLoadStart = false
-                    totalImageSize = -1
 
                     if (chatHistory.userId != App.prefs.userId) {
                         addOthersImageView(encodedImageString, chatHistory.userId)
                     } else {
                         addMyImageView(encodedImageString)
                     }
-
-                    encodedImageString = ""
+                    initImageLoadVariables()
                 }
             } catch (e: Exception) {
-                showShortToast(requireContext(), "에러")
+                showShortToast(requireContext(), "이미지 로드 에러")
+                Timber.e("이미지 로드 에러 / $e")
+                initImageLoadVariables()
             }
         }
+    }
+
+    private fun initImageLoadVariables() {
+
+        imageLoadStart = false
+        totalImageSize = -1
+        encodedImageString = ""
     }
 
     private fun initDrawerView(users: List<User>) {
