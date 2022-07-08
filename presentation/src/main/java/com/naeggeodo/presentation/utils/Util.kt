@@ -190,7 +190,7 @@ object Util {
         result += if (hour > 12) "${hour - 12}:" else if (hour == 0) "12:" else "${hour}:"
         result += f.format(minute)
 
-        Timber.e("time $result $day $month")
+//        Timber.e("time $result $day $month")
         return result
     }
 }

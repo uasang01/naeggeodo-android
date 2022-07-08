@@ -44,6 +44,7 @@ class ChatViewModel @Inject constructor(
         const val EVENT_ENTER_CHAT = 316
         const val EVENT_EXIT_CHAT = 317
         const val EVENT_BAN_USER = 318
+        const val EVENT_STOMP_CONNECTED = 319
         const val ERROR_OCCURRED = 31
 //        const val EVENT = 316
     }
@@ -100,7 +101,7 @@ class ChatViewModel @Inject constructor(
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
-            _users.postValue(response!!.users)
+//            _users.postValue(response!!.users)
             mutableScreenState.postValue(ScreenState.RENDER)
 //            viewEvent(HomeViewModel.EVENT_USERS_CHANGED)
         }
@@ -208,6 +209,7 @@ class ChatViewModel @Inject constructor(
                     Timber.i("OPEND")
                     // 연결 시 입장 메세지 전송
                     sendMsg("", ChatDetailType.WELCOME)
+                    viewEvent(EVENT_STOMP_CONNECTED)
                 }
                 LifecycleEvent.Type.CLOSED -> {
                     Timber.i("CLOSED")

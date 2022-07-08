@@ -9,5 +9,14 @@
         android:id="@+id/chatFragment"
         android:name="com.naeggeodo.presentation.view.chat.ChatFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat" >
+        <action
+            android:id="@+id/action_chatFragment_to_depositFragment"
+            app:destination="@id/depositFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/depositFragment"
+        android:name="com.naeggeodo.presentation.view.chat.DepositFragment"
+        android:label="fragment_deposit"
+        tools:layout="@layout/fragment_deposit" />
 </navigation>
