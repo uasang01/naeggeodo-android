@@ -3,4 +3,6 @@
     <string name="not_apartment">아파트나 공동주택을 검색해 주세요</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+        <string name="deposit_body">수령완료 버튼을 누르면\n참여멤버의 안심번호를 확인할 수 있어요</string>
+    <string name="deposit_body2">수령체크 후 미수령으로 전환이 어렵습니다</string>
 </resources>

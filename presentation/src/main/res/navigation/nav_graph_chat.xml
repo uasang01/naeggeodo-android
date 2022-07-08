@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/depositFragment"
-        android:name="com.naeggeodo.presentation.view.chat.DepositFragment"
+        android:name="com.naeggeodo.presentation.view.chat.RemitFragment"
         android:label="fragment_deposit"
-        tools:layout="@layout/fragment_deposit" />
+        tools:layout="@layout/fragment_remit" />
 </navigation>
