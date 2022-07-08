@@ -4,7 +4,6 @@ import android.app.Activity
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonParser
@@ -15,6 +14,7 @@ import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.data.Message
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
+import com.naeggeodo.presentation.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
@@ -65,15 +65,15 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    private val _chatInfo: MutableLiveData<Chat> = MutableLiveData()
+    private val _chatInfo: SingleLiveEvent<Chat> = SingleLiveEvent()
     val chatInfo: LiveData<Chat> get() = _chatInfo
-    private val _users: MutableLiveData<List<User>> = MutableLiveData()
+    private val _users: SingleLiveEvent<List<User>> = SingleLiveEvent()
     val users: LiveData<List<User>> get() = _users
-    private val _history: MutableLiveData<List<ChatHistory>> = MutableLiveData()
+    private val _history: SingleLiveEvent<List<ChatHistory>> = SingleLiveEvent()
     val history: LiveData<List<ChatHistory>> get() = _history
-    private val _message: MutableLiveData<Message> = MutableLiveData()
+    private val _message: SingleLiveEvent<Message> = SingleLiveEvent()
     val message: LiveData<Message> get() = _message
-    private val _quickChat: MutableLiveData<List<QuickChat>> = MutableLiveData()
+    private val _quickChat: SingleLiveEvent<List<QuickChat>> = SingleLiveEvent()
     val quickChat: LiveData<List<QuickChat>> get() = _quickChat
 
 //    val message: Message? = null

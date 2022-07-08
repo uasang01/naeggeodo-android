@@ -48,7 +48,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
     private val galleryAdapter by lazy { GalleryAdapter(requireContext(), arrayListOf()) }
 
-    private var imageLoadStart = false
     private var totalImageSize = -1
     private var encodedImageString = ""
     private var quickChatDialog: QuickChatBottomDialogFragment? = null
@@ -62,11 +61,14 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         super.onStart()
 
         chatViewModel.getChatInfo()
-        if(!chatViewModel.stompClient.isConnected){
+        if (!chatViewModel.stompClient.isConnected) {
             chatViewModel.runStomp()
+        } else {
+            chatViewModel.getChatHistory()
+            chatViewModel.getQuickChats(App.prefs.userId!!)
         }
-
     }
+
 
     override fun initView() {
         super.initView()
@@ -298,12 +300,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     binding.numOfPeople.text =
                         "인원 ${currentCount}명 / ${chatViewModel.chatInfo.value?.maxCount}명"
                 }
-                ChatDetailType.WELCOME.name-> {
+                ChatDetailType.WELCOME.name -> {
                     addNoticeView(msgInfo.contents)
                 }
                 ChatDetailType.EXIT.name -> {
                     addNoticeView(msgInfo.contents)
-                    if(msgInfo.contents.contains(App.prefs.nickname!!)){
+                    if (msgInfo.contents.contains(App.prefs.nickname!!)) {
                         binding.checkDepositButton.visibility = View.VISIBLE
                     }
                 }
@@ -327,10 +329,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
     private fun imageReceiver(msgInfo: Message) {
         try {
-            if (!imageLoadStart) {
-                Timber.e("load image start")
-                imageLoadStart = true
-                totalImageSize = msgInfo.contents.toInt()
+            val isStartOfLoading = msgInfo.contents.toIntOrNull()
+            if (isStartOfLoading is Int) {
+                initImageLoadVariables()
+                totalImageSize = isStartOfLoading
             } else {
                 if (totalImageSize < 0) {
                     initImageLoadVariables()
@@ -358,10 +360,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
     private fun imageReceiver(chatHistory: ChatHistory) {
         try {
-            if (!imageLoadStart) {
-                Timber.e("load image start")
-                imageLoadStart = true
-                totalImageSize = chatHistory.contents.toInt()
+            // 이미지를 전송할 때 처음엔 파일 사이즈를 보내기 때문에 인트형으로 케스팅된다면 이미지 전송의 처음임.
+            val isStartOfLoading = chatHistory.contents.toIntOrNull()
+            if (isStartOfLoading is Int) {
+                initImageLoadVariables()
+                totalImageSize = isStartOfLoading
             } else {
                 if (totalImageSize < 0) {
                     initImageLoadVariables()
@@ -388,14 +391,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
     private fun initImageLoadVariables() {
-
-        imageLoadStart = false
         totalImageSize = -1
         encodedImageString = ""
     }
 
     private fun initDrawerView(users: List<User>) {
-
         val inflater = LayoutInflater.from(requireContext())
         binding.drawer.participantContainer.removeAllViews()
         users.forEach {
@@ -540,7 +540,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
         timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         msgView.text = str
-        nicknameView.text = chatViewModel.users.value?.first{ id == it.userId}?.nickname ?: "꾁!"
+        nicknameView.text = chatViewModel.users.value?.first { id == it.userId }?.nickname ?: "꾁!"
         binding.msgContainer.addView(msgLayout)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
@@ -575,10 +575,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
     override fun onStop() {
         super.onStop()
+        chatViewModel.stopStomp()
     }
 
     override fun onDestroy() {
-        chatViewModel.stopStomp()
+//        chatViewModel.stopStomp()
         super.onDestroy()
     }
 
