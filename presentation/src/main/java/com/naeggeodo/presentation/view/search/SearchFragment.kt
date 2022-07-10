@@ -28,6 +28,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
     private val searchViewModel: SearchViewModel by activityViewModels()
 
+    private val searchType = "search"
+
     override fun onStart() {
         super.onStart()
         searchViewModel.getTags()
@@ -48,6 +50,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         lm.justifyContent = JustifyContent.FLEX_START
         binding.tagRecyclerView.layoutManager = lm
 
+
         // chats recyclerview
         binding.chatListRecyclerView.adapter = chatListAdapter
         binding.chatListRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -59,7 +62,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
             when (keyCode) {
                 KeyEvent.KEYCODE_ENTER -> {
                     Timber.e("${binding.searchBarText.text}")
-                    val searchType = "search"
                     val keyWord = binding.searchBarText.text.toString()
 
                     searchChatList(searchType, keyWord)
@@ -82,9 +84,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
             }
 
+        tagAdapter.setItemClickEvent { pos ->
+            searchChatList(searchType, tagAdapter.getData(pos))
+        }
+
         chatListAdapter.setListener { pos ->
             val chat = chatListAdapter.getData(pos)
-            chat.chatId
 
             Timber.e("chat info : ${chat.chatId} ${chat.title} ${chat.userId}")
 
@@ -111,7 +116,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         if (showTags) {
             binding.chatListRecyclerView.visibility = View.GONE
             binding.tagRecyclerView.visibility = View.VISIBLE
-
         } else {
             binding.tagRecyclerView.visibility = View.GONE
             binding.chatListRecyclerView.visibility = View.VISIBLE

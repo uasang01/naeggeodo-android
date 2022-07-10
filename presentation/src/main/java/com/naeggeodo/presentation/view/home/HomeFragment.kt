@@ -79,10 +79,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     override fun initListener() {
         chatListAdapter?.setListener { pos ->
-//            showShortSnackbar(binding.root, "$pos clicked")
-
             val chat = chatListAdapter!!.getData(pos)
-            chat.chatId
 
             Timber.e("chat info : ${chat.chatId} ${chat.title} ${chat.userId}")
 

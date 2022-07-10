@@ -11,7 +11,6 @@ import com.naeggeodo.presentation.databinding.ItemTagBinding
 class TagAdapter(private val context: Context, private var datas: ArrayList<Tag>) :
     RecyclerView.Adapter<TagAdapter.ViewHolder>() {
 
-    private var selected: Int = 0
     private var itemClickEvent: (Int) -> Unit = {}
 
     inner class ViewHolder(val binding: ItemTagBinding) :
@@ -27,29 +26,17 @@ class TagAdapter(private val context: Context, private var datas: ArrayList<Tag>
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.run {
             tagText.text = datas[position].tag
-//            category.text = enumValueOf<CategoryType>(datas[position].category).korean
-//
-//            if (selected == position) {
-//                category.setTextColor(ContextCompat.getColor(context, R.color.orange_EF6212))
-//            } else {
-//                category.setTextColor(ContextCompat.getColor(context, R.color.black))
-//            }
-//
-//            category.setOnClickListener {
-//                if (selected == position) return@setOnClickListener
-//
-//                val prevPos = selected
-//                selected = datas[position].idx
-//                notifyItemChanged(prevPos)
-//                notifyItemChanged(selected)
-//
-//                itemClickEvent(position)
-//            }
+
+            tagCardView.setOnClickListener {
+                itemClickEvent(position)
+            }
         }
     }
 
     override fun getItemCount() = datas.size
 //    fun getSelectedCategory() = if (selected == 0) null else datas[selected].category
+
+    fun getData(pos: Int): String = datas[pos].tag
 
     fun setData(Tags: ArrayList<Tag>) {
         clearData()

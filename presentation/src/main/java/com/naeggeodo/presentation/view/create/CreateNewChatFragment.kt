@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayoutMediator
 import com.naeggeodo.presentation.R
@@ -18,6 +19,10 @@ import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -104,15 +109,19 @@ class CreateNewChatFragment :
 
                 val bitmap = createChatViewModel.chatImage.value
                 bitmap?.let {
-
                     val file = persistImage(requireContext(), bitmap, "file")
                     val imageBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                     val partImage = MultipartBody.Part.createFormData("file", "file", imageBody)
                     parts.add(partImage)
                 }
 
-                createChatViewModel.createChat(parts)
+                CoroutineScope(Dispatchers.IO).launch{
+                    val result = createChatViewModel.createChat(parts)
+                    if(!result){
+                        showShortToast(requireContext(), "채팅방 생성 실패")
+                    }
 
+                }
             } catch (e: Exception) {
                 showShortToast(requireContext(), "Error occurred")
                 Timber.e("error occurred on request CreateChatApi / $e")
@@ -129,7 +138,9 @@ class CreateNewChatFragment :
             createButtonEnable()
         }
         createChatViewModel.chatId.observe(viewLifecycleOwner) {
-            Timber.e("11 $it")
+            Timber.e("chatId $it")
+//            val action = CreateNewChatFragmentDirections.actionCreateNewChatFragmentToChatActivity(it)
+//            findNavController().navigate(action)
         }
     }
 
