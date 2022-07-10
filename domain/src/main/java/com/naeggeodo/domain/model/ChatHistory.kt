@@ -11,5 +11,6 @@ data class ChatHistory(
     val regDate: String,
     val type: String,
     @SerializedName("user_id")
-    val userId: String
+    val userId: String,
+    val nickname: String?
 )
