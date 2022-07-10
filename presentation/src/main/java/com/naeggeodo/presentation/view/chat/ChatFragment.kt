@@ -24,7 +24,7 @@ import com.naeggeodo.domain.utils.ChatDetailType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.data.Message
-import com.naeggeodo.presentation.databinding.FragmentChatBinding
+import com.naeggeodo.presentation.databinding.*
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.Util
@@ -275,7 +275,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                 } else {
                     when (h.type) {
                         ChatDetailType.TEXT.name -> {
-                            addOthersMsgView(h.contents, h.userId, LocalDateTime.parse(h.regDate))
+                            addOthersMsgView(h.contents, h.userId, h.nickname!!, LocalDateTime.parse(h.regDate))
                         }
                         ChatDetailType.IMAGE.name -> {
                             imageReceiver(h)
@@ -312,7 +312,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                 ChatDetailType.TEXT.name -> {
                     // 내가 보낸 메세지는 추가하지 않음
                     if (msgInfo.sender != App.prefs.userId) {
-                        addOthersMsgView(msgInfo.contents, msgInfo.sender)
+                        addOthersMsgView(msgInfo.contents, msgInfo.sender, msgInfo.nickname)
                     } else {
                         addMyMsgView(msgInfo.contents)
                     }
@@ -344,7 +344,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
 
                     if (msgInfo.sender != App.prefs.userId) {
-                        addOthersImageView(encodedImageString, msgInfo.sender)
+                        addOthersImageView(encodedImageString, msgInfo.sender, msgInfo.nickname)
                     } else {
                         addMyImageView(encodedImageString)
                     }
@@ -376,7 +376,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
 
                     if (chatHistory.userId != App.prefs.userId) {
-                        addOthersImageView(encodedImageString, chatHistory.userId)
+                        addOthersImageView(encodedImageString, chatHistory.userId, chatHistory.nickname!!)
                     } else {
                         addMyImageView(encodedImageString)
                     }
@@ -433,42 +433,38 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
     private fun addMyMsgView(str: String, time: LocalDateTime? = null) {
-
         val inflater = LayoutInflater.from(requireContext())
-        val msgLayout = inflater.inflate(R.layout.item_my_message_box, null)
-        val msgView = msgLayout.findViewById<TextView>(R.id.my_msg_view)
-        val timeView = msgLayout.findViewById<TextView>(R.id.my_time_view)
+        val layoutBinding = ItemMyMessageBoxBinding.inflate(inflater)
 
-        msgView.text = str
-        val curTime = TimeZone.getTimeZone(ZoneId.of("Asia/Seoul"))
-
-        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-        binding.msgContainer.addView(msgLayout)
+        layoutBinding.myMsgView.text = str
+        layoutBinding.myTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+        binding.msgContainer.addView(layoutBinding.root)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
 
     private fun addMyImageView(encodedString: String, time: LocalDateTime? = null) {
-        val inflater = LayoutInflater.from(requireContext())
-        val imageLayout = inflater.inflate(R.layout.item_my_image_box, null)
-        val imageView = imageLayout.findViewById<ImageView>(R.id.my_image_view)
         val byteArray = decodeString(encodedString)
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        val timeView = imageLayout.findViewById<TextView>(R.id.my_time_view)
 
-        // scale image size
-        val screenSize = Util.getScreenSize(requireContext())
-        val maxWidth = ((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()
-        val imageWith = if (bitmap.width > maxWidth) maxWidth else bitmap.width
-        val imgLp = imageView.layoutParams
-        imgLp.width = imageWith
-        imageView.layoutParams = imgLp
-        Timber.e("${((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()} / ${bitmap.width}")
+        val inflater = LayoutInflater.from(requireContext())
+        val layoutBinding = ItemMyImageBoxBinding.inflate(inflater)
+        layoutBinding.apply {
+            // scale image size
+            val screenSize = Util.getScreenSize(requireContext())
+            val maxWidth = ((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()
+            val imageWith = if (bitmap.width > maxWidth) maxWidth else bitmap.width
+            val imgLp = myImageView.layoutParams
+            imgLp.width = imageWith
+            myImageView.layoutParams = imgLp
+            Timber.e("${((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()} / ${bitmap.width}")
 
-        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-        Glide.with(requireContext())
-            .load(bitmap)
-            .into(imageView)
-        binding.msgContainer.addView(imageLayout)
+            myTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            Glide.with(requireContext())
+                .load(bitmap)
+                .into(myImageView)
+        }
+
+        binding.msgContainer.addView(layoutBinding.root)
         binding.msgScrollview.apply {
             postDelayed(
                 { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) },
@@ -477,39 +473,40 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
     }
 
-    private fun addOthersImageView(encodedString: String, id: String, time: LocalDateTime? = null) {
-        // view, image
-        val inflater = LayoutInflater.from(requireContext())
-        val imageLayout = inflater.inflate(R.layout.item_others_image_box, null)
-        val imageView = imageLayout.findViewById<ImageView>(R.id.others_image_view)
+    private fun addOthersImageView(encodedString: String, id: String, nickname: String, time: LocalDateTime? = null) {
+
         val byteArray = decodeString(encodedString)
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        val timeView = imageLayout.findViewById<TextView>(R.id.others_time_view)
-        val nicknameView = imageLayout.findViewById<TextView>(R.id.others_name_view)
-        val profileView = imageLayout.findViewById<ImageView>(R.id.profile_image)
 
-        val masterId = chatViewModel.chatInfo.value?.userId
-        profileView.setImageDrawable(
-            ContextCompat.getDrawable(
-                requireContext(),
-                if (id == masterId) R.drawable.ic_king else R.drawable.ic_user
+        // view, image
+        val inflater = LayoutInflater.from(requireContext())
+        val layoutBinding = ItemOthersImageBoxBinding.inflate(inflater)
+        layoutBinding.apply{
+            val masterId = chatViewModel.chatInfo.value?.userId
+            profileImage.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    if (id == masterId) R.drawable.ic_king else R.drawable.ic_user
+                )
             )
-        )
 
-        // scale image size
-        val screenSize = Util.getScreenSize(requireContext())
-        val maxWidth = ((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()
-        val imageWith = if (bitmap.width > maxWidth) maxWidth else bitmap.width
-        val imgLp = imageView.layoutParams
-        imgLp.width = imageWith
-        imageView.layoutParams = imgLp
+            // scale image size
+            val screenSize = Util.getScreenSize(requireContext())
+            val maxWidth = ((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()
+            val imageWith = if (bitmap.width > maxWidth) maxWidth else bitmap.width
+            val imgLp = othersImageView.layoutParams
+            imgLp.width = imageWith
+            othersImageView.layoutParams = imgLp
 
-        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-        Glide.with(requireContext())
-            .load(bitmap)
-            .into(imageView)
-        nicknameView.text = chatViewModel.users.value?.first { id == it.userId }?.nickname ?: "꾁!"
-        binding.msgContainer.addView(imageLayout)
+            othersTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            Glide.with(requireContext())
+                .load(bitmap)
+                .into(othersImageView)
+            othersNameView.text = nickname
+        }
+
+
+        binding.msgContainer.addView(layoutBinding.root)
         binding.msgScrollview.apply {
             postDelayed(
                 { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) },
@@ -519,29 +516,23 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
 
-    private fun addOthersMsgView(str: String, id: String, time: LocalDateTime? = null) {
+    private fun addOthersMsgView(str: String, id: String, nickname: String, time: LocalDateTime? = null) {
         // view, image
         val inflater = LayoutInflater.from(requireContext())
-        val msgLayout = inflater.inflate(R.layout.item_others_message_box, null)
-        val profileView = msgLayout.findViewById<ImageView>(R.id.profile_image)
-        val msgView = msgLayout.findViewById<TextView>(R.id.others_msg_view)
-        val nicknameView = msgLayout.findViewById<TextView>(R.id.others_name_view)
-        val timeView = msgLayout.findViewById<TextView>(R.id.others_time_view)
-
-
-        val masterId = chatViewModel.chatInfo.value?.userId
-
-        profileView.setImageDrawable(
-            ContextCompat.getDrawable(
-                requireContext(),
-                if (id == masterId) R.drawable.ic_king else R.drawable.ic_user
+        val layoutBinding = ItemOthersMessageBoxBinding.inflate(inflater)
+        layoutBinding.apply{
+            val masterId = chatViewModel.chatInfo.value?.userId
+            profileImage.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    if (id == masterId) R.drawable.ic_king else R.drawable.ic_user
+                )
             )
-        )
-
-        timeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-        msgView.text = str
-        nicknameView.text = chatViewModel.users.value?.first { id == it.userId }?.nickname ?: "꾁!"
-        binding.msgContainer.addView(msgLayout)
+            othersTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            othersMsgView.text = str
+            othersNameView.text = nickname
+        }
+        binding.msgContainer.addView(layoutBinding.root)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
 
@@ -549,12 +540,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     private fun addNoticeView(str: String) {
         // view, image
         val inflater = LayoutInflater.from(requireContext())
-        val msgLayout = inflater.inflate(R.layout.item_chat_notice, null)
-        val noticeView = msgLayout.findViewById<TextView>(R.id.notice_textview)
+        val layoutBinding = ItemChatNoticeBinding.inflate(inflater)
 
-        noticeView.text = str
+        layoutBinding.noticeTextview.text = str
 
-        binding.msgContainer.addView(msgLayout)
+        binding.msgContainer.addView(layoutBinding.root)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
 
