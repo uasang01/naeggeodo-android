@@ -20,17 +20,17 @@ class CreateFragment : BaseFragment<FragmentCreateBinding>(R.layout.fragment_cre
         }
         binding.oneHourButton.setOnClickListener {
             val action =
-                CreateFragmentDirections.actionCreateToSetNewChatFragment(OrderTimeType.ONE_HOUR.name)
+                CreateFragmentDirections.actionCreateToCreateNewChatFragment(OrderTimeType.ONE_HOUR.name)
             findNavController().navigate(action)
         }
         binding.quickButton.setOnClickListener {
             val action =
-                CreateFragmentDirections.actionCreateToSetNewChatFragment(OrderTimeType.QUICK.name)
+                CreateFragmentDirections.actionCreateToCreateNewChatFragment(OrderTimeType.QUICK.name)
             findNavController().navigate(action)
         }
         binding.freedomButton.setOnClickListener {
             val action =
-                CreateFragmentDirections.actionCreateToSetNewChatFragment(OrderTimeType.FREEDOM.name)
+                CreateFragmentDirections.actionCreateToCreateNewChatFragment(OrderTimeType.FREEDOM.name)
             findNavController().navigate(action)
         }
     }

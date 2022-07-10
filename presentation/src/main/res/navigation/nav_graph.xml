@@ -38,8 +38,8 @@
         android:label="fragment_create"
         tools:layout="@layout/fragment_create">
         <action
-            android:id="@+id/action_create_to_setNewChatFragment"
-            app:destination="@id/setNewChatFragment" />
+            android:id="@+id/action_create_to_createNewChatFragment"
+            app:destination="@id/createNewChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/my_chats"
@@ -52,13 +52,18 @@
         android:label="fragment_info"
         tools:layout="@layout/fragment_info" />
     <fragment
-        android:id="@+id/setNewChatFragment"
+        android:id="@+id/createNewChatFragment"
         android:name="com.naeggeodo.presentation.view.create.CreateNewChatFragment"
-        android:label="fragment_set_new_chat"
+        android:label="fragment_create_new_chat"
         tools:layout="@layout/fragment_create_new_chat" >
         <argument
             android:name="orderTimeType"
             app:argType="string" />
+        <action
+            android:id="@+id/action_createNewChatFragment_to_chatActivity"
+            app:destination="@id/chatActivity"
+            app:popUpToInclusive="true"
+            />
     </fragment>
 
     <include
