@@ -44,4 +44,7 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideGetMyInfoUseCase(repository: HomeRepository) = GetMyInfoUseCase(repository)
+    @Provides
+    @Singleton
+    fun provideDeleteCreationChatHistoryUseCase(repository: CreateRepository) = DeleteCreationChatHistoryUseCase(repository)
 }

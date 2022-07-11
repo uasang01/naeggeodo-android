@@ -1,11 +1,13 @@
 package com.naeggeodo.data.repository.create.remote
 
 import com.naeggeodo.data.api.BookmarkingApi
+import com.naeggeodo.data.api.ChatRoomApi
 import com.naeggeodo.data.api.CreateChatApi
 import com.naeggeodo.data.api.GetChatCreationHistoryApi
 import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.ChatId
 import com.naeggeodo.domain.model.ChatList
+import com.naeggeodo.domain.model.DeleteChat
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import okhttp3.MultipartBody
 import timber.log.Timber
@@ -15,7 +17,8 @@ import javax.inject.Inject
 class CreateRemoteDataSourceImpl @Inject constructor(
     private val createChatApi: CreateChatApi,
     private val getChatCreationHistoryApi: GetChatCreationHistoryApi,
-    private val bookmarkingApi: BookmarkingApi
+    private val bookmarkingApi: BookmarkingApi,
+    private val chatRoomApi: ChatRoomApi
 ) : CreateRemoteDataSource, BaseRepository() {
     override suspend fun createChat(
         remoteErrorEmitter: RemoteErrorEmitter,
@@ -61,6 +64,22 @@ class CreateRemoteDataSourceImpl @Inject constructor(
         } else {
             Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
             false
+        }
+    }
+
+    override suspend fun deleteChat(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int
+    ): DeleteChat? {
+        val res = safeApiCall(remoteErrorEmitter) {
+            chatRoomApi.deleteChatRoom(chatId)
+        }
+        Timber.e("bookmark api response $res")
+        return if (res != null && res.isSuccessful && res.code() == 200) {
+            res.body()
+        } else {
+            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
+            null
         }
     }
 }

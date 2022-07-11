@@ -3,6 +3,7 @@ package com.naeggeodo.data.repository.create
 import com.naeggeodo.data.repository.create.remote.CreateRemoteDataSource
 import com.naeggeodo.domain.model.ChatId
 import com.naeggeodo.domain.model.ChatList
+import com.naeggeodo.domain.model.DeleteChat
 import com.naeggeodo.domain.repository.CreateRepository
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import okhttp3.MultipartBody
@@ -31,5 +32,12 @@ class CreateRepositoryImpl @Inject constructor(
         userId: String
     ): Boolean {
         return createRemoteDataSource.bookmarking(remoteErrorEmitter, chatId, userId)
+    }
+
+    override suspend fun deleteChat(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int
+    ): DeleteChat? {
+        return createRemoteDataSource.deleteChat(remoteErrorEmitter, chatId)
     }
 }

@@ -2,6 +2,7 @@ package com.naeggeodo.data.repository.create.remote
 
 import com.naeggeodo.domain.model.ChatId
 import com.naeggeodo.domain.model.ChatList
+import com.naeggeodo.domain.model.DeleteChat
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import okhttp3.MultipartBody
 
@@ -21,4 +22,9 @@ interface CreateRemoteDataSource {
         chatId: Int,
         userId: String
     ): Boolean
+
+    suspend fun deleteChat(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int
+    ): DeleteChat?
 }

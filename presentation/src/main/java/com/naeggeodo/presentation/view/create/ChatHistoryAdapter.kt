@@ -138,6 +138,10 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
     fun getData(pos: Int): Chat {
         return datas[pos]
     }
+    fun deleteData(pos: Int){
+        datas.removeAt(pos)
+        notifyItemRemoved(pos)
+    }
 
     fun updateBookmark(pos: Int) {
         if (datas[pos].bookmarks == Bookmarks.Y.name) {

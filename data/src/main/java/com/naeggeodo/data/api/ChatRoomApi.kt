@@ -1,6 +1,7 @@
 package com.naeggeodo.data.api
 
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.model.DeleteChat
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -15,5 +16,5 @@ interface ChatRoomApi {
     @DELETE("chat-rooms/{chatMain_id}")
     suspend fun deleteChatRoom(
         @Path("chatMain_id") chatId: Int
-    ): Response<Any>
+    ): Response<DeleteChat>
 }
