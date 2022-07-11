@@ -22,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -66,6 +65,7 @@ class CreateNewChatFragment :
             tab.layoutParams = layoutParams
             tabLayout.requestLayout()
         }
+        createButtonEnable()
     }
 
     override fun initListener() {
@@ -115,9 +115,9 @@ class CreateNewChatFragment :
                     parts.add(partImage)
                 }
 
-                CoroutineScope(Dispatchers.IO).launch{
+                CoroutineScope(Dispatchers.IO).launch {
                     val result = createChatViewModel.createChat(parts)
-                    if(!result){
+                    if (!result) {
                         showShortToast(requireContext(), "채팅방 생성 실패")
                     }
 
@@ -138,7 +138,9 @@ class CreateNewChatFragment :
             createButtonEnable()
         }
         createChatViewModel.chatId.observe(viewLifecycleOwner) {
-            val action = CreateNewChatFragmentDirections.actionCreateNewChatFragmentToChatActivity(it)
+            createChatViewModel.init()
+            val action =
+                CreateNewChatFragmentDirections.actionCreateNewChatFragmentToChatActivity(it)
             findNavController().navigate(action)
         }
     }

@@ -84,7 +84,6 @@ class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_
 //        }
 
         createChatViewModel.place.value?.let {
-
             binding.placeEditText.setText(it)
         }
 
@@ -95,6 +94,10 @@ class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_
         createChatViewModel.tag.value?.let {
             binding.tagEditText.setText(it)
         }
+        createChatViewModel.maxPeopleNum.value?.let {
+            binding.peopleCountTextView.text = it.toString()
+        }
+
         bitmap?.let {
             Glide.with(requireContext())
                 .load(bitmap)
@@ -155,7 +158,7 @@ class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_
                 )
             }
             num += 1
-//            binding.peopleCountTextView.text = num.toString()
+            binding.peopleCountTextView.text = num.toString()
             createChatViewModel.setMaxPeopleNum(num)
             // 더하고 PEOPLE_MAX이상이 되면 더하기 버튼 비활성화
             if (num >= PEOPLE_MAX) {
@@ -179,7 +182,7 @@ class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_
                 )
             }
             num -= 1
-//            binding.peopleCountTextView.text = num.toString()
+            binding.peopleCountTextView.text = num.toString()
             createChatViewModel.setMaxPeopleNum(num)
             if (num <= PEOPLE_MIN) {
                 binding.subtractButton.setImageDrawable(

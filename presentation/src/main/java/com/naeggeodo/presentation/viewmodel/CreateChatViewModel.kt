@@ -2,7 +2,6 @@ package com.naeggeodo.presentation.viewmodel
 
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naeggeodo.domain.model.Category
 import com.naeggeodo.domain.usecase.CreateChatUseCase
@@ -34,7 +33,9 @@ class CreateChatViewModel @Inject constructor(
     val place: LiveData<String> get() = _place
     private val _tag: SingleLiveEvent<String> = SingleLiveEvent()
     val tag: LiveData<String> get() = _tag
-    private val _maxPeopleNum: SingleLiveEvent<Int> = SingleLiveEvent()
+    private val _maxPeopleNum: SingleLiveEvent<Int> = SingleLiveEvent<Int>().apply {
+        postValue(2)
+    }
     val maxPeopleNum: LiveData<Int> get() = _maxPeopleNum
     private val _chatImage: SingleLiveEvent<Bitmap> = SingleLiveEvent()
     val chatImage: LiveData<Bitmap> get() = _chatImage
@@ -86,5 +87,14 @@ class CreateChatViewModel @Inject constructor(
 
     fun getChatHistories(userId: String) = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
+    }
+
+    fun init() {
+        setChatTitle("")
+        setCategory(null)
+        setPlace("")
+        setLink("")
+        setTag("")
+        setMaxPeopleNum(2)
     }
 }
