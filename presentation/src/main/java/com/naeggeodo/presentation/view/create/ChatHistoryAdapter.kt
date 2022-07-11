@@ -26,6 +26,7 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
     private var favoriteListener: (pos: Int) -> Unit = {}
     private var deleteListener: (pos: Int) -> Unit = {}
     private var selectedItemPos: Int? = null
+    private var itemClickListener: (item: Chat?) -> Unit = {}
 
     inner class ViewHolder(val binding: ItemChatHistoryBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -83,15 +84,15 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
             chatCreationHistoryContainer.setOnClickListener {
                 val prevPos = selectedItemPos
                 selectedItemPos = if (selectedItemPos == position) {
+                    itemClickListener(null)
                     null
                 } else {
+                    itemClickListener(datas[position])
                     position
                 }
-
                 prevPos?.let { notifyItemChanged(it) }
                 notifyItemChanged(position)
             }
-
 
             bookmarkButton.setOnClickListener {
                 favoriteListener(position)
@@ -132,15 +133,20 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
     fun setData(chatList: ArrayList<Chat>) {
         clearData()
         datas.addAll(chatList)
+        selectedItemPos = null
         notifyItemRangeInserted(0, chatList.size)
     }
 
     fun getData(pos: Int): Chat {
         return datas[pos]
     }
-    fun deleteData(pos: Int){
+
+    fun deleteData(pos: Int) {
+        val prevSize = datas.size
         datas.removeAt(pos)
         notifyItemRemoved(pos)
+        notifyItemRangeChanged(pos, prevSize);
+
     }
 
     fun updateBookmark(pos: Int) {
@@ -165,6 +171,10 @@ class ChatHistoryAdapter(private val context: Context, private var datas: ArrayL
 
     fun setDeleteListener(listener: (p: Int) -> Unit) {
         deleteListener = listener
+    }
+
+    fun setItemClickListener(listener: (item: Chat?) -> Unit) {
+        itemClickListener = listener
     }
 
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.model.DeleteChat
 import com.naeggeodo.domain.usecase.BookmarkingUseCase
 import com.naeggeodo.domain.usecase.DeleteCreationChatHistoryUseCase
 import com.naeggeodo.domain.usecase.GetChatCreationHistoryUseCase
@@ -30,10 +29,10 @@ class CreateHistoryViewModel @Inject constructor(
         const val EVENT_BOOKMARK = 511
     }
 
-    private val _chatList: MutableLiveData<List<Chat>> = SingleLiveEvent()
+    private val _chatList: SingleLiveEvent<List<Chat>> = SingleLiveEvent()
     val chatList: LiveData<List<Chat>> get() = _chatList
-    private val _deleteResponse: MutableLiveData<DeleteChat> = SingleLiveEvent()
-    val deleteResponse: LiveData<DeleteChat> get() = _deleteResponse
+    private val _selectedChat: SingleLiveEvent<Chat?> = SingleLiveEvent()
+    val selectedChat: LiveData<Chat?> get() = _selectedChat
 
     val bookmarkId: MutableLiveData<Int> = MutableLiveData()
 
@@ -47,6 +46,7 @@ class CreateHistoryViewModel @Inject constructor(
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
             _chatList.postValue(response.chatList)
+            _selectedChat.postValue(null)
             mutableScreenState.postValue(ScreenState.RENDER)
             viewEvent(HomeViewModel.EVENT_CATEGORIES_CHANGED)
         }
@@ -78,4 +78,6 @@ class CreateHistoryViewModel @Inject constructor(
                 result
             }
         }.await()
+
+    fun setSelectedChat(chat: Chat?) = _selectedChat.postValue(chat)
 }

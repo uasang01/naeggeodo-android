@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.create.CreateNewFragment">
+    tools:context=".view.create.TabNewFragment">
 
     <data>
 
@@ -12,7 +12,7 @@
 
         <variable
             name="fragment"
-            type="com.naeggeodo.presentation.view.create.CreateNewFragment" />
+            type="com.naeggeodo.presentation.view.create.TabNewFragment" />
     </data>
 
     <ScrollView

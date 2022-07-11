@@ -83,6 +83,11 @@ class ApiModule {
     fun provideMyInfoApiService(@Named("Auth") retrofit: Retrofit): MyInfoApi {
         return retrofit.create(MyInfoApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideRemitApiService(@Named("Auth") retrofit: Retrofit): RemitApi {
+        return retrofit.create(RemitApi::class.java)
+    }
 
 
 

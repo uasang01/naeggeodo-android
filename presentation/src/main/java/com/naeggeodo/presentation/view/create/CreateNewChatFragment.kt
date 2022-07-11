@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -17,6 +18,7 @@ import com.naeggeodo.presentation.utils.Util.persistImage
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
+import com.naeggeodo.presentation.viewmodel.CreateHistoryViewModel
 import com.naeggeodo.presentation.viewmodel.LocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -34,23 +36,32 @@ import timber.log.Timber
 class CreateNewChatFragment :
     BaseFragment<FragmentCreateNewChatBinding>(R.layout.fragment_create_new_chat) {
     private val createChatViewModel: CreateChatViewModel by activityViewModels()
+    private val createHistoryViewModel: CreateHistoryViewModel by activityViewModels()
 
     //    private val homeViewModel: HomeViewModel by activityViewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
-    private val tabTitleArray = arrayOf("새로입력", "주문목록")
+    private val pagerAdapter by lazy {
+        CreatePagerAdapter(
+            childFragmentManager,
+            lifecycle
+        )
+    }
+    private val tabTitleArray = arrayOf("새로입력", "생성내역")
     private lateinit var orderTimeType: String
+    private var tabState = 0    // 0 = TabNewChatFragment, 1 = TabHistoriesFragment
     override fun init() {
         val args: CreateNewChatFragmentArgs by navArgs()
         orderTimeType = args.orderTimeType
     }
 
+
     override fun initView() {
         // TabLayout, ViewPager
-        val viewPager = binding.viewPager
-        viewPager.adapter = CreatePagerAdapter(requireActivity().supportFragmentManager, lifecycle)
+        binding.viewPager.offscreenPageLimit = 1
+        binding.viewPager.adapter = pagerAdapter
 
         val tabLayout = binding.tabLayout
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        TabLayoutMediator(tabLayout, binding.viewPager) { tab, position ->
             tab.text = tabTitleArray[position]
         }.attach()
 
@@ -69,6 +80,16 @@ class CreateNewChatFragment :
     }
 
     override fun initListener() {
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                tabState = position
+                createButtonEnable()
+                if (tabState == 1) {
+                }
+            }
+        })
+
         binding.createTextView.setOnClickListener {
             if (!checkFieldValidation()) return@setOnClickListener
 
@@ -87,40 +108,72 @@ class CreateNewChatFragment :
                 return@setOnClickListener
             }
 
+
             try {
                 val json = JSONObject()
-                json.put("buildingCode", addr)
-                json.put("category", createChatViewModel.category.value!!.category)
-                json.put("title", createChatViewModel.chatTitle.value!!)
-                json.put("user_id", App.prefs.userId!!)
-                json.put("address", App.prefs.address!!)
-                json.put("orderTimeType", orderTimeType)
-                json.put("maxCount", createChatViewModel.maxPeopleNum.value!!)
-                json.put("tag", createChatViewModel.tag.value?.split(","))
-                json.put("link", createChatViewModel.link.value)
-                json.put("place", createChatViewModel.place.value)
-
                 val parts = arrayListOf<MultipartBody.Part>()
-                val body = json.toString()
-                    .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                val partJson =
-                    MultipartBody.Part.createFormData("chat", "post-chatRooms.json", body)
-                parts.add(partJson)
+                when (tabState) {
+                    0 -> {
+                        json.put("buildingCode", addr)
+                        json.put("category", createChatViewModel.category.value!!.category)
+                        json.put("title", createChatViewModel.chatTitle.value!!)
+                        json.put("user_id", App.prefs.userId!!)
+                        json.put("address", App.prefs.address!!)
+                        json.put("orderTimeType", orderTimeType)
+                        json.put("maxCount", createChatViewModel.maxPeopleNum.value!!)
+                        json.put("tag", createChatViewModel.tag.value?.split(","))
+                        json.put("link", createChatViewModel.link.value)
+                        json.put("place", createChatViewModel.place.value)
 
-                val bitmap = createChatViewModel.chatImage.value
-                bitmap?.let {
-                    val file = persistImage(requireContext(), bitmap, "file")
-                    val imageBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                    val partImage = MultipartBody.Part.createFormData("file", "file", imageBody)
-                    parts.add(partImage)
+                        val body = json.toString()
+                            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                        val partJson =
+                            MultipartBody.Part.createFormData("chat", "post-chatRooms.json", body)
+                        parts.add(partJson)
+
+                        val bitmap = createChatViewModel.chatImage.value
+                        bitmap?.let {
+                            val file = persistImage(requireContext(), bitmap, "file")
+                            val imageBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                            val partImage =
+                                MultipartBody.Part.createFormData("file", "file", imageBody)
+                            parts.add(partImage)
+                        }
+                    }
+                    1 -> {
+                        val chat = createHistoryViewModel.selectedChat.value!!
+                        json.put("buildingCode", addr)
+                        json.put("category", chat.category)
+                        json.put("title", chat.title)
+                        json.put("user_id", App.prefs.userId!!)
+                        json.put("address", App.prefs.address!!)
+                        json.put("orderTimeType", orderTimeType)
+                        json.put("maxCount", chat.maxCount)
+                        json.put("tag", chat.tags.ifEmpty { null })
+                        json.put("link", chat.link)
+                        json.put("place", chat.place)
+
+                        val body = json.toString()
+                            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                        val partJson =
+                            MultipartBody.Part.createFormData("chat", "post-chatRooms.json", body)
+                        parts.add(partJson)
+
+                        val bitmap = createChatViewModel.chatImage.value
+                        bitmap?.let {
+                            val file = persistImage(requireContext(), bitmap, "file")
+                            val imageBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                            val partImage =
+                                MultipartBody.Part.createFormData("file", "file", imageBody)
+                            parts.add(partImage)
+                        }
+                    }
                 }
-
                 CoroutineScope(Dispatchers.IO).launch {
                     val result = createChatViewModel.createChat(parts)
                     if (!result) {
                         showShortToast(requireContext(), "채팅방 생성 실패")
                     }
-
                 }
             } catch (e: Exception) {
                 showShortToast(requireContext(), "Error occurred")
@@ -143,6 +196,9 @@ class CreateNewChatFragment :
                 CreateNewChatFragmentDirections.actionCreateNewChatFragmentToChatActivity(it)
             findNavController().navigate(action)
         }
+        createHistoryViewModel.selectedChat.observe(viewLifecycleOwner) {
+            createButtonEnable()
+        }
     }
 
     private fun checkFieldValidation(): Boolean {
@@ -150,15 +206,21 @@ class CreateNewChatFragment :
 ////            showShortToast("위치 정보가 없습니다")
 //            return false
 //        }
-        if (createChatViewModel.chatTitle.value == null || createChatViewModel.chatTitle.value!!.isEmpty()) {
+        when (tabState) {
+            0 -> {
+                if (createChatViewModel.chatTitle.value == null || createChatViewModel.chatTitle.value!!.isEmpty()) {
 //            showShortToast("제목을 입력해 주세요")
-            return false
-        }
-        if (createChatViewModel.category.value == null) {
+                    return false
+                }
+                if (createChatViewModel.category.value == null) {
 //            showShortToast("카테고리를 선택해 주세요")
-            return false
+                    return false
+                }
+            }
+            1 -> {
+                return createHistoryViewModel.selectedChat.value != null
+            }
         }
-
         return true
     }
 

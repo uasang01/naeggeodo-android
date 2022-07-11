@@ -27,7 +27,7 @@ private const val PEOPLE_MAX = 5
 private const val PEOPLE_MIN = 2
 
 @AndroidEntryPoint
-class CreateNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_tab_new) {
+class TabNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_tab_new) {
     val createChatViewModel: CreateChatViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 
