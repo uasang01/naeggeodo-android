@@ -138,9 +138,8 @@ class CreateNewChatFragment :
             createButtonEnable()
         }
         createChatViewModel.chatId.observe(viewLifecycleOwner) {
-            Timber.e("chatId $it")
-//            val action = CreateNewChatFragmentDirections.actionCreateNewChatFragmentToChatActivity(it)
-//            findNavController().navigate(action)
+            val action = CreateNewChatFragmentDirections.actionCreateNewChatFragmentToChatActivity(it)
+            findNavController().navigate(action)
         }
     }
 

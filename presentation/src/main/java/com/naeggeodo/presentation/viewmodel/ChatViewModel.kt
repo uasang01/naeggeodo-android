@@ -2,6 +2,8 @@ package com.naeggeodo.presentation.viewmodel
 
 import android.app.Activity
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -16,6 +18,7 @@ import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +28,7 @@ import timber.log.Timber
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import ua.naiksoftware.stomp.dto.StompHeader
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +49,8 @@ class ChatViewModel @Inject constructor(
         const val EVENT_EXIT_CHAT = 317
         const val EVENT_BAN_USER = 318
         const val EVENT_STOMP_CONNECTED = 319
+        const val ERROR_STOMP_NOT_CONNECTED = 320
+        const val FAILED_TO_SEND_MESSAGE = 321
         const val ERROR_OCCURRED = 31
 //        const val EVENT = 316
     }
@@ -179,7 +185,11 @@ class ChatViewModel @Inject constructor(
 
         // 메세지를 받기위한 구독 설정
         msgReceiverDisposable = stompClient.topic("/topic/$chatId")
-            .subscribe({ topicMessage ->
+            .onErrorReturn { throwable ->
+                Timber.i("error occurred. cause: ${throwable.cause}, message: ${throwable.message}")
+                null
+            }
+            .subscribe { topicMessage ->
 //                Timber.i("message Recieve ${topicMessage.payload}")
                 val jsonObject = JsonParser.parseString(topicMessage.payload)
                 val msgInfo = Gson().fromJson(jsonObject, Message::class.java)
@@ -197,37 +207,43 @@ class ChatViewModel @Inject constructor(
                     }
                 }
 
-            }, { throwable ->
-                Timber.i("error occurred. cause: ${throwable.cause}, message: ${throwable.message}")
-            })
+            }
 
 
         // stomp의 lifecycle 구독
-        lifecycleDisposable = stompClient.lifecycle().subscribe { lifecycleEvent ->
-            when (lifecycleEvent.type) {
-                LifecycleEvent.Type.OPENED -> {
-                    Timber.i("OPEND")
-                    // 연결 시 입장 메세지 전송
-                    sendMsg("", ChatDetailType.WELCOME)
-                    viewEvent(EVENT_STOMP_CONNECTED)
-                }
-                LifecycleEvent.Type.CLOSED -> {
-                    Timber.i("CLOSED")
+        lifecycleDisposable = stompClient.lifecycle()
+            .onErrorReturn { throwable ->
+                Timber.e("subscribe lifecycle observable failure / ${throwable.message}")
+                null
+            }
+            .subscribe { lifecycleEvent ->
+                when (lifecycleEvent.type) {
+                    LifecycleEvent.Type.OPENED -> {
+                        Timber.i("OPENED")
+                        // 연결 시 입장 메세지 전송
+                        Handler(Looper.getMainLooper())
+                            .postDelayed({
+                                sendMsg("", ChatDetailType.WELCOME)
+                            },200L)
+                        viewEvent(EVENT_STOMP_CONNECTED)
+                    }
+                    LifecycleEvent.Type.CLOSED -> {
+                        Timber.i("CLOSED")
 //                    stopStomp()
 //                    runStomp()
 
-                    viewEvent(ERROR_OCCURRED)
-                }
-                LifecycleEvent.Type.ERROR -> {
-                    Timber.i("ERROR")
-                    Timber.e("CONNECT ERROR ${lifecycleEvent.exception}")
-                    viewEvent(ERROR_OCCURRED)
-                }
-                else -> {
-                    Timber.i("ELSE ${lifecycleEvent.message}")
+                        viewEvent(ERROR_OCCURRED)
+                    }
+                    LifecycleEvent.Type.ERROR -> {
+                        Timber.i("ERROR")
+                        Timber.e("CONNECT ERROR ${lifecycleEvent.exception}")
+                        viewEvent(ERROR_OCCURRED)
+                    }
+                    else -> {
+                        Timber.i("ELSE ${lifecycleEvent.message}")
+                    }
                 }
             }
-        }
 
         // 메세지형식
         // 일반
@@ -264,6 +280,11 @@ class ChatViewModel @Inject constructor(
     }
 
     fun sendMsg(content: String, type: ChatDetailType) {
+        if(!stompClient.isConnected) {
+            viewEvent(FAILED_TO_SEND_MESSAGE)
+            return
+        }
+
         val prefix = "/app/chat"
         val send = "/send"
         val image = "/image"
@@ -316,14 +337,13 @@ class ChatViewModel @Inject constructor(
         }
         msgSenderDisposable = stompClient
             .send(destination, data.toString())
-            .subscribe(
-                {
-                    //onComplete
-                },
-                { error ->
-                    Timber.e("ERROR OCCURRED ON SEND MESSAGE\nmessage: ${error.message} / cause: ${error.cause}")
-                    viewEvent(ERROR_OCCURRED)
-                })
+            .doOnError { throwable ->
+                Timber.e("ERROR OCCURRED ON SEND MESSAGE\nmessage: ${throwable.message} / cause: ${throwable.cause}")
+//                viewEvent(ERROR_OCCURRED)
+            }
+            .subscribe {
+                //onComplete
+            }
 
         // 메세지 전송
 

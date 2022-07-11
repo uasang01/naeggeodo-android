@@ -211,6 +211,9 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                         chatViewModel.getChatHistory()
                         chatViewModel.getQuickChats(App.prefs.userId!!)
                     }
+                    ChatViewModel.FAILED_TO_SEND_MESSAGE -> {
+                        showShortToast(requireContext(), "메세지 전송 실패")
+                    }
                 }
             }
         }
@@ -241,6 +244,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
 
         chatViewModel.users.observe(viewLifecycleOwner) { users ->
+            Timber.e("users / $users")
             initDrawerView(users)
         }
 
@@ -286,7 +290,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     }
                 }
             }
-            chatViewModel.runStomp()
         }
 
         chatViewModel.message.observe(viewLifecycleOwner) { msgInfo ->
