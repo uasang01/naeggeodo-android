@@ -1,9 +1,6 @@
 package com.naeggeodo.data.repository.chat.remote
 
-import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.model.ChatHistoryList
-import com.naeggeodo.domain.model.QuickChatList
-import com.naeggeodo.domain.model.Users
+import com.naeggeodo.domain.model.*
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 
 interface ChatRemoteDataSource {
@@ -24,4 +21,8 @@ interface ChatRemoteDataSource {
         userId: String,
         body: HashMap<String, List<String?>>
     ): QuickChatList?
+    suspend fun getMyChatList(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        userId: String
+    ): ChatList?
 }

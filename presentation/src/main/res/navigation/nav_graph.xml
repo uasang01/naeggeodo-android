@@ -5,20 +5,16 @@
     android:id="@+id/navigation"
     app:startDestination="@id/home">
 
-<!--    <include app:graph="@navigation/home"/>-->
-<!--    <include app:graph="@navigation/search"/>-->
-<!--    <include app:graph="@navigation/create"/>-->
-<!--    <include app:graph="@navigation/chat"/>-->
-<!--    <include app:graph="@navigation/info"/>-->
+    <!--    <include app:graph="@navigation/home"/>-->
+    <!--    <include app:graph="@navigation/search"/>-->
+    <!--    <include app:graph="@navigation/create"/>-->
+    <!--    <include app:graph="@navigation/chat"/>-->
+    <!--    <include app:graph="@navigation/info"/>-->
     <fragment
         android:id="@+id/home"
         android:name="com.naeggeodo.presentation.view.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_home_to_navigation_chat"
-            app:destination="@id/navigation_chat"
-            />
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_to_chatActivity"
             app:destination="@id/chatActivity" />
@@ -27,7 +23,7 @@
         android:id="@+id/search"
         android:name="com.naeggeodo.presentation.view.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_search_to_chatActivity"
             app:destination="@id/chatActivity" />
@@ -45,7 +41,13 @@
         android:id="@+id/my_chat"
         android:name="com.naeggeodo.presentation.view.mychat.MyChatFragment"
         android:label="fragment_my_chat"
-        tools:layout="@layout/fragment_my_chat" />
+        tools:layout="@layout/fragment_my_chat">
+        <action
+            android:id="@+id/action_my_chat_to_chatActivity"
+            app:destination="@id/chatActivity"
+            app:popUpTo="@id/home"
+            app:popUpToInclusive="false" />
+    </fragment>
     <fragment
         android:id="@+id/info"
         android:name="com.naeggeodo.presentation.view.info.InfoFragment"
@@ -55,25 +57,22 @@
         android:id="@+id/createNewChatFragment"
         android:name="com.naeggeodo.presentation.view.create.CreateNewChatFragment"
         android:label="fragment_create_new_chat"
-        tools:layout="@layout/fragment_create_new_chat" >
+        tools:layout="@layout/fragment_create_new_chat">
         <argument
             android:name="orderTimeType"
             app:argType="string" />
         <action
             android:id="@+id/action_createNewChatFragment_to_chatActivity"
             app:destination="@id/chatActivity"
-            app:popUpToInclusive="false"
             app:popUpTo="@id/home"
-            />
+            app:popUpToInclusive="false" />
     </fragment>
 
-    <include
-        app:graph="@navigation/nav_graph_chat" />
     <activity
         android:id="@+id/chatActivity"
         android:name="com.naeggeodo.presentation.view.chat.ChatActivity"
         android:label="activity_chat"
-        tools:layout="@layout/activity_chat" >
+        tools:layout="@layout/activity_chat">
         <argument
             android:name="chatId"
             app:argType="integer" />

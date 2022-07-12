@@ -1,10 +1,7 @@
 package com.naeggeodo.data.repository.chat
 
 import com.naeggeodo.data.repository.chat.remote.ChatRemoteDataSource
-import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.model.ChatHistoryList
-import com.naeggeodo.domain.model.QuickChatList
-import com.naeggeodo.domain.model.Users
+import com.naeggeodo.domain.model.*
 import com.naeggeodo.domain.repository.ChatRepository
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import javax.inject.Inject
@@ -44,5 +41,12 @@ class ChatRepositoryImpl @Inject constructor(
         body: HashMap<String, List<String?>>
     ): QuickChatList? {
         return dataSource.patchQuickChat(remoteErrorEmitter, userId, body)
+    }
+
+    override suspend fun getMyChatList(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        userId: String
+    ): ChatList? {
+        return dataSource.getMyChatList(remoteErrorEmitter, userId)
     }
 }

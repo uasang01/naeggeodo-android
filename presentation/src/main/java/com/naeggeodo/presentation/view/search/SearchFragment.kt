@@ -114,10 +114,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
     private fun recyclerViewChanger(showTags: Boolean) {
         if (showTags) {
-            binding.chatListRecyclerView.visibility = View.GONE
-            binding.tagRecyclerView.visibility = View.VISIBLE
+            binding.chatListRecyclerView.visibility = View.INVISIBLE
+            binding.tagContainer.visibility = View.VISIBLE
         } else {
-            binding.tagRecyclerView.visibility = View.GONE
+            binding.tagContainer.visibility = View.INVISIBLE
             binding.chatListRecyclerView.visibility = View.VISIBLE
         }
     }

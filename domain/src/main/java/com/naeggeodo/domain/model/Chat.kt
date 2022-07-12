@@ -24,5 +24,6 @@ data class Chat(
     val tags: List<String>,
     val title: String,
     @SerializedName("user_id")
-    val userId: String
+    val userId: String,
+    val latestMessage: String?
 )

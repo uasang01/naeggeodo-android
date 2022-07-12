@@ -5,10 +5,7 @@ import com.naeggeodo.data.api.ChatRoomApi
 import com.naeggeodo.data.api.GetPrevChatHistoryApi
 import com.naeggeodo.data.api.GetUsersInChatApi
 import com.naeggeodo.data.api.QuickChatApi
-import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.model.ChatHistoryList
-import com.naeggeodo.domain.model.QuickChatList
-import com.naeggeodo.domain.model.Users
+import com.naeggeodo.domain.model.*
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import timber.log.Timber
 import javax.inject.Inject
@@ -87,6 +84,21 @@ class ChatRemoteDataSourceImpl @Inject constructor(
     ): QuickChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
             quickChatApi.patchQuickChatApi(userId, body)
+        }
+        return if (res != null && res.isSuccessful && res.code() == 200) {
+            res.body()
+        } else {
+            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
+            null
+        }
+    }
+
+    override suspend fun getMyChatList(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        userId: String
+    ): ChatList? {
+        val res = safeApiCall(remoteErrorEmitter) {
+            chatRoomApi.getMyChats(userId)
         }
         return if (res != null && res.isSuccessful && res.code() == 200) {
             res.body()
