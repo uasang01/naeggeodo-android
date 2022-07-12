@@ -44,12 +44,6 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideCreateChatApiService(@Named("Auth") retrofit: Retrofit): CreateChatApi {
-        return retrofit.create(CreateChatApi::class.java)
-    }
-
-    @Provides
-    @Singleton
     fun provideChatRoomApiService(@Named("Auth") retrofit: Retrofit): ChatRoomApi {
         return retrofit.create(ChatRoomApi::class.java)
     }

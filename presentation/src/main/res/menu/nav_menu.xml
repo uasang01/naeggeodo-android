@@ -6,20 +6,20 @@
         android:enabled="true"
         android:title="홈"/>
     <item
-        android:id="@+id/search"
-        android:icon="@drawable/ic_nav_search"
+        android:id="@+id/my_chat"
+        android:icon="@drawable/ic_nav_my_chat"
         android:enabled="true"
-        android:title="검색"/>
+        android:title="내꺼톡"/>
     <item
         android:id="@+id/create"
         android:icon="@drawable/ic_nav_create"
         android:enabled="true"
         android:title="내꺼도 생성"/>
     <item
-        android:id="@+id/my_chats"
-        android:icon="@drawable/ic_nav_my_chats"
+        android:id="@+id/search"
+        android:icon="@drawable/ic_nav_search"
         android:enabled="true"
-        android:title="내꺼톡"/>
+        android:title="검색"/>
     <item
         android:id="@+id/info"
         android:icon="@drawable/ic_nav_info"

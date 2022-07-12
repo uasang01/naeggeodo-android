@@ -42,10 +42,10 @@
             app:destination="@id/createNewChatFragment" />
     </fragment>
     <fragment
-        android:id="@+id/my_chats"
-        android:name="com.naeggeodo.presentation.view.mychats.MyChatsFragment"
-        android:label="fragment_my_chats"
-        tools:layout="@layout/fragment_my_chats" />
+        android:id="@+id/my_chat"
+        android:name="com.naeggeodo.presentation.view.mychat.MyChatFragment"
+        android:label="fragment_my_chat"
+        tools:layout="@layout/fragment_my_chat" />
     <fragment
         android:id="@+id/info"
         android:name="com.naeggeodo.presentation.view.info.InfoFragment"

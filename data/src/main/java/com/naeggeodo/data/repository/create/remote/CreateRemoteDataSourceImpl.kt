@@ -2,7 +2,6 @@ package com.naeggeodo.data.repository.create.remote
 
 import com.naeggeodo.data.api.BookmarkingApi
 import com.naeggeodo.data.api.ChatRoomApi
-import com.naeggeodo.data.api.CreateChatApi
 import com.naeggeodo.data.api.GetChatCreationHistoryApi
 import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.ChatId
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 
 class CreateRemoteDataSourceImpl @Inject constructor(
-    private val createChatApi: CreateChatApi,
     private val getChatCreationHistoryApi: GetChatCreationHistoryApi,
     private val bookmarkingApi: BookmarkingApi,
     private val chatRoomApi: ChatRoomApi
@@ -25,7 +23,7 @@ class CreateRemoteDataSourceImpl @Inject constructor(
         files: List<MultipartBody.Part>
     ): ChatId? {
         val res = safeApiCall(remoteErrorEmitter) {
-            createChatApi.createChat(files)
+            chatRoomApi.createChat(files)
         }
         return if (res != null && res.isSuccessful && res.code() == 200) {
             res.body()
