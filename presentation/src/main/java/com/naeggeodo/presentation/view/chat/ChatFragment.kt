@@ -7,11 +7,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.activityViewModels
@@ -60,7 +57,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         super.onStart()
 
         chatViewModel.getChatInfo()
-        if (!chatViewModel.stompClient.isConnected) {
+        if (!chatViewModel.stompClient.isConnected()) {
             chatViewModel.runStomp()
         } else {
             chatViewModel.getChatHistory()
@@ -79,7 +76,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
 
         // make recycler view not flickering
-        binding.galleryRecyclerview.itemAnimator?.changeDuration = 0L
+        binding.galleryRecyclerview.itemAnimator = null
 
         // initialize bottom sheet dialog
         val phraseClickListener: (String) -> Unit = { str ->
@@ -118,7 +115,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             exitDialog.setTitle("나가기")
             exitDialog.setMessage("정말 나가시겠습니까?")
             exitDialog.setPositiveButton("나가기") { _, _ ->
-                chatViewModel.sendMsg("", ChatDetailType.EXIT)
+                chatViewModel.exitChat()
                 requireActivity().finish()
             }
             exitDialog.setNegativeButton("취소") { dialog, _ ->
@@ -212,6 +209,30 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     }
                     ChatViewModel.FAILED_TO_SEND_MESSAGE -> {
                         showShortToast(requireContext(), "메세지 전송 실패")
+                    }
+                    ChatViewModel.ERROR_BANNED_FROM_CHAT -> {
+                        showShortToast(requireContext(), "추방당한 방입니다")
+                        requireActivity().finish()
+                    }
+                    ChatViewModel.ERROR_SESSION_DUPLICATION -> {
+                        showShortToast(requireContext(), "중복된 접속입니다")
+                        requireActivity().finish()
+                    }
+                    ChatViewModel.ERROR_UNAUTHORIZED -> {
+                        showShortToast(requireContext(), "인증되지 않은 아이디 입니다")
+                        requireActivity().finish()
+                    }
+                    ChatViewModel.ERROR_INVALID_STATE -> {
+                        showShortToast(requireContext(), "입장할 수 없습니다")
+                        requireActivity().finish()
+                    }
+                    ChatViewModel.ERROR_INVALID_ACCESS -> {
+                        showShortToast(requireContext(), "잘못된 접근입니다")
+                        requireActivity().finish()
+                    }
+                    ChatViewModel.ERROR_BAD_REQUEST -> {
+                        showShortToast(requireContext(), "잘못된 요청입니다")
+                        requireActivity().finish()
                     }
                 }
             }
@@ -409,37 +430,47 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     private fun initDrawerView(users: List<User>) {
         val inflater = LayoutInflater.from(requireContext())
         binding.drawer.participantContainer.removeAllViews()
-        users.forEach {
-            val userView = inflater.inflate(R.layout.item_participant, null)
-            val profileView = userView.findViewById<ImageView>(R.id.profile_image_view)
-            val nicknameView = userView.findViewById<TextView>(R.id.nickname_text_view)
-            val masterView = userView.findViewById<CardView>(R.id.me_text_view)
-            val masterId = chatViewModel.chatInfo.value?.userId
+        users.forEach { user ->
+            val layoutBinding = ItemParticipantBinding.inflate(inflater)
+            val ownerId = chatViewModel.chatInfo.value?.userId
 
-            nicknameView.text = it.nickname
+            // user nickname
+            layoutBinding.nicknameTextView.text = user.nickname
 
-            if (App.prefs.userId != it.userId) {
-                masterView.visibility = View.GONE
+            // show me icon
+            if (App.prefs.userId != user.userId) {
+                layoutBinding.meTextView.visibility = View.GONE
             }
-            if (masterId == it.userId) {
-                profileView.setImageDrawable(
+            if (ownerId == user.userId) {
+                // owner user profile
+                layoutBinding.profileImageView.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.ic_king
                     )
                 )
             } else {
-                profileView.setImageDrawable(
+                // normal user profile
+                layoutBinding.profileImageView.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.ic_user
                     )
                 )
+                // show ban button
+                if (ownerId == App.prefs.userId) {
+                    layoutBinding.banButton.visibility = View.VISIBLE
+                    layoutBinding.banButton.setOnClickListener {
+                        chatViewModel.banUser(user.userId)
+                    }
+                }
             }
+
+
             val lp = LinearLayout.LayoutParams(MATCH_PARENT, 40.dpToPx(requireContext()))
             lp.topMargin = 4.dpToPx(requireContext())
-            userView.layoutParams = lp
-            binding.drawer.participantContainer.addView(userView)
+            layoutBinding.root.layoutParams = lp
+            binding.drawer.participantContainer.addView(layoutBinding.root)
         }
     }
 

@@ -17,18 +17,18 @@ import com.naeggeodo.presentation.data.Message
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.SingleLiveEvent
+import com.uasang01.stomp.lib.Event
+import com.uasang01.stomp.lib.StompClient
+import com.uasang01.stomp.lib.payload.StompMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
 import org.json.JSONObject
 import timber.log.Timber
-import ua.naiksoftware.stomp.Stomp
-import ua.naiksoftware.stomp.dto.LifecycleEvent
-import ua.naiksoftware.stomp.dto.StompHeader
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,36 +41,20 @@ class ChatViewModel @Inject constructor(
     private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase
 ) : BaseViewModel() {
     companion object {
-        const val EVENT_CHAT_INFO_CHANGED = 311
-        const val EVENT_USERS_CHANGED = 312
-        const val EVENT_HISTORY_CHANGED = 313
-        const val EVENT_MESSAGE_RECEIVED = 314
-        const val EVENT_IMAGE_RECEIVED = 315
-        const val EVENT_ENTER_CHAT = 316
-        const val EVENT_EXIT_CHAT = 317
-        const val EVENT_BAN_USER = 318
         const val EVENT_STOMP_CONNECTED = 319
-        const val ERROR_STOMP_NOT_CONNECTED = 320
         const val FAILED_TO_SEND_MESSAGE = 321
         const val EVENT_CHAT_FINISHED = 322
+        const val ERROR_SESSION_DUPLICATION = 330
+        const val ERROR_BANNED_FROM_CHAT = 331
+        const val ERROR_BAD_REQUEST = 332
+        const val ERROR_UNAUTHORIZED = 333
+        const val ERROR_INVALID_STATE = 334
+        const val ERROR_INVALID_ACCESS = 335
         const val ERROR_OCCURRED = 31
-//        const val EVENT = 316
     }
 
 
     var chatId: Int? = null
-
-    // http -> ws
-    // https -> wss
-    private val url = "wss://api.naeggeodo.com/api/chat" // 소켓에 연결하는 엔드포인트가 /socket일때 다음과 같음
-
-    // url 끝에 /websocket 은 꼭 붙여줘야한다.
-    val stompClient by lazy {
-        Stomp.over(
-            Stomp.ConnectionProvider.OKHTTP,
-            "$url/websocket"
-        )
-    }
 
 
     private val _chatInfo: SingleLiveEvent<Chat> = SingleLiveEvent()
@@ -173,6 +157,15 @@ class ChatViewModel @Inject constructor(
         }
 
 
+    fun banUser(targetId: String) {
+        sendMsg(targetId, ChatDetailType.BAN)
+    }
+
+    fun exitChat() {
+        sendMsg("", ChatDetailType.EXIT)
+    }
+
+
     //    ### 커넥트 END Point
     //    ⇒ https//api.naeggeodo.com/api/chat
 
@@ -180,89 +173,96 @@ class ChatViewModel @Inject constructor(
     //    1.  ‘/topic/’+채팅방id   : 전체 메세지
     //    2. ‘/user/queue/’+세션Id : 개인 메시지 ex)강퇴 , alert
 
+    private var compositeDisposable: CompositeDisposable? = null
 
-    var lifecycleDisposable: Disposable? = null
-    var msgReceiverDisposable: Disposable? = null
-    var msgSenderDisposable: Disposable? = null
 
+    // init
+    val userId = App.prefs.userId
+
+    // http -> ws
+    // https -> wss
+    // url 끝에 '/websocket'을 꼭 붙여줘야한다.
+    private val url = "wss://api.naeggeodo.com/api/chat" // 소켓에 연결하는 엔드포인트가 /socket일때 다음과 같음
+
+
+    val stompClient = StompClient(OkHttpClient())
     fun runStomp() {
-        if (stompClient.isConnected) {
-            Timber.e("STOMP ALREADY CONNECTED")
-            return
-        }
-
-        // init
-        val userId = App.prefs.userId
         Timber.e("chatId : $chatId userId: $userId  ")
+
+        resetSubscriptions()
+
+        stompClient.url = "$url/websocket"
         // 필요한 헤더 추가
-        val headerList = arrayListOf<StompHeader>()
-        headerList.add(StompHeader("chatMain_id", "$chatId"))
-        headerList.add(StompHeader("sender", "${userId}"))
-        headerList.add(StompHeader("Authorization", "Bearer ${App.prefs.accessToken}"))
-        stompClient.connect(headerList)
+        val headers = HashMap<String, String>()
+        headers["chatMain_id"] = "$chatId"
+        headers["sender"] = "${userId}"
+        headers["Authorization"] = "Bearer ${App.prefs.accessToken}"
 
-
-        // 메세지를 받기위한 구독 설정
-        msgReceiverDisposable = stompClient.topic("/topic/$chatId")
-            .onErrorReturn { throwable ->
-                Timber.i("error occurred. cause: ${throwable.cause}, message: ${throwable.message}")
-                null
-            }
-            .subscribe { topicMessage ->
-//                Timber.i("message Recieve ${topicMessage.payload}")
-                val jsonObject = JsonParser.parseString(topicMessage.payload)
-                val msgInfo = Gson().fromJson(jsonObject, Message::class.java)
-                _message.postValue(msgInfo)
-
-                when (msgInfo.type) {
-                    ChatDetailType.CNT.name -> {
-                        // CNT 타입의 메세지를 받으면 1명 추가하기.
-                        val currentCount = JSONObject(msgInfo.contents).get("currentCount")
-                        val users = Gson().fromJson(
-                            "{\"users\":${JSONObject(msgInfo.contents).get("users")}}",
-                            Users::class.java
-                        )
-                        _users.postValue(users.users)
-                    }
-                }
-
-            }
-
-
-        // stomp의 lifecycle 구독
-        lifecycleDisposable = stompClient.lifecycle()
-            .onErrorReturn { throwable ->
-                Timber.e("subscribe lifecycle observable failure / ${throwable.message}")
-                null
-            }
-            .subscribe { lifecycleEvent ->
-                when (lifecycleEvent.type) {
-                    LifecycleEvent.Type.OPENED -> {
+        val connectionDisposable = stompClient.connect(headers).subscribe(
+            {
+                when (it.type) {
+                    Event.Type.OPENED -> {
                         Timber.i("OPENED")
                         // 연결 시 입장 메세지 전송
                         Handler(Looper.getMainLooper())
                             .postDelayed({
                                 sendMsg("", ChatDetailType.WELCOME)
-                            },200L)
+                            }, 200L)
                         viewEvent(EVENT_STOMP_CONNECTED)
                     }
-                    LifecycleEvent.Type.CLOSED -> {
-                        Timber.i("CLOSED")
-//                    stopStomp()
-//                    runStomp()
-
-                        viewEvent(ERROR_OCCURRED)
+                    Event.Type.CLOSED -> {
+                        Timber.i("CLOSED ${it.type} / ${it.exception}")
                     }
-                    LifecycleEvent.Type.ERROR -> {
-                        Timber.i("ERROR")
-                        Timber.e("CONNECT ERROR ${lifecycleEvent.exception}")
-                        viewEvent(ERROR_OCCURRED)
+                    Event.Type.ERROR -> {
+                        Timber.e("CONNECT ERROR / ${it.type} / ${it.exception}")
                     }
                     else -> {
-                        Timber.i("ELSE ${lifecycleEvent.message}")
+                        Timber.e("NPE / ${it.type} / ${it.exception}")
                     }
                 }
-            }
+            }, {
+                Timber.e("STOMP ERROR OCCURRED ON CONNECT / ${it.message}")
+                connectErrorHandler(it.message!!)
+            })
+        compositeDisposable?.add(connectionDisposable)
+        RxJavaPlugins.setErrorHandler { }
+
+        // 메세지를 받기위해 구독
+        val topicDisposable = stompClient.join("/topic/$chatId")
+            .subscribe(
+                { message ->
+                    Timber.e("message arrived / $message")
+                    try {
+                        var jsonObject = JsonParser.parseString(message)
+                        val stompMessage = Gson().fromJson(jsonObject, StompMessage::class.java)
+
+                        jsonObject = if (stompMessage.payload.isNullOrEmpty()) {
+                            JsonParser.parseString(message)
+                        } else {
+                            JsonParser.parseString(stompMessage.payload)
+                        }
+
+                        val msgInfo = Gson().fromJson(jsonObject, Message::class.java)
+                        _message.postValue(msgInfo)
+
+                        when (msgInfo.type) {
+                            ChatDetailType.CNT.name -> {
+                                // CNT 타입의 메세지를 받으면 1명 추가하기.
+                                val currentCount = JSONObject(msgInfo.contents).get("currentCount")
+                                val users = Gson().fromJson(
+                                    "{\"users\":${JSONObject(msgInfo.contents).get("users")}}",
+                                    Users::class.java
+                                )
+                                _users.postValue(users.users)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Timber.e("test ${e.message} / ${e.stackTraceToString()}")
+                    }
+                }, {
+                    Timber.e("STOMP TOPIC ERROR / ${it.message} / ${it.stackTraceToString()} ")
+                })
+        compositeDisposable?.add(topicDisposable)
 
         // 메세지형식
         // 일반
@@ -291,6 +291,36 @@ class ChatViewModel @Inject constructor(
         //    2. 입장메시지 : ‘/enter’
         //    3. 퇴장메시지 : ‘/exit’
         //    4. 강퇴 : ‘/ban’
+
+
+    }
+
+    private fun connectErrorHandler(error: String) {
+        when (error) {
+            "BANNED_CHAT_USER" -> {
+                viewEvent(ERROR_BANNED_FROM_CHAT)
+            }
+            "SESSION_DUPLICATION" -> {
+                viewEvent(ERROR_SESSION_DUPLICATION)
+            }
+            "INVALID_STATE" -> {
+                viewEvent(ERROR_INVALID_STATE)
+            }
+            "BAD_REQUEST" -> {
+                viewEvent(ERROR_BAD_REQUEST)
+            }
+            "UNAUTHORIZED" -> {
+                viewEvent(ERROR_UNAUTHORIZED)
+            }
+            else -> {
+                viewEvent(ERROR_INVALID_ACCESS)
+            }
+        }
+    }
+
+    private fun resetSubscriptions() {
+        compositeDisposable?.dispose()
+        compositeDisposable = CompositeDisposable()
     }
 
 
@@ -299,7 +329,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun sendMsg(content: String, type: ChatDetailType) {
-        if(!stompClient.isConnected) {
+        if (!stompClient.isConnected()) {
             viewEvent(FAILED_TO_SEND_MESSAGE)
             return
         }
@@ -314,69 +344,54 @@ class ChatViewModel @Inject constructor(
         val data = JSONObject()
         var destination = prefix
         val nickname = App.prefs.nickname
+
+        data.put("chatMain_id", chatId)
+        data.put("sender", App.prefs.userId)
+        data.put("type", type.name)
+        data.put("nickname", nickname)
         when (type) {
             ChatDetailType.TEXT -> {
-                data.put("chatMain_id", chatId)
-                data.put("sender", App.prefs.userId)
                 data.put("contents", content)
-                data.put("type", type.name)
-                data.put("nickname", nickname)
                 destination += send
             }
             ChatDetailType.IMAGE -> {
-                data.put("chatMain_id", chatId)
-                data.put("sender", App.prefs.userId)
                 data.put("contents", content)
-                data.put("type", type.name)
-                data.put("nickname", nickname)
                 destination += send
             }
             ChatDetailType.WELCOME -> {
-                data.put("chatMain_id", chatId)
-                data.put("sender", App.prefs.userId)
                 data.put("contents", "${nickname}님이 입장하셨습니다")
-                data.put("type", type.name)
-                data.put("nickname", nickname)
                 destination += enter
             }
             ChatDetailType.EXIT -> {
-                data.put("chatMain_id", chatId)
-                data.put("sender", App.prefs.userId)
                 data.put("contents", "${nickname}님이 퇴장하셨습니다")
-                data.put("type", type.name)
-                data.put("nickname", nickname)
                 destination += exit
             }
-//            ChatDetailType.WELCOME -> {
-//
-//            }
+            ChatDetailType.BAN -> {
+                data.put("target_id", content)
+                data.put("contents", content)
+                destination += ban
+            }
             else -> {
                 return
             }
         }
-        msgSenderDisposable = stompClient
-            .send(destination, data.toString())
-            .doOnError { throwable ->
-                Timber.e("ERROR OCCURRED ON SEND MESSAGE\nmessage: ${throwable.message} / cause: ${throwable.cause}")
-//                viewEvent(ERROR_OCCURRED)
-            }
-            .subscribe {
-                //onComplete
-            }
 
         // 메세지 전송
-
+        val msgSenderDisposable = stompClient
+            .send(destination, data.toString())
+            .subscribe({
+                //onComplete
+            }, { throwable ->
+                Timber.e("ERROR OCCURRED ON SEND MESSAGE\nmessage: ${throwable.message} / cause: ${throwable.cause}")
+            })
+        compositeDisposable?.add(msgSenderDisposable)
 
     }
 
-    fun banUser() {}
-    fun exitChat() {}
-
     fun stopStomp() {
-        msgSenderDisposable?.dispose()
-        msgReceiverDisposable?.dispose()
-        lifecycleDisposable?.dispose()
-        stompClient.disconnect()
+        compositeDisposable?.dispose()
+//        stompClient.
+//        stompClient.disconnect()
     }
 
     fun getAllImagePaths(activity: Activity): ArrayList<String> {

@@ -43,13 +43,23 @@
         <TextView
             android:id="@+id/nickname_text_view"
             style="@style/font_regular_15"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="18dp"
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
-            android:gravity="center"
+            android:gravity="start"
             android:text="신길동호랑이"
             android:textColor="@color/black" />
+
+        <ImageView
+            android:id="@+id/ban_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="10dp"
+            android:visibility="invisible"
+            android:src="@drawable/ic_ban_user"
+            />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
