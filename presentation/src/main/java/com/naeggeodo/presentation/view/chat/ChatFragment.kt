@@ -39,7 +39,6 @@ import org.json.JSONObject
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
 
 
 class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
@@ -279,7 +278,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                 } else {
                     when (h.type) {
                         ChatDetailType.TEXT.name -> {
-                            addOthersMsgView(h.contents, h.userId, h.nickname!!, LocalDateTime.parse(h.regDate))
+                            addOthersMsgView(
+                                h.contents,
+                                h.userId,
+                                h.nickname!!,
+                                LocalDateTime.parse(h.regDate)
+                            )
                         }
                         ChatDetailType.IMAGE.name -> {
                             imageReceiver(h)
@@ -379,7 +383,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
 
                     if (chatHistory.userId != App.prefs.userId) {
-                        addOthersImageView(encodedImageString, chatHistory.userId, chatHistory.nickname!!)
+                        addOthersImageView(
+                            encodedImageString,
+                            chatHistory.userId,
+                            chatHistory.nickname!!
+                        )
                     } else {
                         addMyImageView(encodedImageString)
                     }
@@ -440,7 +448,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         val layoutBinding = ItemMyMessageBoxBinding.inflate(inflater)
 
         layoutBinding.myMsgView.text = str
-        layoutBinding.myTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+        layoutBinding.myTimeView.text =
+            getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
         binding.msgContainer.addView(layoutBinding.root)
         binding.msgScrollview.apply { post { binding.msgScrollview.fullScroll(View.FOCUS_DOWN) } }
     }
@@ -459,9 +468,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             val imgLp = myImageView.layoutParams
             imgLp.width = imageWith
             myImageView.layoutParams = imgLp
-            Timber.e("${((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()} / ${bitmap.width}")
+//            Timber.e("${((screenSize.x - 58.dpToPx(requireContext())) * 0.5).toInt()} / ${bitmap.width}")
 
-            myTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            myTimeView.text =
+                getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
             Glide.with(requireContext())
                 .load(bitmap)
                 .into(myImageView)
@@ -476,7 +486,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
     }
 
-    private fun addOthersImageView(encodedString: String, id: String, nickname: String, time: LocalDateTime? = null) {
+    private fun addOthersImageView(
+        encodedString: String,
+        id: String,
+        nickname: String,
+        time: LocalDateTime? = null
+    ) {
 
         val byteArray = decodeString(encodedString)
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
@@ -484,7 +499,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         // view, image
         val inflater = LayoutInflater.from(requireContext())
         val layoutBinding = ItemOthersImageBoxBinding.inflate(inflater)
-        layoutBinding.apply{
+        layoutBinding.apply {
             val masterId = chatViewModel.chatInfo.value?.userId
             profileImage.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -501,7 +516,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             imgLp.width = imageWith
             othersImageView.layoutParams = imgLp
 
-            othersTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            othersTimeView.text =
+                getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
             Glide.with(requireContext())
                 .load(bitmap)
                 .into(othersImageView)
@@ -519,11 +535,16 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
 
-    private fun addOthersMsgView(str: String, id: String, nickname: String, time: LocalDateTime? = null) {
+    private fun addOthersMsgView(
+        str: String,
+        id: String,
+        nickname: String,
+        time: LocalDateTime? = null
+    ) {
         // view, image
         val inflater = LayoutInflater.from(requireContext())
         val layoutBinding = ItemOthersMessageBoxBinding.inflate(inflater)
-        layoutBinding.apply{
+        layoutBinding.apply {
             val masterId = chatViewModel.chatInfo.value?.userId
             profileImage.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -531,7 +552,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     if (id == masterId) R.drawable.ic_king else R.drawable.ic_user
                 )
             )
-            othersTimeView.text = getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            othersTimeView.text =
+                getMessageTimeString(time ?: LocalDateTime.now(ZoneId.of("Asia/Seoul")))
             othersMsgView.text = str
             othersNameView.text = nickname
         }

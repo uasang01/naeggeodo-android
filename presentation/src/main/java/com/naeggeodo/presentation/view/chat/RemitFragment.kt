@@ -12,7 +12,7 @@ import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentRemitBinding
 import com.naeggeodo.presentation.databinding.ItemNotRemittedUserBinding
 import com.naeggeodo.presentation.databinding.ItemRemittedUserBinding
-import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.view.CommonDialogFragment
 import com.naeggeodo.presentation.viewmodel.ChatViewModel
 import com.naeggeodo.presentation.viewmodel.RemitViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,11 +21,22 @@ import dagger.hilt.android.AndroidEntryPoint
 class RemitFragment : BaseFragment<FragmentRemitBinding>(R.layout.fragment_remit) {
     private val chatViewModel: ChatViewModel by activityViewModels()
     private val remitViewModel: RemitViewModel by activityViewModels()
+
+    private var dialog: CommonDialogFragment? = null
+
     override fun init() {
 
     }
 
     override fun initView() {
+
+        dialog = CommonDialogFragment(
+            contentString = "채팅방이 종료되면 다시 참여할 수 없습니다",
+            yesString = "종료하기",
+            yesListener = {
+                chatViewModel.finishChat(chatViewModel.chatId!!, ChatState.END.name)
+            }
+        )
     }
 
     override fun onStart() {
@@ -38,17 +49,17 @@ class RemitFragment : BaseFragment<FragmentRemitBinding>(R.layout.fragment_remit
             findNavController().popBackStack()
         }
         binding.finishChatButton.setOnClickListener {
-            chatViewModel.finishChat(chatViewModel.chatId!!, ChatState.END.name)
+            dialog?.show(childFragmentManager, "Dialog")
         }
     }
 
     override fun observeViewModels() {
-        remitViewModel.users.observe(viewLifecycleOwner){
+        remitViewModel.users.observe(viewLifecycleOwner) {
             initUsersView(it)
         }
         remitViewModel.viewEvent.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { event ->
-                when(event){
+                when (event) {
                     RemitViewModel.EVENT_CHANGE_REMITTANCE_STATE_SUCCESS -> {
                         remitViewModel.getUsers(chatViewModel.chatId!!)
                     }
@@ -58,7 +69,7 @@ class RemitFragment : BaseFragment<FragmentRemitBinding>(R.layout.fragment_remit
 
         chatViewModel.viewEvent.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { event ->
-                when(event){
+                when (event) {
                     ChatViewModel.EVENT_CHAT_FINISHED -> {
                         requireActivity().finish()
                     }
@@ -73,9 +84,9 @@ class RemitFragment : BaseFragment<FragmentRemitBinding>(R.layout.fragment_remit
         val inflater = LayoutInflater.from(requireContext())
         // 송금 한 유저들
         val remittedUsers = users!!.filter { it.remittanceState == RemittanceState.Y.name }
-        if(remittedUsers.isEmpty()){
+        if (remittedUsers.isEmpty()) {
             binding.remittedUsersLayout.visibility = View.GONE
-        }else{
+        } else {
             binding.remittedUsersLayout.visibility = View.VISIBLE
         }
         remittedUsers.forEach {
@@ -85,9 +96,9 @@ class RemitFragment : BaseFragment<FragmentRemitBinding>(R.layout.fragment_remit
         }
         // 송금 해야하는 유저들
         val notRemittedUsers = users.filter { it.remittanceState == RemittanceState.N.name }
-        if(notRemittedUsers.isEmpty()){
+        if (notRemittedUsers.isEmpty()) {
             binding.notRemittedUsersLayout.visibility = View.GONE
-        }else{
+        } else {
             binding.notRemittedUsersLayout.visibility = View.VISIBLE
         }
         notRemittedUsers.forEach { user ->
