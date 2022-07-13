@@ -68,33 +68,31 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tag_container"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_bar_cardview">
+
             <TextView
                 android:id="@+id/tag_title"
+                style="@style/font_medium_17"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/defaultMargin"
-                style="@style/font_medium_17"
-                android:textColor="@color/black"
                 android:text="많이 검색한 태그"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/tag_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:clipToPadding="false"
                 android:paddingHorizontal="@dimen/defaultMargin"
-                app:layout_constraintTop_toBottomOf="@id/tag_title"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintTop_toBottomOf="@id/tag_title" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -102,11 +100,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
-            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_bar_cardview" />
+            app:layout_constraintTop_toBottomOf="@id/tag_container" />
 
 
         <!--        <com.google.android.flexbox.FlexboxLayout-->

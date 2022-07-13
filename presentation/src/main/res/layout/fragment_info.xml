@@ -40,9 +40,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:paddingHorizontal="0dp"
                     android:inputType="text|textNoSuggestions"
                     android:maxLength="12"
+                    android:paddingHorizontal="0dp"
                     android:text="~~~~~~~"
                     android:textColor="@color/black" />
 
@@ -59,10 +59,10 @@
                     android:id="@+id/edit_nickname_button"
                     android:layout_width="50dp"
                     android:layout_height="30dp"
-                    android:padding="5dp"
-                    android:visibility="invisible"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_edit" />
+                    android:padding="5dp"
+                    android:src="@drawable/ic_edit"
+                    android:visibility="invisible" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -98,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="?건"
+                    android:text="\?건"
                     android:textColor="@color/main_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/recent_order_title" />
@@ -131,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="5dp"
-                    android:text="?건"
+                    android:text="\?건"
                     android:textColor="@color/main_color"
                     app:layout_constraintStart_toStartOf="@id/middle_bar"
                     app:layout_constraintTop_toBottomOf="@id/recent_order_title" />
@@ -147,18 +147,19 @@
             android:layout_marginTop="24dp"
             android:background="@color/grey_F5F5F5"
             app:layout_constraintTop_toBottomOf="@id/order_info_container" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@id/layout_separator"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_separator">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/customer_service_container"
                     android:layout_width="match_parent"
@@ -346,7 +347,6 @@
 
                 </LinearLayout>
             </LinearLayout>
-
 
 
         </ScrollView>

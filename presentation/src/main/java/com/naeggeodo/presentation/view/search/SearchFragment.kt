@@ -1,10 +1,8 @@
 package com.naeggeodo.presentation.view.search
 
 import android.app.Activity
-import android.content.Context
 import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,9 +12,8 @@ import com.google.android.flexbox.JustifyContent
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentSearchBinding
-import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
-import com.naeggeodo.presentation.view.home.HomeFragmentDirections
+import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -54,6 +51,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         // chats recyclerview
         binding.chatListRecyclerView.adapter = chatListAdapter
         binding.chatListRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.chatListRecyclerView.itemAnimator = null
     }
 
     override fun initListener() {
@@ -66,6 +64,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
                     searchChatList(searchType, keyWord)
                     hideKeyboard(activity as Activity)
+                    binding.searchBarText.clearFocus()
+                    binding.searchBarText.clearComposingText()
 
                     return@setOnKeyListener true
                 }
@@ -80,12 +80,21 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         }
         binding.searchBarText.onFocusChangeListener =
             View.OnFocusChangeListener { view, isFocused ->
-                Timber.e("view:$view isFocused:$isFocused")
+                if (isFocused) {
+                    binding.tagContainer.visibility = View.VISIBLE
+//                    binding.chatListRecyclerView.visibility = View.VISIBLE
+                } else {
+//                    binding.chatListRecyclerView.visibility = View.VISIBLE
+                }
+
 
             }
 
         tagAdapter.setItemClickEvent { pos ->
             searchChatList(searchType, tagAdapter.getData(pos))
+            hideKeyboard(activity as Activity)
+            binding.searchBarText.clearFocus()
+            binding.searchBarText.clearComposingText()
         }
 
         chatListAdapter.setListener { pos ->
@@ -104,8 +113,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
             tagAdapter.setData(ArrayList(it))
         }
         searchViewModel.chatList.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                showShortToast(requireContext(), "검색 결과가 없습니다")
+                binding.tagContainer.visibility = View.VISIBLE
+            } else {
+                binding.tagContainer.visibility = View.GONE
+            }
             chatListAdapter.setData(ArrayList(it))
-            recyclerViewChanger(false)
+//            recyclerViewChanger(false)
         }
     }
 
