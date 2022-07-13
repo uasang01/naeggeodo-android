@@ -9,5 +9,5 @@ interface RemitApi {
     suspend fun changeRemittanceState(
         @Path("chatMain_id") chatId: Int,
         @Path("user_id") userId: String
-    ): Response<Any>
+    ): Response<String>
 }

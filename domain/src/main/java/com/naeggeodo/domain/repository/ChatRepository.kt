@@ -24,4 +24,9 @@ interface ChatRepository {
         remoteErrorEmitter: RemoteErrorEmitter,
         userId: String
     ): ChatList?
+    suspend fun changeChatRoomState(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int,
+        state: String
+    ): ChatRoomState?
 }

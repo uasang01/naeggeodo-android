@@ -11,6 +11,8 @@ import com.naeggeodo.data.repository.info.remote.InfoRemoteDataSourceImpl
 import com.naeggeodo.data.repository.login.LoginRepositoryImpl
 import com.naeggeodo.data.repository.login.SearchRepositoryImpl
 import com.naeggeodo.data.repository.login.remote.LoginRemoteDataSourceImpl
+import com.naeggeodo.data.repository.remit.RemitRepositoryImpl
+import com.naeggeodo.data.repository.remit.remote.RemitRemoteDataSourceImpl
 import com.naeggeodo.data.repository.search.remote.SearchRemoteDataSourceImpl
 import com.naeggeodo.domain.repository.*
 import dagger.Module
@@ -68,5 +70,13 @@ class RepositoryModule {
         infoRemoteDataSourceImpl: InfoRemoteDataSourceImpl
     ): InfoRepository {
         return InfoRepositoryImpl(infoRemoteDataSourceImpl)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRemitRepository(
+        remitRemoteDataSourceImpl: RemitRemoteDataSourceImpl
+    ): RemitRepository {
+        return RemitRepositoryImpl(remitRemoteDataSourceImpl)
     }
 }

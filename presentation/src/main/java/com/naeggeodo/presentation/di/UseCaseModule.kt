@@ -75,4 +75,10 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideGetMyChatListUseCase(repository: ChatRepository) = GetMyChatListUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideChangeRemittanceStateUseCase(repository: RemitRepository) =
+        ChangeRemittanceStateUseCase(repository)
+
 }

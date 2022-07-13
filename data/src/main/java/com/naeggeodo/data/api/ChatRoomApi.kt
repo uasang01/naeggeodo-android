@@ -1,10 +1,6 @@
 package com.naeggeodo.data.api
 
-import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.model.ChatId
-import com.naeggeodo.domain.model.ChatList
-import com.naeggeodo.domain.model.DeleteChat
-import com.naeggeodo.domain.utils.ChatState
+import com.naeggeodo.domain.model.*
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -24,7 +20,8 @@ interface ChatRoomApi {
     suspend fun changeChatRoomState(
         @Path("chatMain_id") chatId: Int,
         @Query("state") state: String
-    )
+    ): Response<ChatRoomState>
+
     @Multipart
     @POST("chat-rooms")
     suspend fun createChat(

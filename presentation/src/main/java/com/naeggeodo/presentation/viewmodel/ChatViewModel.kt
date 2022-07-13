@@ -37,7 +37,8 @@ class ChatViewModel @Inject constructor(
     private val getUsersInChatUseCase: GetUsersInChatUseCase,
     private val getPrevChatHistoryUseCase: GetPrevChatHistoryUseCase,
     private val getQuickChatUseCase: GetQuickChatUseCase,
-    private val patchQuickChatUseCase: PatchQuickChatUseCase
+    private val patchQuickChatUseCase: PatchQuickChatUseCase,
+    private val changeChatRoomStateUseCase: ChangeChatRoomStateUseCase
 ) : BaseViewModel() {
     companion object {
         const val EVENT_CHAT_INFO_CHANGED = 311
@@ -51,6 +52,7 @@ class ChatViewModel @Inject constructor(
         const val EVENT_STOMP_CONNECTED = 319
         const val ERROR_STOMP_NOT_CONNECTED = 320
         const val FAILED_TO_SEND_MESSAGE = 321
+        const val EVENT_CHAT_FINISHED = 322
         const val ERROR_OCCURRED = 31
 //        const val EVENT = 316
     }
@@ -153,6 +155,23 @@ class ChatViewModel @Inject constructor(
                 mutableScreenState.postValue(ScreenState.RENDER)
             }
         }
+
+    fun finishChat(chatId: Int, state: String) =
+        viewModelScope.launch {
+            mutableScreenState.postValue(ScreenState.LOADING)
+            val response = withContext(Dispatchers.IO) {
+                changeChatRoomStateUseCase.execute(this@ChatViewModel, chatId, state)
+            }
+            if (response == null) {
+                mutableScreenState.postValue(ScreenState.ERROR)
+            } else {
+//                _quickChat.postValue(response.quickChats)
+                Timber.e("test response / $response")
+                mutableScreenState.postValue(ScreenState.RENDER)
+                viewEvent(EVENT_CHAT_FINISHED)
+            }
+        }
+
 
     //    ### 커넥트 END Point
     //    ⇒ https//api.naeggeodo.com/api/chat

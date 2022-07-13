@@ -49,4 +49,12 @@ class ChatRepositoryImpl @Inject constructor(
     ): ChatList? {
         return dataSource.getMyChatList(remoteErrorEmitter, userId)
     }
+
+    override suspend fun changeChatRoomState(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int,
+        state: String
+    ): ChatRoomState? {
+        return dataSource.changeChatRoomState(remoteErrorEmitter, chatId, state)
+    }
 }
