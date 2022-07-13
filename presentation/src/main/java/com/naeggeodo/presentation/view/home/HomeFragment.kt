@@ -171,7 +171,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 }
             }
         }
-        homeViewModel.myInfo.observe(viewLifecycleOwner) {
+        homeViewModel.myNickName.observe(viewLifecycleOwner) {
             App.prefs.nickname = it.nickname
         }
 

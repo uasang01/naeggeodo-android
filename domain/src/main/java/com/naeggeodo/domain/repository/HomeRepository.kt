@@ -2,7 +2,7 @@ package com.naeggeodo.domain.repository
 
 import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.ChatList
-import com.naeggeodo.domain.model.MyInfo
+import com.naeggeodo.domain.model.MyNickName
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 
 interface HomeRepository {
@@ -12,8 +12,8 @@ interface HomeRepository {
         category: String?,
         buildingCode: String
     ): ChatList?
-    suspend fun getMyInfo(
+    suspend fun getMyNickName(
         remoteErrorEmitter: RemoteErrorEmitter,
         userId: String
-    ): MyInfo?
+    ): MyNickName?
 }

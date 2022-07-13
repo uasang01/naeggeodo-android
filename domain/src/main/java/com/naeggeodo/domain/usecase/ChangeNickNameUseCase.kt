@@ -4,9 +4,9 @@ import com.naeggeodo.domain.repository.InfoRepository
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import javax.inject.Inject
 
-class GetMyInfoUseCase @Inject constructor(
+class ChangeNickNameUseCase @Inject constructor(
     private val infoRepository: InfoRepository
 ) {
-    suspend fun execute(remoteErrorEmitter: RemoteErrorEmitter, userId: String) =
-        infoRepository.getMyInfo(remoteErrorEmitter, userId)
+    suspend fun execute(remoteErrorEmitter: RemoteErrorEmitter, userId: String, nickname: String) =
+        infoRepository.changeNickName(remoteErrorEmitter, userId, nickname)
 }

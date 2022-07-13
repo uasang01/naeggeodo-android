@@ -20,7 +20,7 @@ interface ChatRoomApi {
         @Path("chatMain_id") chatId: Int
     ): Response<DeleteChat>
 
-    @PATCH("chat-rooms/{chatMain_id}?state=?")
+    @PATCH("chat-rooms/{chatMain_id}")
     suspend fun changeChatRoomState(
         @Path("chatMain_id") chatId: Int,
         @Query("state") state: String

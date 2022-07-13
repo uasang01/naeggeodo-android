@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.Chat
-import com.naeggeodo.domain.model.MyInfo
+import com.naeggeodo.domain.model.MyNickName
 import com.naeggeodo.domain.usecase.CategoryUseCase
-import com.naeggeodo.domain.usecase.GetMyInfoUseCase
+import com.naeggeodo.domain.usecase.GetMyNickNameUseCase
 import com.naeggeodo.domain.usecase.SearchChatListByCategoryUseCase
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.utils.ScreenState
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getCategoriesUseCase: CategoryUseCase,
     private val searchChatListByCategoryUseCase: SearchChatListByCategoryUseCase,
-    private val getMyInfoUseCase: GetMyInfoUseCase
+    private val getMyNickNameUseCase: GetMyNickNameUseCase
 ) : BaseViewModel() {
 
     companion object {
@@ -35,8 +35,8 @@ class HomeViewModel @Inject constructor(
     private val _chatList: MutableLiveData<List<Chat>> = MutableLiveData()
     val chatList: LiveData<List<Chat>> get() = _chatList
 
-    private val _myInfo: MutableLiveData<MyInfo> = MutableLiveData()
-    val myInfo: LiveData<MyInfo> get() = _myInfo
+    private val _myNickName: MutableLiveData<MyNickName> = MutableLiveData()
+    val myNickName: LiveData<MyNickName> get() = _myNickName
 
 
     fun getCategories() = viewModelScope.launch {
@@ -71,13 +71,13 @@ class HomeViewModel @Inject constructor(
     fun getMyInfo(userId: String) = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
         val response = withContext(Dispatchers.IO) {
-            getMyInfoUseCase.execute(this@HomeViewModel, userId)
+            getMyNickNameUseCase.execute(this@HomeViewModel, userId)
         }
 
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
-            _myInfo.postValue(response!!)
+            _myNickName.postValue(response!!)
 
             viewEvent(EVENT_CHAT_LIST_CHANGED)
         }

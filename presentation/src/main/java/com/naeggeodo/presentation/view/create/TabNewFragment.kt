@@ -137,7 +137,6 @@ class TabNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_tab
             when (keyCode) {
                 KeyEvent.KEYCODE_ENTER -> {
                     hideKeyboard(activity as Activity)
-
                     return@setOnKeyListener true
                 }
                 else -> return@setOnKeyListener false

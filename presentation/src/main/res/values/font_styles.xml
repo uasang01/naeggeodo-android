@@ -6,6 +6,11 @@
         <item name="android:textSize">26sp</item>
         <!--        <item name="android:fontWeight">400</item>-->
     </style>
+    <style name="font_bold_24">
+        <item name="android:fontFamily">@font/spoqahansansneo_bold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
 
     <style name="font_bold_18">
         <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
@@ -54,6 +59,11 @@
         <item name="android:includeFontPadding">false</item>
     </style>
 
+    <style name="font_medium_24">
+        <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
     <style name="font_medium_26">
         <item name="android:fontFamily">@font/spoqahansansneo_medium</item>
         <item name="android:textSize">26sp</item>
@@ -66,6 +76,11 @@
         <item name="android:includeFontPadding">false</item>
     </style>
 
+    <style name="font_regular_14">
+        <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
     <style name="font_regular_15">
         <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
         <item name="android:textSize">15sp</item>
@@ -75,6 +90,11 @@
     <style name="font_regular_17">
         <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
         <item name="android:textSize">17sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="font_regular_24">
+        <item name="android:fontFamily">@font/spoqahansansneo_regular</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
 
