@@ -80,7 +80,9 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
             )
             startActivity(browserIntent)
         }
-        binding.logoutButton.setOnClickListener { }
+        binding.logoutButton.setOnClickListener {
+
+        }
     }
 
     private fun changeNickname() {

@@ -114,11 +114,11 @@ class AddressSearchDialogFragment : DialogFragment() {
                 // 페이지 로딩 시작시 호출
                 override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
                     Timber.e("페이지 시작 / $url")
-                    binding.webProgress.visibility = View.VISIBLE
+                    binding.webProgress.progressImage.visibility = View.VISIBLE
                 }
 
                 override fun onPageFinished(view: WebView, url: String) {
-                    binding.webProgress.visibility = View.GONE
+                    binding.webProgress.progressImage.visibility = View.GONE
                     Timber.e("페이지 로딩 / $url")
                 }
             }
