@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,6 +52,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     private val chatViewModel: ChatViewModel by activityViewModels()
 
     private val galleryAdapter by lazy { GalleryAdapter(requireContext(), arrayListOf()) }
+
+    private val DRAWER_GALLERY_ITEM_MAX = 5
 
     private var totalImageSize = -1
     private var encodedImageString = ""
@@ -154,7 +157,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                 //send image
                 val uriString = galleryAdapter.getSelectedPicture()
                 if (uriString != null) {
-
                     val encodedString =
                         encodeImage(uriString).replace("\n", "")    // encoded with Base64
                     val chopSize = 10240
@@ -179,7 +181,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                         }
                     }, 100)
                     galleryAdapter.clearSelected()
-                    binding.galleryRecyclerview.visibility = View.GONE
+                    showGallery()
 
                     return@setOnClickListener
                 }
@@ -389,15 +391,21 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     return
                 }
                 Timber.e("loading image ${encodedImageString.length}/$totalImageSize ")
-                encodedImageString += msgInfo.contents
+//                val payloads = msgInfo.contents.split(",")
+//                if(payloads.size>1){
+//                    Timber.e("!!!!!!!!!!!!! ${payloads.size} !! ${payloads.first().length} ${payloads.first()}")
+//                    totalImageSize -= payloads.first().length
+//                }
+                encodedImageString += msgInfo.contents/*.split(",").last()*/
                 if (encodedImageString.length >= totalImageSize) {
-                    Timber.e("load image finish ${encodedImageString.length}/$totalImageSize ")
+                    Timber.e("load image finish ${encodedImageString.length}/$totalImageSize \n$encodedImageString ")
 
                     if (msgInfo.sender != App.prefs.userId) {
                         addOthersImageView(encodedImageString, msgInfo.sender, msgInfo.nickname)
                     } else {
                         addMyImageView(encodedImageString)
                     }
+                    addImageToDrawerGallery(encodedImageString)
                     initImageLoadVariables()
                 }
             }
@@ -434,6 +442,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     } else {
                         addMyImageView(encodedImageString)
                     }
+                    addImageToDrawerGallery(encodedImageString)
                     initImageLoadVariables()
                 }
             }
@@ -442,6 +451,26 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             Timber.e("이미지 로드 에러 / $e")
             initImageLoadVariables()
         }
+    }
+
+    private fun addImageToDrawerGallery(encodedString: String) {
+        val byteArray = decodeString(encodedString.split(",").last())
+        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+
+        val imageView = ImageView(requireContext())
+        val lp = LinearLayout.LayoutParams(40.dpToPx(requireContext()), 40.dpToPx(requireContext()))
+        lp.marginEnd = 5.dpToPx(requireContext())
+        imageView.layoutParams = lp
+
+        Glide.with(requireContext())
+            .load(bitmap)
+            .centerCrop()
+            .into(imageView)
+        if(binding.drawer.galleryContainer.childCount>=DRAWER_GALLERY_ITEM_MAX){
+            binding.drawer.galleryContainer.removeViewAt(0)
+        }
+        binding.drawer.galleryContainer.addView(imageView)
+        binding.drawer.galleryNothingText.visibility = View.GONE
     }
 
     private fun initImageLoadVariables() {
@@ -516,8 +545,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
     private fun addMyImageView(encodedString: String, time: LocalDateTime? = null) {
-        val byteArray = decodeString(encodedString)
+        val byteArray = decodeString(encodedString.split(",").last())
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        if(bitmap == null){
+            Timber.e("Image null")
+            return
+        }
 
         val inflater = LayoutInflater.from(requireContext())
         val layoutBinding = ItemMyImageBoxBinding.inflate(inflater)
@@ -553,8 +586,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         nickname: String,
         time: LocalDateTime? = null
     ) {
-
-        val byteArray = decodeString(encodedString)
+        val byteArray = decodeString(encodedString.split(",").last())
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 
         // view, image
@@ -650,9 +682,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
     override fun onStop() {
-        super.onStop()
         chatViewModel.stopStomp()
+        super.onStop()
     }
+
 
     override fun onBackPressed() {
         val drawerLayout = binding.drawerLayout

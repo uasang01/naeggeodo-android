@@ -144,7 +144,7 @@ object Util {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
 //        Timber.e("before ${stream.toByteArray().size} ${stream.size()} bitmap byte count: ${bitmap.byteCount} row bytes: ${bitmap.rowBytes} ${bitmap.rowBytes * bitmap.height}")
-        return Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
+        return "data:image/jpeg;base64,${Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)}"
     }
 
     fun decodeString(data: String): ByteArray = Base64.decode(data, Base64.DEFAULT)

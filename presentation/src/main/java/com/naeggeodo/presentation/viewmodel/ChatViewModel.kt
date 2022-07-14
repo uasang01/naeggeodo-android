@@ -395,7 +395,6 @@ class ChatViewModel @Inject constructor(
             listOfAllImages.add(absolutePathOfImage)
         }
         cursor.close()
-
         return listOfAllImages
     }
 }
