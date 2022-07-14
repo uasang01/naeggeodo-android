@@ -49,7 +49,11 @@ class Prefs(context: Context) {
         accessToken = null
         refreshToken = null
         userId = null
+
         address = null
+        buildingCode = null
+        apartment = null
+
         nickname= null
     }
 

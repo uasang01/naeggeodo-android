@@ -11,11 +11,11 @@ import androidx.fragment.app.DialogFragment
 import com.naeggeodo.presentation.databinding.FragmentCommonDialogBinding
 
 class CommonDialogFragment(
-    private val contentString: String? = null,
-    private val yesString: String = "예",
-    private val noString: String = "아니오",
-    private val yesListener: () -> Unit = {},
-    private val noListener: () -> Unit = {}
+    private val contentText: String = "",
+    private val normalButtonText: String = "예",
+    private val colorButtonText: String = "아니오",
+    private val normalButtonListener: () -> Unit = {},
+    private val colorButtonListener: () -> Unit = {}
 ) : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,15 +40,15 @@ class CommonDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.contentTextView.text = contentString
-        binding.yesTextView.text = yesString
-        binding.noTextView.text = noString
-        binding.yesButton.setOnClickListener {
-            yesListener()
+        binding.contentTextView.text = contentText
+        binding.normalTextView.text = normalButtonText
+        binding.normalTextView.setOnClickListener {
+            normalButtonListener()
             dismiss()
         }
-        binding.noButton.setOnClickListener {
-            noListener()
+        binding.colorTextView.text = colorButtonText
+        binding.colorButton.setOnClickListener {
+            colorButtonListener()
             dismiss()
         }
     }

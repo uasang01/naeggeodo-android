@@ -96,6 +96,9 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
     override fun initListener() {
+        binding.backButton.setOnClickListener {
+            requireActivity().finish()
+        }
         binding.hambergerButton.setOnClickListener {
             val drawerLayout = binding.drawerLayout
             if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
@@ -106,22 +109,21 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
 
         binding.checkDepositButton.setOnClickListener {
-            val action = ChatFragmentDirections.actionChatFragmentToDepositFragment()
+            val action = ChatFragmentDirections.actionChatFragmentToRemitFragment()
             findNavController().navigate(action)
         }
 
         binding.drawer.exitChatButton.setOnClickListener {
-            val exitDialog = AlertDialog.Builder(requireContext())
-            exitDialog.setTitle("나가기")
-            exitDialog.setMessage("정말 나가시겠습니까?")
-            exitDialog.setPositiveButton("나가기") { _, _ ->
-                chatViewModel.exitChat()
-                requireActivity().finish()
-            }
-            exitDialog.setNegativeButton("취소") { dialog, _ ->
-                dialog.dismiss()
-            }
-            exitDialog.show()
+            val dialog = CommonDialogFragment(
+                contentText = "정말 나가시겠습니까?",
+                normalButtonText = "취소",
+                colorButtonText = "나가기",
+                colorButtonListener = {
+                    chatViewModel.exitChat()
+                    requireActivity().finish()
+                }
+            )
+            dialog.show(childFragmentManager, "Dialog")
         }
 
         binding.sendMessageButton.setOnClickListener {

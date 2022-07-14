@@ -7,6 +7,7 @@ import com.naeggeodo.domain.model.LogIn
 import com.naeggeodo.domain.usecase.LoginUseCase
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.utils.ScreenState
+import com.naeggeodo.presentation.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -17,7 +18,7 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ) : BaseViewModel() {
 
-    private val _loginResult: MutableLiveData<LogIn> = MutableLiveData()
+    private val _loginResult: SingleLiveEvent<LogIn> = SingleLiveEvent()
     val loginResult: LiveData<LogIn> get() = _loginResult
 
 

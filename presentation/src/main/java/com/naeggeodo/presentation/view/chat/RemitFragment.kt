@@ -31,11 +31,12 @@ class RemitFragment : BaseFragment<FragmentRemitBinding>(R.layout.fragment_remit
     override fun initView() {
 
         dialog = CommonDialogFragment(
-            contentString = "채팅방이 종료되면 다시 참여할 수 없습니다",
-            yesString = "종료하기",
-            yesListener = {
+            contentText = "채팅방이 종료되면 다시 참여할 수 없습니다",
+            colorButtonText = "종료하기",
+            colorButtonListener = {
                 chatViewModel.finishChat(chatViewModel.chatId!!, ChatState.END.name)
-            }
+            },
+            normalButtonText = "취소"
         )
     }
 
