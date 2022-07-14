@@ -49,6 +49,25 @@ object NetworkModule {
             .build()
     }
 
+    @Provides
+    @Singleton
+    @Named("RefreshHeader")
+    fun provideRefreshHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .readTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(getLoggingInterceptor())
+            .addInterceptor { chain ->
+                Timber.e("REFRESH TOKEN / Bearer ${App.prefs.refreshToken}")
+                val request = chain.request().newBuilder()
+                    .addHeader("Cookie", "refreshToken=${App.prefs.refreshToken}")
+                    .build()
+                chain.proceed(request)
+            }
+            .build()
+    }
+
     @Singleton
     @Provides
     @Named("Auth")
@@ -63,12 +82,25 @@ object NetworkModule {
             .build()
     }
 
-
     @Singleton
     @Provides
     @Named("NoAuth")
     fun provideLoginRetrofitInstance(
         @Named("NoAuthHeader") okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @Named("Refresh")
+    fun provideRefreshRetrofitInstance(
+        @Named("RefreshHeader") okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()

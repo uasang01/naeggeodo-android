@@ -16,4 +16,11 @@ class LoginRepositoryImpl @Inject constructor(
     ): LogIn? {
         return loginRemoteDataSource.login(remoteErrorEmitter, platform, params)
     }
+
+    override suspend fun refreshToken(
+        remoteErrorEmitter: RemoteErrorEmitter,
+    ): LogIn? {
+        return loginRemoteDataSource.refreshToken(remoteErrorEmitter)
+    }
+
 }

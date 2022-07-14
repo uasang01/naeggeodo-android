@@ -47,42 +47,52 @@ class ApiModule {
     fun provideChatRoomApiService(@Named("Auth") retrofit: Retrofit): ChatRoomApi {
         return retrofit.create(ChatRoomApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideGetUsersInChatApiService(@Named("Auth") retrofit: Retrofit): GetUsersInChatApi {
         return retrofit.create(GetUsersInChatApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideGetPrevChatHistoryApiService(@Named("Auth") retrofit: Retrofit): GetPrevChatHistoryApi {
         return retrofit.create(GetPrevChatHistoryApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideGetChatCreationHistoryApiService(@Named("Auth") retrofit: Retrofit): GetChatCreationHistoryApi {
         return retrofit.create(GetChatCreationHistoryApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideBookmarkingApiService(@Named("Auth") retrofit: Retrofit): BookmarkingApi {
         return retrofit.create(BookmarkingApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideQuickChatApiService(@Named("Auth") retrofit: Retrofit): QuickChatApi {
         return retrofit.create(QuickChatApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideInfoApiService(@Named("Auth") retrofit: Retrofit): InfoApi {
         return retrofit.create(InfoApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideRemitApiService(@Named("Auth") retrofit: Retrofit): RemitApi {
         return retrofit.create(RemitApi::class.java)
     }
 
-
-
+    @Provides
+    @Singleton
+    fun provideRefreshTokenApiService(@Named("Refresh") retrofit: Retrofit): RefreshTokenApi {
+        return retrofit.create(RefreshTokenApi::class.java)
+    }
 }

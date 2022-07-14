@@ -6,7 +6,7 @@ data class LogIn(
     @SerializedName("accessToken")
     val accessToken: String,
     @SerializedName("refreshToken")
-    val refreshToken: String,
+    var refreshToken: String,
     @SerializedName("type")
     val type: String,
     @SerializedName("user_id")

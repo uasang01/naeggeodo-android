@@ -81,4 +81,9 @@ class UseCaseModule {
     fun provideChangeRemittanceStateUseCase(repository: RemitRepository) =
         ChangeRemittanceStateUseCase(repository)
 
+    @Provides
+    @Singleton
+    fun provideRefreshTokenUseCase(repository: LoginRepository) =
+        RefreshTokenUseCase(repository)
+
 }

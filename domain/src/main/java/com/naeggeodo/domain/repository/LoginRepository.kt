@@ -9,4 +9,8 @@ interface LoginRepository {
         platform: String,
         params: HashMap<String, String?>
     ): LogIn?
+
+    suspend fun refreshToken(
+        remoteErrorEmitter: RemoteErrorEmitter,
+    ): LogIn?
 }

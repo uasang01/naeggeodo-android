@@ -166,7 +166,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             App.prefs.accessToken = logIn.accessToken
             App.prefs.refreshToken = logIn.refreshToken
             App.prefs.userId = logIn.userId
+            logIn.address?.let {
+                App.prefs.address = it
+            }
+            logIn.buildingCode?.let {
+                App.prefs.buildingCode = it
+            }
             goToHome()
+            loginViewModel.refreshToken()
         }
         loginViewModel.mutableScreenState.observe(this) { state ->
             val layout = binding.loadingView.root

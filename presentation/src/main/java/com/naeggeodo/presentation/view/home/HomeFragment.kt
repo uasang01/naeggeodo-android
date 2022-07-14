@@ -1,7 +1,5 @@
 package com.naeggeodo.presentation.view.home
 
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +44,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 Triple(
                     App.prefs.address!!,
                     App.prefs.buildingCode!!,
-                    App.prefs.apartment!!
+                    ApartmentFlag.Y.name
                 )
             )
         }
@@ -177,41 +175,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
 
         locationViewModel.viewEvent.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { event ->
-                when (event) {
-                    LocationViewModel.EVENT_ADDRESS_INFO_CHANGED -> {
-                        Timber.e("event triggered / EVENT_ADDRESS_INFO_CHANGED")
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            val v = locationViewModel.addressInfo.value?.let { v ->
-                                Timber.e("address $v")
-                                val address = v.first
-                                val buildingCode = v.second
-                                val apartment = v.third
-
-                                App.prefs.address = address
-                                App.prefs.buildingCode = buildingCode
-                                App.prefs.apartment = apartment
-
-
-                                val textview = binding.searchBarText
-                                if (apartment == ApartmentFlag.Y.name) {
-                                    textview.text = address
-                                    requestChatList(
-                                        category = categoryAdapter.getSelectedCategory(),
-                                        buildingCode = buildingCode
-                                    )
-                                } else {
-                                    textview.text = getText(R.string.not_apartment)
-                                }
-                            }
-                        }, 100)
-                    }
-                }
-            }
+//            it.getContentIfNotHandled()?.let { event ->
+//                when (event) {
+//                    LocationViewModel.EVENT_ADDRESS_INFO_CHANGED -> {
+//                        Handler(Looper.getMainLooper()).postDelayed({
+//
+//                        }, 100)
+//                    }
+//                }
+//            }
         }
         homeViewModel.categories.observe(viewLifecycleOwner) { value ->
             value.categories.map {
-                Timber.e("${it.idx} ${it.category} ")
+//                Timber.e("${it.idx} ${it.category} ")
             }
             binding.categoryRecyclerView.post {
                 categoryAdapter.setData(ArrayList(value.categories))
@@ -237,32 +213,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
         }
 
-//        locationViewModel.addressInfo.observe(viewLifecycleOwner) { value ->
-//            Timber.e("address $value")
-//            val address = value.first
-//            val buildingCode = value.second
-//            val apartment = value.third
-//
-//            App.prefs.address = address
-//            App.prefs.buildingCode = buildingCode
-//            App.prefs.apartment = apartment
-//
-//
-//            val textview = binding.searchBarText
-//            if (apartment == ApartmentFlag.Y.name) {
-//                textview.text = address
-//                requestChatList(
-//                    category = categoryAdapter.getSelectedCategory(),
-//                    buildingCode = buildingCode
-//                )
-//            } else {
-//                textview.text = getText(R.string.not_apartment)
-//            }
-//        }
+        locationViewModel.addressInfo.observe(viewLifecycleOwner) { value ->
+            addressInfoUpdated()
+        }
 
 //        homeViewModel.chatList.observe(viewLifecycleOwner) { value ->
 //            chatListAdapter!!.setData(ArrayList(value))
 //        }
+    }
+
+    private fun addressInfoUpdated() {
+        locationViewModel.addressInfo.value?.let { v ->
+            Timber.e("address $v")
+            val address = v.first
+            val buildingCode = v.second
+            val apartment = v.third
+
+            App.prefs.address = address
+            App.prefs.buildingCode = buildingCode
+            App.prefs.apartment = apartment
+
+            val textview = binding.searchBarText
+            if (apartment == ApartmentFlag.Y.name) {
+                textview.text = address
+                requestChatList(
+                    category = categoryAdapter.getSelectedCategory(),
+                    buildingCode = buildingCode
+                )
+            } else {
+                textview.text = getText(R.string.not_apartment)
+            }
+        }
     }
 
     private fun refreshChatList() {

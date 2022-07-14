@@ -9,4 +9,8 @@ interface LoginRemoteDataSource {
         provider: String,
         body: HashMap<String, String?>
     ): LogIn?
+
+    suspend fun refreshToken(
+        remoteErrorEmitter: RemoteErrorEmitter,
+    ): LogIn?
 }
