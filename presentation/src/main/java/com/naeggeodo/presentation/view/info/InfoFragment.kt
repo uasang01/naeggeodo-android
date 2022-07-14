@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import com.naeggeodo.domain.utils.ReportType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentInfoBinding
@@ -63,10 +64,27 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
             startActivity(browserIntent)
         }
         binding.suggestButton.setOnClickListener {
-
+            val dialog = SuggestDialogFragment(
+                normalButtonText = "취소",
+                colorButtonText = "건의하기",
+                colorButtonListener = { contents ->
+                    // suggest!
+                    val type = ReportType.FEEDBACK.name
+                    Timber.e("type $type / contents $contents")
+                }
+            )
+            dialog.show(childFragmentManager, "SuggestDialog")
         }
         binding.reportButton.setOnClickListener {
-
+            val dialog = ReportDialogFragment(
+                normalButtonText = "취소",
+                colorButtonText = "신고하기",
+                colorButtonListener = { type, contents ->
+                    // report!
+                    Timber.e("type $type / contents $contents")
+                }
+            )
+            dialog.show(childFragmentManager, "ReportDialog")
         }
         binding.termsButton.setOnClickListener {
             val browserIntent = Intent(

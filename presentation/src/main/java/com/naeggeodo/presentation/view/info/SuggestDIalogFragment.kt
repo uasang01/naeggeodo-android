@@ -1,4 +1,4 @@
-package com.naeggeodo.presentation.view
+package com.naeggeodo.presentation.view.info
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,14 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
-import com.naeggeodo.presentation.databinding.DialogFragmentCommonBinding
+import com.naeggeodo.presentation.databinding.DialogFragmentSuggestBinding
 
-class CommonDialogFragment(
-    private val contentText: String = "",
+class SuggestDialogFragment(
     private val normalButtonText: String = "예",
     private val colorButtonText: String = "아니오",
     private val normalButtonListener: () -> Unit = {},
-    private val colorButtonListener: () -> Unit = {}
+    private val colorButtonListener: (String) -> Unit = {}
 ) : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,14 +23,14 @@ class CommonDialogFragment(
         isCancelable = true
     }
 
-    private lateinit var binding: DialogFragmentCommonBinding
+    private lateinit var binding: DialogFragmentSuggestBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DialogFragmentCommonBinding.inflate(inflater, container, false)
+        binding = DialogFragmentSuggestBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         return binding.root
@@ -40,7 +39,6 @@ class CommonDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.contentTextView.text = contentText
         binding.normalTextView.text = normalButtonText
         binding.normalTextView.setOnClickListener {
             normalButtonListener()
@@ -48,7 +46,7 @@ class CommonDialogFragment(
         }
         binding.colorTextView.text = colorButtonText
         binding.colorButton.setOnClickListener {
-            colorButtonListener()
+            colorButtonListener(binding.contentEditText.text.toString())
             dismiss()
         }
     }
