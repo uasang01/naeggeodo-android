@@ -1,7 +1,9 @@
 package com.naeggeodo.domain.utils
 
-enum class OrderTimeType {
-    ONE_HOUR,       // 한 시간 이내
-    QUICK,          // 가능 한 빨리
-    FREEDOM         // 상관 없음
+enum class OrderTimeType(
+    val korean: String
+) {
+    ONE_HOUR("1시간 이내"),       // 한 시간 이내
+    QUICK("최대한 빨리"),          // 가능 한 빨리
+    FREEDOM("인원이 모집되는 대로")         // 상관 없음
 }

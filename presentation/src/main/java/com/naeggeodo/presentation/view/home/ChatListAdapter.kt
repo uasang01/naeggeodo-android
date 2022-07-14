@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.utils.OrderTimeType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatListBinding
 import com.naeggeodo.presentation.utils.Util.getSvgRequestBuilder
 import com.naeggeodo.presentation.utils.Util.getTimeDiff
 import com.naeggeodo.presentation.utils.Util.getTimeStr
-import timber.log.Timber
 
 
 class ChatListAdapter(
@@ -45,6 +45,8 @@ class ChatListAdapter(
             title.text = datas[position].title
             time.text = getTimeStr(timeDiff)
             count.text = "인원 ${datas[position].currentCount}명 / ${datas[position].maxCount}명"
+            orderTypeTextView.text =
+                enumValueOf<OrderTimeType>(datas[position].orderTimeType).korean
 
             val uri = Uri.parse(datas[position].imgPath)
             if (uri.toString().split((".")).last() == "svg") {
