@@ -5,6 +5,8 @@ import android.net.Uri
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.naeggeodo.domain.utils.ReportType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -50,6 +52,16 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
                 }
                 else -> return@setOnKeyListener false
             }
+        }
+        binding.participatingContainer.setOnClickListener {
+            val navOptions = navOptions {
+                popUpTo(R.id.home) {
+                    inclusive = false
+                }
+            }
+
+            findNavController()
+                .navigate(R.id.my_chat, null, navOptions)
         }
         binding.editNicknameButton.setOnClickListener {
             // request to change nickname
