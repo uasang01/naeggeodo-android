@@ -22,5 +22,4 @@ class CreatePagerAdapter(fm: FragmentManager, lifecycle: Lifecycle) :
             else -> tabNewFragment
         }
     }
-
 }

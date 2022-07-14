@@ -43,8 +43,8 @@ class MyChatListAdapter(
 
             titleTextView.text = datas[position].title
             timeTextView.text = getTimeStr(timeDiff)
-//            count.text = "인원 ${datas[position].currentCount}명 / ${datas[position].maxCount}명"
             lastMassgaeTextView.text = datas[position].latestMessage
+            locationTextView.text = datas[position].address
 
             val uri = Uri.parse(datas[position].imgPath)
             if (uri.toString().split((".")).last() == "svg") {

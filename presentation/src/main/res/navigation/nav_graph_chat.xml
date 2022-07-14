@@ -11,12 +11,12 @@
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" >
         <action
-            android:id="@+id/action_chatFragment_to_depositFragment"
-            app:destination="@id/depositFragment" />
+            android:id="@+id/action_chatFragment_to_remitFragment"
+            app:destination="@id/remitFragment" />
     </fragment>
     <fragment
-        android:id="@+id/depositFragment"
+        android:id="@+id/remitFragment"
         android:name="com.naeggeodo.presentation.view.chat.RemitFragment"
-        android:label="fragment_deposit"
+        android:label="fragment_remit"
         tools:layout="@layout/fragment_remit" />
 </navigation>

@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 style="@style/font_regular_17"
                 android:layout_marginTop="10dp"
-                android:text="@string/deposit_body"
+                android:text="@string/remit_body"
                 android:textColor="@color/grey_191919"
                 />
             <TextView
@@ -49,8 +49,8 @@
                 android:layout_height="wrap_content"
                 style="@style/font_regular_17"
                 android:layout_marginTop="10dp"
-                android:text="@string/deposit_body2"
-                android:textColor="@color/grey_c9c9c9"
+                android:text="@string/remit_body2"
+                android:textColor="@color/red"
                 />
         </LinearLayout>
 
@@ -72,6 +72,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    style="@style/font_regular_12"
+                    android:textColor="@color/grey_696969"
                     android:text="아직 못받았어요"/>
                 <LinearLayout
                     android:id="@+id/not_remitted_users_container"
@@ -91,6 +93,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    style="@style/font_regular_12"
+                    android:textColor="@color/grey_696969"
                     android:text="돈을 보낸 멤버들"/>
                 <LinearLayout
                     android:id="@+id/remitted_users_container"

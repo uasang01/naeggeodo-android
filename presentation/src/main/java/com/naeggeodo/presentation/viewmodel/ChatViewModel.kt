@@ -34,7 +34,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatInfoUseCase: GetChatInfoUseCase,
-    private val getUsersInChatUseCase: GetUsersInChatUseCase,
     private val getPrevChatHistoryUseCase: GetPrevChatHistoryUseCase,
     private val getQuickChatUseCase: GetQuickChatUseCase,
     private val patchQuickChatUseCase: PatchQuickChatUseCase,
@@ -50,12 +49,9 @@ class ChatViewModel @Inject constructor(
         const val ERROR_UNAUTHORIZED = 333
         const val ERROR_INVALID_STATE = 334
         const val ERROR_INVALID_ACCESS = 335
-        const val ERROR_OCCURRED = 31
     }
 
-
     var chatId: Int? = null
-
 
     private val _chatInfo: SingleLiveEvent<Chat> = SingleLiveEvent()
     val chatInfo: LiveData<Chat> get() = _chatInfo
@@ -68,8 +64,6 @@ class ChatViewModel @Inject constructor(
     private val _quickChat: SingleLiveEvent<List<QuickChat>> = SingleLiveEvent()
     val quickChat: LiveData<List<QuickChat>> get() = _quickChat
 
-//    val message: Message? = null
-
     fun getChatInfo() = viewModelScope.launch {
         mutableScreenState.postValue(ScreenState.LOADING)
         val response = withContext(Dispatchers.IO) {
@@ -80,22 +74,6 @@ class ChatViewModel @Inject constructor(
         } else {
             _chatInfo.postValue(response!!)
             mutableScreenState.postValue(ScreenState.RENDER)
-//            viewEvent(HomeViewModel.EVENT_CHAT_INFO_CHANGED)
-        }
-    }
-
-
-    fun getUsers() = viewModelScope.launch {
-        mutableScreenState.postValue(ScreenState.LOADING)
-        val response = withContext(Dispatchers.IO) {
-            getUsersInChatUseCase.execute(this@ChatViewModel, chatId!!)
-        }
-        if (response == null) {
-            mutableScreenState.postValue(ScreenState.ERROR)
-        } else {
-//            _users.postValue(response!!.users)
-            mutableScreenState.postValue(ScreenState.RENDER)
-//            viewEvent(HomeViewModel.EVENT_USERS_CHANGED)
         }
     }
 
@@ -109,7 +87,6 @@ class ChatViewModel @Inject constructor(
         } else {
             _history.postValue(response.messages)
             mutableScreenState.postValue(ScreenState.RENDER)
-//            viewEvent(HomeViewModel.EVENT_USERS_CHANGED)
         }
     }
 
@@ -208,7 +185,9 @@ class ChatViewModel @Inject constructor(
                             .postDelayed({
                                 sendMsg("", ChatDetailType.WELCOME)
                             }, 200L)
-                        viewEvent(EVENT_STOMP_CONNECTED)
+                        // 연결 성공 시 history, quick chats 요청
+                        getChatHistory()
+                        getQuickChats(App.prefs.userId!!)
                     }
                     Event.Type.CLOSED -> {
                         Timber.i("CLOSED ${it.type} / ${it.exception}")
@@ -324,10 +303,6 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun setScreenState(state: ScreenState) {
-        mutableScreenState.postValue(state)
-    }
-
     fun sendMsg(content: String, type: ChatDetailType) {
         if (!stompClient.isConnected()) {
             viewEvent(FAILED_TO_SEND_MESSAGE)
@@ -372,6 +347,7 @@ class ChatViewModel @Inject constructor(
                 destination += ban
             }
             else -> {
+                Timber.e("can not send message with unknown type")
                 return
             }
         }
@@ -390,8 +366,6 @@ class ChatViewModel @Inject constructor(
 
     fun stopStomp() {
         compositeDisposable?.dispose()
-//        stompClient.
-//        stompClient.disconnect()
     }
 
     fun getAllImagePaths(activity: Activity): ArrayList<String> {

@@ -73,8 +73,20 @@ object Util {
         toast!!.show()
     }
 
-    fun showShortSnackbar(rootView: View, msg: String) =
-        Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT).show()
+    fun showSnackBar(
+        rootView: View,
+        msg: String,
+        buttonText: String? = null,
+        action: (() -> Unit)? = null
+    ) {
+        val snackBar = Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT)
+        action?.let {
+            snackBar.setAction(buttonText?:"허용하기") {
+                it()
+            }
+        }
+        snackBar.show()
+    }
 
     fun isNetworkConnected(context: Context): Boolean {
         val connectivityManager =

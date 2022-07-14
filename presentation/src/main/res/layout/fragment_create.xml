@@ -18,18 +18,6 @@
             app:layout_constraintStart_toStartOf="@id/guideline_left"
             app:layout_constraintTop_toTopOf="@id/guideline_top" />
 
-        <TextView
-            android:id="@+id/write_self_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:includeFontPadding="false"
-            android:text="직접입력"
-            android:textColor="@color/grey_696969"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@id/one_hour_button"
-            app:layout_constraintEnd_toEndOf="@id/guideline_right" />
-
         <androidx.cardview.widget.CardView
             android:id="@+id/one_hour_button"
             android:layout_width="0dp"

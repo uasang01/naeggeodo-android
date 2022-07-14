@@ -14,10 +14,6 @@ class CreateFragment : BaseFragment<FragmentCreateBinding>(R.layout.fragment_cre
     }
 
     override fun initListener() {
-        binding.writeSelfButton.setOnClickListener {
-//            val action = CreateFragmentDirections.actionCreateToSetNewChatFragment()
-//            findNavController().navigate(action)
-        }
         binding.oneHourButton.setOnClickListener {
             val action =
                 CreateFragmentDirections.actionCreateToCreateNewChatFragment(OrderTimeType.ONE_HOUR.name)

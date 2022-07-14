@@ -1,14 +1,19 @@
 package com.naeggeodo.presentation.view.chat
 
+import android.Manifest
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.activityViewModels
@@ -18,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.naeggeodo.domain.model.ChatHistory
 import com.naeggeodo.domain.model.User
 import com.naeggeodo.domain.utils.ChatDetailType
+import com.naeggeodo.presentation.BuildConfig
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.data.Message
@@ -30,7 +36,9 @@ import com.naeggeodo.presentation.utils.Util.encodeImage
 import com.naeggeodo.presentation.utils.Util.getMessageTimeString
 import com.naeggeodo.presentation.utils.Util.loadImageAndSetView
 import com.naeggeodo.presentation.utils.Util.showShortToast
+import com.naeggeodo.presentation.utils.Util.showSnackBar
 import com.naeggeodo.presentation.utils.dpToPx
+import com.naeggeodo.presentation.view.CommonDialogFragment
 import com.naeggeodo.presentation.viewmodel.ChatViewModel
 import org.json.JSONObject
 import timber.log.Timber
@@ -49,8 +57,23 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     private var quickChatDialog: QuickChatBottomDialogFragment? = null
     private var isGalleryVisible = false
 
-    override fun init() {
+    private var permissionLauncher: ActivityResultLauncher<String>? = null
 
+    override fun init() {
+        permissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                showGallery()
+            } else {
+                showSnackBar(binding.root,"사진에 접근하기 위해 권한이 필요합니다\n권한을 허용해 주세요", "허용하기"){
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    intent.data = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
     override fun onStart() {
@@ -171,23 +194,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
 
         binding.showGalleryButton.setOnClickListener {
-            if (isGalleryVisible) {
-                binding.galleryRecyclerview.visibility = View.GONE
-                isGalleryVisible = false
-            } else {
-                val list = chatViewModel.getAllImagePaths(requireActivity())
-                Timber.e("list $list")
-                if (list.isEmpty()) {
-                    showShortToast(requireContext(), "사진이 없습니다")
-                    return@setOnClickListener
-                }
+            // 권한 체크
+//            val permissions = HashMap<String, String>()
+//            permissions["storageRead"] = Manifest.permission.READ_EXTERNAL_STORAGE
+//            val result = PermissionHelper.checkPermission(requireActivity(), permissions)
 
-                binding.galleryRecyclerview.post {
-                    galleryAdapter.setData(list)
-                    binding.galleryRecyclerview.visibility = View.VISIBLE
-                }
-                isGalleryVisible = true
-            }
+            checkPermission()
         }
         galleryAdapter.setItemClickEvent { pos ->
             // 없어도 됨
@@ -196,25 +208,21 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
     }
 
+    private fun checkPermission() {
+        permissionLauncher?.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
 
     override fun observeViewModels() {
         chatViewModel.viewEvent.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { event ->
                 when (event) {
-                    ChatViewModel.ERROR_OCCURRED -> {
-                        showShortToast(requireContext(), "Error Occurred")
-                        requireActivity().finish()
-                    }
-                    ChatViewModel.EVENT_STOMP_CONNECTED -> {
-                        chatViewModel.getChatHistory()
-                        chatViewModel.getQuickChats(App.prefs.userId!!)
-                    }
                     ChatViewModel.FAILED_TO_SEND_MESSAGE -> {
                         showShortToast(requireContext(), "메세지 전송 실패")
                     }
                     ChatViewModel.ERROR_BANNED_FROM_CHAT -> {
-                        showShortToast(requireContext(), "추방당한 방입니다")
                         requireActivity().finish()
+                        showShortToast(requireContext(), "추방당한 방입니다")
                     }
                     ChatViewModel.ERROR_SESSION_DUPLICATION -> {
                         showShortToast(requireContext(), "중복된 접속입니다")
@@ -250,7 +258,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         }
 
         chatViewModel.chatInfo.observe(viewLifecycleOwner) { chat ->
-//            Timber.e("chat received")
             Timber.e("chat received ${chat}")
 
 
@@ -288,15 +295,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                         ChatDetailType.EXIT.name -> {
                             addNoticeView(h.contents)
                         }
-//                        ChatDetailType.BAN -> {
-//
-//                        }
-//                        ChatDetailType.BAN -> {
-//
-//                        }
-//                        ChatDetailType.TEXT.name -> {
-//
-//                        }
                     }
                 } else {
                     when (h.type) {
@@ -354,6 +352,28 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
                 }
             }
+        }
+    }
+
+    private fun showGallery() {
+        // granted
+        if (isGalleryVisible) {
+            binding.galleryRecyclerview.visibility = View.GONE
+            isGalleryVisible = false
+        } else {
+            //
+            val list = chatViewModel.getAllImagePaths(requireActivity())
+            Timber.e("list $list")
+            if (list.isEmpty()) {
+                showShortToast(requireContext(), "사진이 없습니다")
+                return
+            }
+
+            binding.galleryRecyclerview.post {
+                galleryAdapter.setData(list)
+                binding.galleryRecyclerview.visibility = View.VISIBLE
+            }
+            isGalleryVisible = true
         }
     }
 
@@ -463,7 +483,15 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                 if (ownerId == App.prefs.userId) {
                     layoutBinding.banButton.visibility = View.VISIBLE
                     layoutBinding.banButton.setOnClickListener {
-                        chatViewModel.banUser(user.userId)
+                        val dialog = CommonDialogFragment(
+                            contentText = "강퇴하시겠습니까?",
+                            colorButtonText = "강퇴",
+                            colorButtonListener = {
+                                chatViewModel.banUser(user.userId)
+                            },
+                            normalButtonText = "취소"
+                        )
+                        dialog.show(childFragmentManager, "Dialog")
                     }
                 }
             }
@@ -624,11 +652,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     override fun onStop() {
         super.onStop()
         chatViewModel.stopStomp()
-    }
-
-    override fun onDestroy() {
-//        chatViewModel.stopStomp()
-        super.onDestroy()
     }
 
     override fun onBackPressed() {

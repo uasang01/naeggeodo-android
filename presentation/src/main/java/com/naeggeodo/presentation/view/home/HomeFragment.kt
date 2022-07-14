@@ -13,7 +13,7 @@ import com.naeggeodo.presentation.databinding.FragmentHomeBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.Util
-import com.naeggeodo.presentation.utils.Util.showShortSnackbar
+import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.viewmodel.ChatViewModel
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
 import com.naeggeodo.presentation.viewmodel.HomeViewModel
@@ -94,7 +94,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 // 주소검색 웹 뷰를 띄울 DialogFragment 로 이동
                 AddressSearchDialogFragment().show(parentFragmentManager, "addressDialog")
             } else {
-                showShortSnackbar(binding.root, "인터넷 연결을 확인해주세요.")
+                showShortToast(requireContext(), "인터넷 연결을 확인해주세요.")
             }
         }
 
@@ -104,7 +104,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 val buildingCode = value.second
                 val apartment = value.third
                 if (apartment == ApartmentFlag.N.name) {
-                    showShortSnackbar(binding.root, getString(R.string.not_apartment))
+                    showShortToast(requireContext(), getString(R.string.not_apartment))
                     return@setItemClickEvent
                 }
                 requestChatList(
@@ -114,7 +114,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 return@setItemClickEvent
             }
 
-            showShortSnackbar(binding.root, getString(R.string.not_apartment))
+            showShortToast(requireContext(), getString(R.string.not_apartment))
         }
 
         binding.chatListRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

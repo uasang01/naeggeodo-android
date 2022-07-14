@@ -17,7 +17,7 @@
             android:id="@+id/profile_image_view"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@color/cardview_dark_background" />
+            android:src="@drawable/ic_user" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/me_text_view"
@@ -50,6 +50,8 @@
             android:layout_marginStart="5dp"
             android:gravity="start"
             android:text="신길동호랑이"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="@color/black" />
 
         <ImageView
@@ -57,7 +59,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="10dp"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:src="@drawable/ic_ban_user"
             />
 
