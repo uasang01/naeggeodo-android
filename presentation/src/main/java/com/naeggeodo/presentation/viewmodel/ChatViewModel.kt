@@ -334,11 +334,11 @@ class ChatViewModel @Inject constructor(
                 destination += send
             }
             ChatDetailType.WELCOME -> {
-                data.put("contents", "${nickname}님이 입장하셨습니다")
+                data.put("contents", "님이 입장하셨습니다")
                 destination += enter
             }
             ChatDetailType.EXIT -> {
-                data.put("contents", "${nickname}님이 퇴장하셨습니다")
+                data.put("contents", "님이 퇴장하셨습니다")
                 destination += exit
             }
             ChatDetailType.BAN -> {

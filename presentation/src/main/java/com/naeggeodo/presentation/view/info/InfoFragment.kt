@@ -23,7 +23,8 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
-    val infoViewModel by activityViewModels<InfoViewModel>()
+    private val infoViewModel by activityViewModels<InfoViewModel>()
+    var prevNickName = ""
     override fun init() {
     }
 
@@ -38,11 +39,7 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
     override fun initListener() {
         binding.nicknameEditText.onFocusChangeListener =
             View.OnFocusChangeListener { view, isFocused ->
-                if (isFocused) {
-                    binding.editNicknameButton.visibility = View.VISIBLE
-                } else {
-                    binding.editNicknameButton.visibility = View.INVISIBLE
-                }
+                if (isFocused) prevNickName = binding.nicknameEditText.text.toString()
             }
         binding.nicknameEditText.setOnKeyListener { view, keyCode, event ->
             when (keyCode) {
@@ -64,8 +61,13 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
                 .navigate(R.id.my_chat, null, navOptions)
         }
         binding.editNicknameButton.setOnClickListener {
+            if (binding.nicknameEditText.hasFocus()) {
+                changeNickname()
+            } else {
+                binding.nicknameEditText.requestFocus()
+            }
             // request to change nickname
-            changeNickname()
+
         }
 
         binding.noticeButton.setOnClickListener {
@@ -133,6 +135,10 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
         hideKeyboard(requireActivity())
         binding.nicknameEditText.clearFocus()
         binding.nicknameEditText.clearComposingText()
+
+        // 기존 닉네임과 같으면 요청 x
+        Timber.e("!! ${prevNickName} ${binding.nicknameEditText.text}")
+        if (prevNickName == binding.nicknameEditText.text.toString()) return
         infoViewModel.changeNickname(App.prefs.userId!!, binding.nicknameEditText.text.toString())
     }
 

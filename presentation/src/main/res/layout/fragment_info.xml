@@ -64,8 +64,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:padding="5dp"
-                    android:src="@drawable/ic_edit"
-                    android:visibility="invisible" />
+                    android:src="@drawable/ic_edit"/>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -292,10 +292,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                             imageReceiver(h)
                         }
                         ChatDetailType.WELCOME.name -> {
-                            addNoticeView(h.contents)
+                            addNoticeView("${h.nickname}${h.contents}")
                         }
                         ChatDetailType.EXIT.name -> {
-                            addNoticeView(h.contents)
+                            addNoticeView("${h.nickname}${h.contents}")
                         }
                     }
                 } else {
@@ -331,10 +331,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                         "인원 ${currentCount}명 / ${chatViewModel.chatInfo.value?.maxCount}명"
                 }
                 ChatDetailType.WELCOME.name -> {
-                    addNoticeView(msgInfo.contents)
+                    addNoticeView("${msgInfo.nickname}${msgInfo.contents}")
                 }
                 ChatDetailType.EXIT.name -> {
-                    addNoticeView(msgInfo.contents)
+                    addNoticeView("${msgInfo.nickname}${msgInfo.contents}")
                     if (msgInfo.contents.contains(App.prefs.nickname!!)) {
                         binding.checkDepositButton.visibility = View.VISIBLE
                     }
