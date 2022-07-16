@@ -5,7 +5,9 @@ import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.MyInfo
 import com.naeggeodo.domain.model.MyNickName
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
+import retrofit2.HttpException
 import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
 class InfoRemoteDataSourceImpl @Inject constructor(
@@ -47,13 +49,22 @@ class InfoRemoteDataSourceImpl @Inject constructor(
         userId: String
     ): MyInfo? {
         val res = safeApiCall(remoteErrorEmitter) {
-            infoApi.getMyInfo(userId)
+            val result = infoApi.getMyInfo(userId)
+            if(result.code()!=200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
+        return res?.body()
+    }
+
+    override suspend fun report(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        body: HashMap<String, String>
+    ): Boolean {
+        val res = safeApiCall(remoteErrorEmitter) {
+            val result = infoApi.report(body)
+            if(result.code() != 200) throw HttpException(result)
+            result
         }
+        return res != null
     }
 }

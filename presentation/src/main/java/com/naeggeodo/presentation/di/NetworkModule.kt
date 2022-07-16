@@ -1,5 +1,7 @@
 package com.naeggeodo.presentation.di
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -113,7 +115,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideConverterFactory(): GsonConverterFactory {
-        return GsonConverterFactory.create()
+        val gson : Gson = GsonBuilder()
+            .setLenient()
+            .create()
+        return GsonConverterFactory.create(gson)
     }
 
     private fun getLoggingInterceptor(): HttpLoggingInterceptor =

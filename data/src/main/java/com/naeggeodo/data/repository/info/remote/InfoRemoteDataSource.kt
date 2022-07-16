@@ -20,4 +20,6 @@ interface InfoRemoteDataSource {
         remoteErrorEmitter: RemoteErrorEmitter,
         userId: String
     ): MyInfo?
+
+    suspend fun report(remoteErrorEmitter: RemoteErrorEmitter, body: HashMap<String, String>): Boolean
 }

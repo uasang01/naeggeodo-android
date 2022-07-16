@@ -86,4 +86,9 @@ class UseCaseModule {
     fun provideRefreshTokenUseCase(repository: LoginRepository) =
         RefreshTokenUseCase(repository)
 
+    @Provides
+    @Singleton
+    fun provideReportUseCase(repository: InfoRepository) =
+        ReportUseCase(repository)
+
 }

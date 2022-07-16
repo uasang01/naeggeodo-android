@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import com.naeggeodo.domain.utils.ErrorType
 import com.naeggeodo.domain.utils.ReportType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -84,7 +85,8 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
                 colorButtonListener = { contents ->
                     // suggest!
                     val type = ReportType.FEEDBACK.name
-                    Timber.e("type $type / contents $contents")
+                    Timber.e("suggest, type $type / contents $contents")
+                    reportUser(contents, type)
                 }
             )
             dialog.show(childFragmentManager, "SuggestDialog")
@@ -95,7 +97,8 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
                 colorButtonText = "신고하기",
                 colorButtonListener = { type, contents ->
                     // report!
-                    Timber.e("type $type / contents $contents")
+                    Timber.e("report, type $type / contents $contents")
+                    reportUser(contents, type)
                 }
             )
             dialog.show(childFragmentManager, "ReportDialog")
@@ -152,5 +155,37 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
             binding.recentOrderTextView.text = "${it.myOrdersCount}건"
             binding.nicknameEditText.setText(it.nickname)
         }
+        infoViewModel.mutableErrorType.observe(viewLifecycleOwner){
+            Timber.e("gdgdgdgdgd")
+            when(it){
+                ErrorType.ACCESS_TOKEN_EXPIRED -> {
+                    showShortToast(requireContext(), "ACCESS_TOKEN_EXPIRED")
+                }
+                ErrorType.REFRESH_TOKEN_EXPIRED -> {
+                    showShortToast(requireContext(), "REFRESH_TOKEN_EXPIRED")
+                }
+                ErrorType.TIMEOUT -> {
+                    showShortToast(requireContext(), "TIMEOUT")
+                }
+                ErrorType.NETWORK -> {
+                    showShortToast(requireContext(), "NETWORK")
+                }
+                ErrorType.UNKNOWN -> {
+                    showShortToast(requireContext(), "UNKNOWN")
+                }
+                else -> {
+                    showShortToast(requireContext(), "UNKNOWN")
+                }
+            }
+        }
+    }
+
+    private fun reportUser(contents: String, type: String) {
+        val body = HashMap<String, String>()
+        body["user_id"] = App.prefs.userId!!
+        body["contents"] = contents
+        body["type"] = type
+
+        infoViewModel.report(body)
     }
 }

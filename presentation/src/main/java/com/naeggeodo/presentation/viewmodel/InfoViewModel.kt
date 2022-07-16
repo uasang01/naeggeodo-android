@@ -7,6 +7,7 @@ import com.naeggeodo.domain.model.MyNickName
 import com.naeggeodo.domain.usecase.ChangeNickNameUseCase
 import com.naeggeodo.domain.usecase.GetMyInfoUseCase
 import com.naeggeodo.domain.usecase.GetMyNickNameUseCase
+import com.naeggeodo.domain.usecase.ReportUseCase
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.SingleLiveEvent
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class InfoViewModel @Inject constructor(
     private val changeNickNameUseCase: ChangeNickNameUseCase,
     private val getMyNickNameUseCase: GetMyNickNameUseCase,
-    private val getMyInfoUseCase: GetMyInfoUseCase
+    private val getMyInfoUseCase: GetMyInfoUseCase,
+    private val reportUseCase: ReportUseCase
 ) : BaseViewModel() {
 
     private val _myInfo = SingleLiveEvent<MyInfo>()
@@ -40,6 +42,7 @@ class InfoViewModel @Inject constructor(
         }
         if (response == null) {
             mutableScreenState.postValue(ScreenState.ERROR)
+
         } else {
             _myInfo.postValue(response!!)
             mutableScreenState.postValue(ScreenState.RENDER)
@@ -57,6 +60,17 @@ class InfoViewModel @Inject constructor(
             _nickname.postValue(response!!)
             mutableScreenState.postValue(ScreenState.RENDER)
             viewEvent(HomeViewModel.EVENT_CATEGORIES_CHANGED)
+        }
+    }
+
+    fun report(body: HashMap<String, String>) = viewModelScope.launch {
+        val response = withContext(Dispatchers.IO) {
+            reportUseCase.execute(this@InfoViewModel, body)
+        }
+        if (response) {
+            mutableScreenState.postValue(ScreenState.RENDER)
+        } else {
+            mutableScreenState.postValue(ScreenState.ERROR)
         }
     }
 }

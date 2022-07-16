@@ -31,24 +31,16 @@ abstract class BaseRepository {
     ): T? {
         return try {
             val myObject = withContext(Dispatchers.IO) { callFunction.invoke() }
-//            (myObject as Response<*>?)?.let { res ->
-//                if (res.isSuccessful && res.code() == 200) {
-//                    myObject
-//                } else {
-//                    Timber.e("Api call failed / status:${res.code()} errorBody:${res.errorBody()}")
-//                    emitter.onError("status:${res.code()} body:${res.errorBody()}")
-//                    null
-//                }
-//            }
             myObject
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                e.printStackTrace()
                 Timber.e("BaseRemoteRepo Call error: ${e.localizedMessage} ${e.cause}")
                 when (e) {
                     is HttpException -> {
-                        if (e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
-                        else {
+                        if (e.code() == 401) emitter.onError(ErrorType.ACCESS_TOKEN_EXPIRED)
+                        else if(e.code() == 403) {
+                            emitter.onError(ErrorType.REFRESH_TOKEN_EXPIRED)
+                        }else{
                             val body = e.response()?.errorBody()
                             emitter.onError(getErrorMessage(body))
                         }
@@ -78,7 +70,7 @@ abstract class BaseRepository {
             Timber.e("BaseRemoteRepo Call error: ${e.localizedMessage} ${e.cause}")
             when (e) {
                 is HttpException -> {
-                    if (e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
+                    if (e.code() == 401) emitter.onError(ErrorType.ACCESS_TOKEN_EXPIRED)
                     else {
                         val body = e.response()?.errorBody()
                         emitter.onError(getErrorMessage(body))

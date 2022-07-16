@@ -31,4 +31,11 @@ class InfoRepositoryImpl @Inject constructor(
     ): MyInfo? {
         return infoRemoteDataSource.getMyInfo(remoteErrorEmitter, userId)
     }
+
+    override suspend fun report(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        body: HashMap<String, String>
+    ): Boolean {
+        return infoRemoteDataSource.report(remoteErrorEmitter, body)
+    }
 }

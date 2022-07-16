@@ -3,10 +3,7 @@ package com.naeggeodo.data.api
 import com.naeggeodo.domain.model.MyInfo
 import com.naeggeodo.domain.model.MyNickName
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface InfoApi {
     @GET("user/{user_id}/mypage")
@@ -24,4 +21,8 @@ interface InfoApi {
         @Path("user_id") userId: String,
         @Query("value") nickname: String
     ): Response<MyNickName>
+    @POST("report")
+    suspend fun report(
+        @Body body: HashMap<String, String>
+    ): Response<String>
 }
