@@ -99,8 +99,8 @@ dependencies {
     implementation "com.kakao.sdk:v2-user:2.10.0" // 카카오 로그인
 
     // stomp
-//    implementation files('libs/stomp-debug.aar')
-    implementation 'com.github.uasang01:Android-Stomp-Client:1.06'
+//    implementation files('libs/stomp-debug.aar')  // for test
+    implementation 'com.github.uasang01:Android-Stomp-Client:1.09'
 
 
     // rx
