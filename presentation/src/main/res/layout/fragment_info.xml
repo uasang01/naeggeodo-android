@@ -68,7 +68,7 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/order_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,6 +121,7 @@
                     android:layout_width="1dp"
                     android:layout_height="0dp"
                     android:background="#dddddd"
+                    android:layout_marginVertical="24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -160,7 +161,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <View
             android:id="@+id/layout_separator"

@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/create_button"/>
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/create_button"
             android:layout_width="0dp"
             android:layout_height="52dp"
@@ -62,7 +62,7 @@
                 android:text="내꺼톡 생성하기"
                 android:textAlignment="center"
                 android:textColor="@color/white" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!--  Guidelines  -->
         <androidx.constraintlayout.widget.Guideline

@@ -34,7 +34,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/select_button"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -49,5 +49,5 @@
             android:text="선택완료"
             android:textAlignment="center"
             android:textColor="@color/white" />
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

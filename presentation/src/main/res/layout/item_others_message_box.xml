@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/others_name_view">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/others_profile_image_cardview"
             android:layout_width="35dp"
             android:layout_height="35dp"
@@ -47,7 +47,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/bg_kakao" />
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/others_msg_view"

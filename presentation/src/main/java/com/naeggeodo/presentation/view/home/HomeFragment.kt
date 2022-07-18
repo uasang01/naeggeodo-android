@@ -1,7 +1,9 @@
 package com.naeggeodo.presentation.view.home
 
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.naeggeodo.domain.utils.ApartmentFlag
@@ -44,7 +46,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 Triple(
                     App.prefs.address!!,
                     App.prefs.buildingCode!!,
-                    ApartmentFlag.Y.name
+                    App.prefs.apartment ?: ApartmentFlag.Y.name
                 )
             )
         }
@@ -87,13 +89,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         binding.searchBarText.setOnClickListener {
-            // 인터넷 연결 확인
-            if (Util.isNetworkConnected(requireContext())) {
-                // 주소검색 웹 뷰를 띄울 DialogFragment 로 이동
-                AddressSearchDialogFragment().show(parentFragmentManager, "addressDialog")
-            } else {
-                showShortToast(requireContext(), "인터넷 연결을 확인해주세요.")
-            }
+            showSearchAddressDialog()
         }
 
         categoryAdapter.setItemClickEvent { pos ->
@@ -143,52 +139,43 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 }
             }
         })
+
+        binding.noneResult.createChatButton.setOnClickListener {
+            val navOptions = navOptions {
+                popUpTo(R.id.home) { inclusive = false }
+            }
+
+            findNavController().navigate(R.id.create, null, navOptions)
+        }
+        binding.noneAddress.searchAddressButton.setOnClickListener {
+            showSearchAddressDialog()
+        }
+    }
+
+    private fun showSearchAddressDialog() {
+        // 인터넷 연결 확인
+        if (Util.isNetworkConnected(requireContext())) {
+            // 주소검색 웹 뷰를 띄울 DialogFragment 로 이동
+            AddressSearchDialogFragment().show(parentFragmentManager, "addressDialog")
+        } else {
+            showShortToast(requireContext(), "인터넷 연결을 확인해주세요.")
+        }
     }
 
     override fun observeViewModels() {
-        homeViewModel.viewEvent.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { event ->
-                when (event) {
-                    HomeViewModel.EVENT_CHAT_LIST_CHANGED -> {
-                        Timber.e("event triggered / EVENT_CHAT_LIST_CHANGED")
-                        binding.chatListRecyclerView.postDelayed({
-                            homeViewModel.chatList.value?.let { value ->
-                                chatListAdapter!!.setDatas(ArrayList(value))
-                            }
-                            homeViewModel.setScreenState(ScreenState.RENDER)
-                        }, 100)
-                    }
-//                    HomeViewModel.EVENT_CATEGORIES_CHANGED -> {
-//                        Timber.e("event triggered / EVENT_CATEGORIES_CHANGED")
-//
-//                        val value = homeViewModel.categories.value!!
-//                        binding.categoryRecyclerView.post {
-//                            categoryAdapter.setData(ArrayList(value.categories))
-//                        }
-//                    }
-                }
+        homeViewModel.chatList.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.noneResult.root.visibility = View.VISIBLE
+            } else {
+                binding.noneResult.root.visibility = View.INVISIBLE
             }
+            chatListAdapter!!.setDatas(ArrayList(it))
         }
         homeViewModel.myNickName.observe(viewLifecycleOwner) {
             App.prefs.nickname = it.nickname
         }
 
-
-        locationViewModel.viewEvent.observe(viewLifecycleOwner) {
-//            it.getContentIfNotHandled()?.let { event ->
-//                when (event) {
-//                    LocationViewModel.EVENT_ADDRESS_INFO_CHANGED -> {
-//                        Handler(Looper.getMainLooper()).postDelayed({
-//
-//                        }, 100)
-//                    }
-//                }
-//            }
-        }
         homeViewModel.categories.observe(viewLifecycleOwner) { value ->
-            value.categories.map {
-//                Timber.e("${it.idx} ${it.category} ")
-            }
             binding.categoryRecyclerView.post {
                 categoryAdapter.setData(ArrayList(value.categories))
             }
@@ -214,12 +201,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         locationViewModel.addressInfo.observe(viewLifecycleOwner) { value ->
-            addressInfoUpdated()
+            if (value.third == ApartmentFlag.N.name) {
+                chatListAdapter!!.clearData()
+                binding.noneResult.root.visibility = View.GONE
+                binding.noneAddress.root.visibility = View.VISIBLE
+                binding.searchBarText.text = getText(R.string.not_apartment)
+                showShortToast(requireContext(), getString(R.string.not_apartment))
+            } else {
+                addressInfoUpdated()
+                binding.noneAddress.root.visibility = View.GONE
+            }
         }
-
-//        homeViewModel.chatList.observe(viewLifecycleOwner) { value ->
-//            chatListAdapter!!.setData(ArrayList(value))
-//        }
     }
 
     private fun addressInfoUpdated() {
@@ -234,15 +226,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             App.prefs.apartment = apartment
 
             val textview = binding.searchBarText
-            if (apartment == ApartmentFlag.Y.name) {
-                textview.text = address
-                requestChatList(
-                    category = categoryAdapter.getSelectedCategory(),
-                    buildingCode = buildingCode
-                )
-            } else {
-                textview.text = getText(R.string.not_apartment)
-            }
+            textview.text = address
+            requestChatList(
+                category = categoryAdapter.getSelectedCategory(),
+                buildingCode = buildingCode
+            )
         }
     }
 

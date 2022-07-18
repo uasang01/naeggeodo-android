@@ -40,7 +40,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/timeCardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 android:layout_marginHorizontal="5dp"
                 android:text="0분 전"
                 android:textColor="@color/grey_696969" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!--        <TextView-->
         <!--            android:id="@+id/count"-->

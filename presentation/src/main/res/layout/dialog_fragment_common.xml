@@ -21,7 +21,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/normal_button"
             android:layout_width="0dp"
             android:layout_height="52dp"
@@ -43,9 +43,9 @@
                 android:layout_height="match_parent"
                 android:text="예"
                 android:textColor="@color/black" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/color_button"
             android:layout_width="0dp"
             android:layout_height="52dp"
@@ -65,7 +65,7 @@
                 android:layout_height="match_parent"
                 android:text="아니오"
                 android:textColor="@color/white" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

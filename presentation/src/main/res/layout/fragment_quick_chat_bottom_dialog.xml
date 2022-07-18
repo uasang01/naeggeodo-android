@@ -7,7 +7,7 @@
     android:paddingHorizontal="@dimen/defaultMargin"
     android:paddingVertical="10dp">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/grab_bar"
         android:layout_width="50dp"
         android:layout_height="4dp"
@@ -72,7 +72,7 @@
             android:hint="자주쓰는 문구를 추가하세요"
             android:inputType="text" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/add_phrase_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -89,7 +89,7 @@
                 android:paddingHorizontal="10dp"
                 android:text="추가하기"
                 android:textColor="@color/black" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

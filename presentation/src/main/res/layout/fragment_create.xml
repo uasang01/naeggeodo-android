@@ -18,7 +18,7 @@
             app:layout_constraintStart_toStartOf="@id/guideline_left"
             app:layout_constraintTop_toTopOf="@id/guideline_top" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/one_hour_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
@@ -40,9 +40,9 @@
                 android:includeFontPadding="false"
                 android:text="1시간 이내"
                 android:textColor="@color/black" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/quick_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
@@ -64,9 +64,9 @@
                 android:includeFontPadding="false"
                 android:text="최대한 빨리"
                 android:textColor="@color/black" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/freedom_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
@@ -87,7 +87,7 @@
                 android:includeFontPadding="false"
                 android:text="상관없음 (인원이 모집되는대로)"
                 android:textColor="@color/black" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!--  Guidelines  -->
         <androidx.constraintlayout.widget.Guideline

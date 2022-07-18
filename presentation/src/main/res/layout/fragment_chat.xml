@@ -30,7 +30,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/image_card_view"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
@@ -45,7 +45,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:src="@drawable/ic_loading_logo" />
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:id="@+id/chat_title_text"
@@ -150,7 +150,7 @@
                     app:layout_constraintStart_toEndOf="@+id/quick_chat_drawer_button"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:backgroundTint="@color/grey_F2F2F8"
@@ -168,7 +168,7 @@
                         android:background="@color/transparent"
                         android:inputType="textMultiLine"
                         android:paddingHorizontal="10dp" />
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <ImageView
                     android:id="@+id/send_message_button"

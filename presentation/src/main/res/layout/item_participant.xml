@@ -19,7 +19,7 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_user" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/me_text_view"
             android:layout_width="18dp"
             android:layout_height="18dp"
@@ -38,7 +38,7 @@
                 android:gravity="center"
                 android:text="나"
                 android:textColor="@color/white" />
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/nickname_text_view"

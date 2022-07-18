@@ -11,6 +11,7 @@ import com.naeggeodo.domain.usecase.GetMyNickNameUseCase
 import com.naeggeodo.domain.usecase.SearchChatListByCategoryUseCase
 import com.naeggeodo.presentation.base.BaseViewModel
 import com.naeggeodo.presentation.utils.ScreenState
+import com.naeggeodo.presentation.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,13 +30,13 @@ class HomeViewModel @Inject constructor(
         const val EVENT_CHAT_LIST_CHANGED = 223
     }
 
-    private val _categories: MutableLiveData<Categories> = MutableLiveData()
+    private val _categories: SingleLiveEvent<Categories> = SingleLiveEvent()
     val categories: LiveData<Categories> get() = _categories
 
-    private val _chatList: MutableLiveData<List<Chat>> = MutableLiveData()
+    private val _chatList: SingleLiveEvent<List<Chat>> = SingleLiveEvent()
     val chatList: LiveData<List<Chat>> get() = _chatList
 
-    private val _myNickName: MutableLiveData<MyNickName> = MutableLiveData()
+    private val _myNickName: SingleLiveEvent<MyNickName> = SingleLiveEvent()
     val myNickName: LiveData<MyNickName> get() = _myNickName
 
 
@@ -63,7 +64,7 @@ class HomeViewModel @Inject constructor(
             mutableScreenState.postValue(ScreenState.ERROR)
         } else {
             _chatList.postValue(response!!.chatList)
-
+            mutableScreenState.postValue(ScreenState.RENDER)
             viewEvent(EVENT_CHAT_LIST_CHANGED)
         }
     }
