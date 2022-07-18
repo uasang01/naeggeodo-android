@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_top"
         app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
         app:layout_constraintStart_toEndOf="@id/imageCardView"
-        app:layout_constraintEnd_toStartOf="@id/time_text_view"
+        app:layout_constraintEnd_toEndOf="@id/guideline_right"
         >
 
         <TextView
@@ -42,6 +42,16 @@
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:id="@+id/edit_button"
+            android:layout_width="40dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="100dp"
+            android:background="@color/white"
+            android:paddingStart="10dp"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintStart_toEndOf="@id/title_text_view"
+            app:layout_constraintTop_toTopOf="parent"/>
 
 
         <TextView
@@ -65,21 +75,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="수원시 팔달구 매산로"
-            android:textColor="@color/black"
+            android:textColor="@color/grey_696969"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/time_text_view"
+            style="@style/font_regular_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="오후 5:30"
+            android:textColor="@color/grey_696969"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/title_text_view" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <TextView
-        android:id="@+id/time_text_view"
-        style="@style/font_regular_12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="오후 5:30"
-        android:textColor="@color/grey_696969"
-        app:layout_constraintTop_toTopOf="@id/guideline_top"
-        app:layout_constraintEnd_toEndOf="@id/guideline_right"/>
 
     <View
         android:layout_width="match_parent"

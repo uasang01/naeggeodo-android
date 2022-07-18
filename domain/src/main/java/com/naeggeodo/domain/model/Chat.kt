@@ -22,7 +22,7 @@ data class Chat(
     val place: Any,
     val state: String,
     val tags: List<String>,
-    val title: String,
+    var title: String,
     @SerializedName("user_id")
     val userId: String,
     val latestMessage: String?

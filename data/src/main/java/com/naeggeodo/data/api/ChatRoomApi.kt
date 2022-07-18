@@ -32,4 +32,10 @@ interface ChatRoomApi {
     suspend fun getMyChats(
         @Path("user_id") userId: String
     ): Response<ChatList>
+
+    @PATCH("chat-rooms/{chatMain_id}")
+    suspend fun changeChatTitle(
+        @Path("chatMain_id") chatId: Int,
+        @Query("title") title: String
+    ): Response<ChatTitle>
 }

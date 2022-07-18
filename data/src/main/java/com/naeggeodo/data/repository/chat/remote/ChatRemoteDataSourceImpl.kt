@@ -7,6 +7,7 @@ import com.naeggeodo.data.api.QuickChatApi
 import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.*
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -122,5 +123,18 @@ class ChatRemoteDataSourceImpl @Inject constructor(
             Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
             null
         }
+    }
+
+    override suspend fun changeChatTitle(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int,
+        title: String
+    ): ChatTitle? {
+        val res = safeApiCall(remoteErrorEmitter) {
+            val result = chatRoomApi.changeChatTitle(chatId, title)
+            if (result.code() != 200) throw HttpException(result)
+            result
+        }
+        return res?.body()
     }
 }

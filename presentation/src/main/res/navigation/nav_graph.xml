@@ -44,9 +44,7 @@
         tools:layout="@layout/fragment_my_chat">
         <action
             android:id="@+id/action_my_chat_to_chatActivity"
-            app:destination="@id/chatActivity"
-            app:popUpTo="@id/home"
-            app:popUpToInclusive="false" />
+            app:destination="@id/chatActivity" />
     </fragment>
     <fragment
         android:id="@+id/info"

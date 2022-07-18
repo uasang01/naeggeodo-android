@@ -7,7 +7,6 @@ import com.naeggeodo.domain.model.MyNickName
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import retrofit2.HttpException
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 class InfoRemoteDataSourceImpl @Inject constructor(
@@ -50,7 +49,7 @@ class InfoRemoteDataSourceImpl @Inject constructor(
     ): MyInfo? {
         val res = safeApiCall(remoteErrorEmitter) {
             val result = infoApi.getMyInfo(userId)
-            if(result.code()!=200) throw HttpException(result)
+            if (result.code() != 200) throw HttpException(result)
             result
         }
         return res?.body()
@@ -62,7 +61,7 @@ class InfoRemoteDataSourceImpl @Inject constructor(
     ): Boolean {
         val res = safeApiCall(remoteErrorEmitter) {
             val result = infoApi.report(body)
-            if(result.code() != 200) throw HttpException(result)
+            if (result.code() != 200) throw HttpException(result)
             result
         }
         return res != null

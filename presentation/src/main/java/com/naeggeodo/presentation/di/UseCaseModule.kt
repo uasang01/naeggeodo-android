@@ -91,4 +91,8 @@ class UseCaseModule {
     fun provideReportUseCase(repository: InfoRepository) =
         ReportUseCase(repository)
 
+    @Provides
+    @Singleton
+    fun provideChangeChatTitleUseCase(repository: ChatRepository) =
+        ChangeChatTitleUseCase(repository)
 }

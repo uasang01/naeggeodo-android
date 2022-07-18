@@ -4,12 +4,15 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.model.ChatTitle
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemMyChatBinding
+import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util.getSvgRequestBuilder
 import com.naeggeodo.presentation.utils.Util.getTimeDiff
 import com.naeggeodo.presentation.utils.Util.getTimeStr
@@ -18,12 +21,15 @@ import com.naeggeodo.presentation.utils.Util.getTimeStr
 class MyChatListAdapter(
     private val context: Context,
     private var datas: ArrayList<Chat>,
-    private var listener: (chatId: Int) -> Unit = {}
+    private var listener: (chatId: Int) -> Unit = {},
+    private var editTitleListener: (chatId: Int, title: String) -> Unit = { _, _ -> }
 ) :
     RecyclerView.Adapter<MyChatListAdapter.ViewHolder>() {
 
     val drawableList = hashMapOf<Int, Drawable>()
     val svgRequestBuilder = getSvgRequestBuilder(context)
+
+    var clickedPos = 0
 
     inner class ViewHolder(val binding: ItemMyChatBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -59,6 +65,14 @@ class MyChatListAdapter(
                     .centerCrop()
                     .into(image)
             }
+            if (datas[position].userId == App.prefs.userId) {
+                editButton.setOnClickListener {
+                    editTitleListener(datas[position].chatId, titleTextView.text.toString())
+                    clickedPos = position
+                }
+            } else {
+                editButton.visibility = View.GONE
+            }
             myChatLayout.setOnClickListener {
                 listener(datas[position].chatId)
             }
@@ -75,6 +89,11 @@ class MyChatListAdapter(
 
     fun getData(pos: Int) = datas[pos]
 
+    fun changeData(chatTitle: ChatTitle) {
+        datas[clickedPos].title = chatTitle.title
+        notifyItemChanged(clickedPos)
+    }
+
     fun clearData() {
         val size = datas.size
         datas.clear()
@@ -85,5 +104,9 @@ class MyChatListAdapter(
 
     fun setListener(l: (chatId: Int) -> Unit) {
         listener = l
+    }
+
+    fun setEditTitleListener(l: (chatId: Int, title: String) -> Unit) {
+        editTitleListener = l
     }
 }

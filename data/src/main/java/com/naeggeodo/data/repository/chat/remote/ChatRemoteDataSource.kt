@@ -33,4 +33,10 @@ interface ChatRemoteDataSource {
         chatId: Int,
         state: String
     ): ChatRoomState?
+
+    suspend fun changeChatTitle(
+        remoteErrorEmitter: RemoteErrorEmitter,
+        chatId: Int,
+        title: String
+    ): ChatTitle?
 }
