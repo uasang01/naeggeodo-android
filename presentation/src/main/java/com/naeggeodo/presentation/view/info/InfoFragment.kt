@@ -17,9 +17,12 @@ import com.naeggeodo.presentation.utils.Util.goToLoginScreen
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.view.CommonDialogFragment
-import com.naeggeodo.presentation.view.LoginActivity
 import com.naeggeodo.presentation.viewmodel.InfoViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
@@ -153,9 +156,9 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
             binding.recentOrderTextView.text = "${it.myOrdersCount}건"
             binding.nicknameEditText.setText(it.nickname)
         }
-        infoViewModel.mutableErrorType.observe(viewLifecycleOwner){
+        infoViewModel.mutableErrorType.observe(viewLifecycleOwner) {
             Timber.e("gdgdgdgdgd")
-            when(it){
+            when (it) {
                 ErrorType.ACCESS_TOKEN_EXPIRED -> {
                     showShortToast(requireContext(), "ACCESS_TOKEN_EXPIRED")
                 }
@@ -184,6 +187,12 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
         body["contents"] = contents
         body["type"] = type
 
-        infoViewModel.report(body)
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = infoViewModel.report(body)
+            withContext(Dispatchers.Main){
+                if(result) showShortToast(requireContext(), "접수되었습니다")
+                else showShortToast(requireContext(), "에러가 발생했습니다")
+            }
+        }
     }
 }

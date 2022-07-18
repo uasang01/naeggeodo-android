@@ -63,14 +63,14 @@ class InfoViewModel @Inject constructor(
         }
     }
 
-    fun report(body: HashMap<String, String>) = viewModelScope.launch {
-        val response = withContext(Dispatchers.IO) {
-            reportUseCase.execute(this@InfoViewModel, body)
+    suspend fun report(body: HashMap<String, String>) =
+        withContext(viewModelScope.coroutineContext) {
+            val response = reportUseCase.execute(this@InfoViewModel, body)
+            if (response) {
+                mutableScreenState.postValue(ScreenState.RENDER)
+            } else {
+                mutableScreenState.postValue(ScreenState.ERROR)
+            }
+            response
         }
-        if (response) {
-            mutableScreenState.postValue(ScreenState.RENDER)
-        } else {
-            mutableScreenState.postValue(ScreenState.ERROR)
-        }
-    }
 }
