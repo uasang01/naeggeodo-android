@@ -224,7 +224,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                     }
                     ChatViewModel.ERROR_BANNED_FROM_CHAT -> {
                         requireActivity().finish()
-                        showShortToast(requireContext(), "추방당한 방입니다")
+                        showShortToast(requireContext(), "방에서 추방당했습니다")
                     }
                     ChatViewModel.ERROR_SESSION_DUPLICATION -> {
                         showShortToast(requireContext(), "중복된 접속입니다")

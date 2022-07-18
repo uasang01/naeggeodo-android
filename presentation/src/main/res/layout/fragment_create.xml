@@ -24,7 +24,7 @@
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
 
-            android:backgroundTint="@color/grey_F2F2F8"
+            android:backgroundTint="@color/bg_selected_orange"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
 
@@ -33,13 +33,13 @@
             app:layout_constraintStart_toStartOf="@id/guideline_left">
 
             <TextView
-                style="@style/font_default_bold_15"
+                style="@style/font_bold_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:includeFontPadding="false"
                 android:text="1시간 이내"
-                android:textColor="@color/black" />
+                android:textColor="@color/main_color" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
@@ -48,7 +48,7 @@
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
 
-            android:backgroundTint="@color/grey_F2F2F8"
+            android:backgroundTint="@color/bg_selected_orange"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
 
@@ -57,20 +57,20 @@
             app:layout_constraintStart_toStartOf="@id/guideline_left">
 
             <TextView
-                style="@style/font_default_bold_15"
+                style="@style/font_bold_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:includeFontPadding="false"
                 android:text="최대한 빨리"
-                android:textColor="@color/black" />
+                android:textColor="@color/main_color" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/freedom_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:backgroundTint="@color/grey_F2F2F8"
+            android:backgroundTint="@color/bg_selected_orange"
 
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
@@ -80,13 +80,13 @@
             app:layout_constraintStart_toStartOf="@id/guideline_left">
 
             <TextView
-                style="@style/font_default_bold_15"
+                style="@style/font_bold_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:includeFontPadding="false"
                 android:text="상관없음 (인원이 모집되는대로)"
-                android:textColor="@color/black" />
+                android:textColor="@color/main_color" />
         </com.google.android.material.card.MaterialCardView>
 
         <!--  Guidelines  -->
