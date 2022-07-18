@@ -16,7 +16,7 @@ data class Chat(
     val chatId: Int,
     val idx: Int,
     val imgPath: String?,
-    val link: String,
+    val link: String?,
     val maxCount: Int,
     val orderTimeType: String,
     val place: Any,

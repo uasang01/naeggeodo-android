@@ -69,7 +69,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             if (isGranted) {
                 showGallery()
             } else {
-                showSnackBar(binding.root,"사진에 접근하기 위해 권한이 필요합니다\n권한을 허용해 주세요", "허용하기"){
+                showSnackBar(binding.root, "사진에 접근하기 위해 권한이 필요합니다\n권한을 허용해 주세요", "허용하기") {
                     val intent = Intent()
                     intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     intent.data = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
@@ -266,6 +266,22 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             binding.chatTitleText.text = chat.title
             loadImageAndSetView(requireContext(), chat.imgPath, binding.chatImage)
             binding.numOfPeople.text = "인원 ${chat.currentCount}명 / ${chat.maxCount}명"
+            val linkValid =
+                chat.link?.run { contains("baemin") || contains("yogiyo") || contains("https://") }
+            if (linkValid == true) {
+
+                binding.linkButton.visibility = View.VISIBLE
+                binding.linkButton.setOnClickListener {
+                    val browserIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(chat.link)
+                    )
+                    startActivity(browserIntent)
+                }
+            } else {
+                binding.linkButton.visibility = View.GONE
+            }
+
 
             val masterId = chatViewModel.chatInfo.value!!.userId
             if (masterId == App.prefs.userId) {
@@ -465,7 +481,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
             .load(bitmap)
             .centerCrop()
             .into(imageView)
-        if(binding.drawer.galleryContainer.childCount>=DRAWER_GALLERY_ITEM_MAX){
+        if (binding.drawer.galleryContainer.childCount >= DRAWER_GALLERY_ITEM_MAX) {
             binding.drawer.galleryContainer.removeViewAt(0)
         }
         binding.drawer.galleryContainer.addView(imageView)
@@ -546,7 +562,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     private fun addMyImageView(encodedString: String, time: LocalDateTime? = null) {
         val byteArray = decodeString(encodedString.split(",").last())
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        if(bitmap == null){
+        if (bitmap == null) {
             Timber.e("Image null")
             return
         }
