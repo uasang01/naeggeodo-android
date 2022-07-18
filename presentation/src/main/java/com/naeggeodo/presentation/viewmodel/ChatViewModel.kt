@@ -19,7 +19,7 @@ import com.naeggeodo.presentation.utils.ScreenState
 import com.naeggeodo.presentation.utils.SingleLiveEvent
 import com.uasang01.stomp.lib.Event
 import com.uasang01.stomp.lib.StompClient
-import com.uasang01.stomp.lib.payload.StompMessage
+import com.uasang01.stomp.lib.StompMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.plugins.RxJavaPlugins

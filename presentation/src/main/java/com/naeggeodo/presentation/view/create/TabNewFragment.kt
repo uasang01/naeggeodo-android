@@ -84,15 +84,18 @@ class TabNewFragment : BaseFragment<FragmentTabNewBinding>(R.layout.fragment_tab
 //        }
 
         createChatViewModel.place.value?.let {
-            binding.placeEditText.setText(it)
+            if (it.isNotEmpty()) binding.placeEditText.setText(it)
+            else null
         }
 
         createChatViewModel.link.value?.let {
-            binding.linkEditText.setText(it)
+            if (it.isNotEmpty()) binding.linkEditText.setText(it)
+            else null
         }
 
         createChatViewModel.tag.value?.let {
-            binding.tagEditText.setText(it)
+            if (it.isNotEmpty()) binding.tagEditText.setText(it)
+            else null
         }
         createChatViewModel.maxPeopleNum.value?.let {
             binding.peopleCountTextView.text = it.toString()

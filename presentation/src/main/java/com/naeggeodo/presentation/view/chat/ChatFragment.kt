@@ -262,7 +262,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
         chatViewModel.chatInfo.observe(viewLifecycleOwner) { chat ->
             Timber.e("chat received ${chat}")
 
-
             // 헤더 뷰 설정
             binding.chatTitleText.text = chat.title
             loadImageAndSetView(requireContext(), chat.imgPath, binding.chatImage)
@@ -312,7 +311,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                             imageReceiver(h)
                         }
                         ChatDetailType.WELCOME.name, ChatDetailType.EXIT.name -> {
-                            addNoticeView(h.contents)
+                            addNoticeView("${h.nickname}${h.contents}")
                         }
                     }
                 }

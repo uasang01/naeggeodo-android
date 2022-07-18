@@ -27,12 +27,12 @@ class CreateChatViewModel @Inject constructor(
     val category: LiveData<Category> get() = _category
     private val _categoryKorean: SingleLiveEvent<String> = SingleLiveEvent()
     val categoryKorean: LiveData<String> get() = _categoryKorean
-    private val _link: SingleLiveEvent<String> = SingleLiveEvent()
-    val link: LiveData<String> get() = _link
-    private val _place: SingleLiveEvent<String> = SingleLiveEvent()
-    val place: LiveData<String> get() = _place
-    private val _tag: SingleLiveEvent<String> = SingleLiveEvent()
-    val tag: LiveData<String> get() = _tag
+    private val _link: SingleLiveEvent<String?> = SingleLiveEvent()
+    val link: LiveData<String?> get() = _link
+    private val _place: SingleLiveEvent<String?> = SingleLiveEvent()
+    val place: LiveData<String?> get() = _place
+    private val _tag: SingleLiveEvent<String?> = SingleLiveEvent()
+    val tag: LiveData<String?> get() = _tag
     private val _maxPeopleNum: SingleLiveEvent<Int> = SingleLiveEvent<Int>().apply {
         postValue(2)
     }
@@ -54,9 +54,9 @@ class CreateChatViewModel @Inject constructor(
         category?.let { _category.postValue(category!!) }
     }
 
-    fun setPlace(str: String) = _place.postValue(str)
-    fun setLink(str: String) = _link.postValue(str)
-    fun setTag(str: String) = _tag.postValue(str)
+    fun setPlace(str: String?) = _place.postValue(str)
+    fun setLink(str: String?) = _link.postValue(str)
+    fun setTag(str: String?) = _tag.postValue(str)
     fun setMaxPeopleNum(num: Int) = _maxPeopleNum.postValue(num)
     fun setChatImage(bitmap: Bitmap) = _chatImage.postValue(bitmap)
 
@@ -92,9 +92,9 @@ class CreateChatViewModel @Inject constructor(
     fun init() {
         setChatTitle("")
         setCategory(null)
-        setPlace("")
-        setLink("")
-        setTag("")
+        setPlace(null)
+        setLink(null)
+        setTag(null)
         setMaxPeopleNum(2)
     }
 }

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentCreateNewChatBinding
@@ -24,10 +25,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -121,7 +124,13 @@ class CreateNewChatFragment :
                         json.put("address", App.prefs.address!!)
                         json.put("orderTimeType", orderTimeType)
                         json.put("maxCount", createChatViewModel.maxPeopleNum.value!!)
-                        json.put("tag", createChatViewModel.tag.value?.split(","))
+                        val tag = createChatViewModel.tag.value?.let {
+//                            if(it.isNotEmpty()) it.split(",")
+//                            if(it.isNotEmpty()) Gson().toJsonTree(it.split(","))
+                            if (it.isNotEmpty()) JSONArray(it.split(","))
+                            else null
+                        }
+                        json.put("tag", tag)
                         json.put("link", createChatViewModel.link.value)
                         json.put("place", createChatViewModel.place.value)
 
@@ -169,10 +178,13 @@ class CreateNewChatFragment :
                         }
                     }
                 }
+                // request
                 CoroutineScope(Dispatchers.IO).launch {
                     val result = createChatViewModel.createChat(parts)
                     if (!result) {
-                        showShortToast(requireContext(), "채팅방 생성 실패")
+                        withContext(Dispatchers.Main) {
+                            showShortToast(requireContext(), "채팅방 생성 실패")
+                        }
                     }
                 }
             } catch (e: Exception) {

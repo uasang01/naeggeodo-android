@@ -48,19 +48,23 @@ class ChatListAdapter(
             orderTypeTextView.text =
                 enumValueOf<OrderTimeType>(datas[position].orderTimeType).korean
 
-            val uri = Uri.parse(datas[position].imgPath)
-            if (uri.toString().split((".")).last() == "svg") {
-                svgRequestBuilder.load(uri)
-                    .centerCrop()
-                    .error(R.drawable.ic_error)
-                    .into(image)
-            } else {
-                Glide.with(context)
-                    .load(uri)
-                    .error(R.drawable.ic_error)
-                    .centerCrop()
-                    .into(image)
+            val imagePath = datas[position].imgPath
+            if(imagePath != null){
+                val uri = Uri.parse(datas[position].imgPath)
+                if (uri.toString().split((".")).last() == "svg") {
+                    svgRequestBuilder.load(uri)
+                        .centerCrop()
+                        .error(R.drawable.ic_error)
+                        .into(image)
+                } else {
+                    Glide.with(context)
+                        .load(uri)
+                        .error(R.drawable.ic_error)
+                        .centerCrop()
+                        .into(image)
+                }
             }
+
             enterContainer.setOnClickListener {
                 listener(position)
             }

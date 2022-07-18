@@ -45,7 +45,8 @@ object Util {
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(SvgSoftwareLayerSetter())
 
-    fun loadImageAndSetView(context: Context, imagePath: String, view: ImageView) {
+    fun loadImageAndSetView(context: Context, imagePath: String?, view: ImageView) {
+        if(imagePath == null) return
         val uri = Uri.parse(imagePath)
         if (uri.toString().split((".")).last() == "svg") {
             getSvgRequestBuilder(context).load(uri)
