@@ -25,6 +25,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
     private val loginViewModel: LoginViewModel by viewModels()
 
+    override fun init() {
+        if(App.prefs.accessToken != null) goToHome()
+    }
+
     override fun initListener() {
         binding.naverButton.setOnClickListener {
             NaverIdLoginSDK.initialize(

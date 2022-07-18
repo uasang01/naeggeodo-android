@@ -5,7 +5,7 @@ import com.naeggeodo.data.api.RefreshTokenApi
 import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.LogIn
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
-import timber.log.Timber
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class LoginRemoteDataSourceImpl @Inject constructor(
@@ -18,25 +18,19 @@ class LoginRemoteDataSourceImpl @Inject constructor(
         body: HashMap<String, String?>
     ): LogIn? {
         val res = safeApiCall(remoteErrorEmitter) {
-            logInApi.logIn(provider, body)
+            val result = logInApi.logIn(provider, body)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun refreshToken(remoteErrorEmitter: RemoteErrorEmitter): LogIn? {
         val res = safeApiCall(remoteErrorEmitter) {
-            refreshTokenApi.refreshToken()
+            val result = refreshTokenApi.refreshToken()
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 }

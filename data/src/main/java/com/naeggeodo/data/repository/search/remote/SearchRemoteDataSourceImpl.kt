@@ -1,12 +1,12 @@
 package com.naeggeodo.data.repository.search.remote
 
-import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.data.api.GetTagsApi
 import com.naeggeodo.data.api.SearchChatListByKeyWordApi
+import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.ChatList
 import com.naeggeodo.domain.model.Tags
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
-import timber.log.Timber
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class SearchRemoteDataSourceImpl @Inject constructor(
@@ -17,14 +17,11 @@ class SearchRemoteDataSourceImpl @Inject constructor(
         remoteErrorEmitter: RemoteErrorEmitter
     ): Tags? {
         val res = safeApiCall(remoteErrorEmitter) {
-            getTagsApi.getTags()
+            val result = getTagsApi.getTags()
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getChatList(
@@ -33,13 +30,10 @@ class SearchRemoteDataSourceImpl @Inject constructor(
         keyWord: String
     ): ChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
-            searchChatListByKeyWordApi.getChatList(searchType, keyWord)
+            val result = searchChatListByKeyWordApi.getChatList(searchType, keyWord)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 }

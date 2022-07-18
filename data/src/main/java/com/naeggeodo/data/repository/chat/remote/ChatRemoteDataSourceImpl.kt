@@ -8,7 +8,6 @@ import com.naeggeodo.data.base.BaseRepository
 import com.naeggeodo.domain.model.*
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import retrofit2.HttpException
-import timber.log.Timber
 import javax.inject.Inject
 
 class ChatRemoteDataSourceImpl @Inject constructor(
@@ -18,32 +17,24 @@ class ChatRemoteDataSourceImpl @Inject constructor(
     private val quickChatApi: QuickChatApi
 ) : ChatRemoteDataSource, BaseRepository() {
     override suspend fun getChatInfo(remoteErrorEmitter: RemoteErrorEmitter, chatId: Int): Chat? {
-
         val res = safeApiCall(remoteErrorEmitter) {
-            chatRoomApi.getChatInfo(chatId)
+            val result = chatRoomApi.getChatInfo(chatId)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getUsersInChat(
         remoteErrorEmitter: RemoteErrorEmitter,
         chatId: Int
     ): Users? {
-
         val res = safeApiCall(remoteErrorEmitter) {
-            getUsersInChat.getUsersInChat(chatId)
+            val result = getUsersInChat.getUsersInChat(chatId)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getPrevChatHistory(
@@ -51,16 +42,12 @@ class ChatRemoteDataSourceImpl @Inject constructor(
         chatId: Int,
         userId: String
     ): ChatHistoryList? {
-
         val res = safeApiCall(remoteErrorEmitter) {
-            getPrevChatHistoryApi.getPrevChatHistory(chatId, userId)
+            val result = getPrevChatHistoryApi.getPrevChatHistory(chatId, userId)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getQuickChat(
@@ -68,14 +55,11 @@ class ChatRemoteDataSourceImpl @Inject constructor(
         userId: String
     ): QuickChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
-            quickChatApi.getQuickChatApi(userId)
+            val result = quickChatApi.getQuickChatApi(userId)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun patchQuickChat(
@@ -84,14 +68,11 @@ class ChatRemoteDataSourceImpl @Inject constructor(
         body: HashMap<String, List<String?>>
     ): QuickChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
-            quickChatApi.patchQuickChatApi(userId, body)
+            val result = quickChatApi.patchQuickChatApi(userId, body)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getMyChatList(
@@ -99,14 +80,11 @@ class ChatRemoteDataSourceImpl @Inject constructor(
         userId: String
     ): ChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
-            chatRoomApi.getMyChats(userId)
+            val result = chatRoomApi.getMyChats(userId)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun changeChatRoomState(
@@ -115,14 +93,11 @@ class ChatRemoteDataSourceImpl @Inject constructor(
         state: String
     ): ChatRoomState? {
         val res = safeApiCall(remoteErrorEmitter) {
-            chatRoomApi.changeChatRoomState(chatId, state)
+            val result = chatRoomApi.changeChatRoomState(chatId, state)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun changeChatTitle(

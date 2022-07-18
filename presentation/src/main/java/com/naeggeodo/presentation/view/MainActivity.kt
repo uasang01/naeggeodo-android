@@ -49,10 +49,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     override fun onDestroy() {
         super.onDestroy()
-
-        App.prefs.clearAccessToken()
-        App.prefs.clearUserId()
-        App.prefs.clearNickname()
     }
 
     override fun onBackPressed() {

@@ -9,6 +9,7 @@ import com.naeggeodo.domain.model.ChatList
 import com.naeggeodo.domain.model.DeleteChat
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import okhttp3.MultipartBody
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,14 +24,13 @@ class CreateRemoteDataSourceImpl @Inject constructor(
         files: List<MultipartBody.Part>
     ): ChatId? {
         val res = safeApiCall(remoteErrorEmitter) {
-            chatRoomApi.createChat(files)
+            val result = chatRoomApi.createChat(files)
+            if (result.code() != 200) {
+                throw HttpException(result)
+            }
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getChatCreationHistory(
@@ -38,14 +38,13 @@ class CreateRemoteDataSourceImpl @Inject constructor(
         userId: String
     ): ChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
-            getChatCreationHistoryApi.getChatCreationHistoryApi(userId)
+            val result = getChatCreationHistoryApi.getChatCreationHistoryApi(userId)
+            if (result.code() != 200) {
+                throw HttpException(result)
+            }
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun bookmarking(
@@ -54,15 +53,13 @@ class CreateRemoteDataSourceImpl @Inject constructor(
         userId: String
     ): Boolean {
         val res = safeApiCall(remoteErrorEmitter) {
-            bookmarkingApi.bookmarking(chatId, userId)
+            val result = bookmarkingApi.bookmarking(chatId, userId)
+            if (result.code() != 200) {
+                throw HttpException(result)
+            }
+            result
         }
-        Timber.e("bookmark api response $res")
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            true
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            false
-        }
+        return res != null
     }
 
     override suspend fun deleteChat(
@@ -70,14 +67,12 @@ class CreateRemoteDataSourceImpl @Inject constructor(
         chatId: Int
     ): DeleteChat? {
         val res = safeApiCall(remoteErrorEmitter) {
-            chatRoomApi.deleteChatRoom(chatId)
+            val result = chatRoomApi.deleteChatRoom(chatId)
+            if (result.code() != 200) {
+                throw HttpException(result)
+            }
+            result
         }
-        Timber.e("bookmark api response $res")
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 }

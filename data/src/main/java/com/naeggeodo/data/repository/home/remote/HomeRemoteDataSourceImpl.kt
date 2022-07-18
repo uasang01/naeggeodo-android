@@ -8,7 +8,7 @@ import com.naeggeodo.domain.model.Categories
 import com.naeggeodo.domain.model.ChatList
 import com.naeggeodo.domain.model.MyNickName
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
-import timber.log.Timber
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(
@@ -20,14 +20,12 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         remoteErrorEmitter: RemoteErrorEmitter
     ): Categories? {
         val res = safeApiCall(remoteErrorEmitter) {
-            categoryApi.getCategories()
+            val result = categoryApi.getCategories()
+            if (result.code() != 200) throw HttpException(result)
+
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getChatList(
@@ -36,29 +34,24 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         buildingCode: String
     ): ChatList? {
         val res = safeApiCall(remoteErrorEmitter) {
-            searchChatListByCategoryApi.getChatList(category, buildingCode)
+            val result = searchChatListByCategoryApi.getChatList(category, buildingCode)
+            if (result.code() != 200) throw HttpException(result)
+
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getMyNickName(
         remoteErrorEmitter: RemoteErrorEmitter,
         userId: String
     ): MyNickName? {
-
         val res = safeApiCall(remoteErrorEmitter) {
-            infoApi.getMyNickName(userId)
+            val result = infoApi.getMyNickName(userId)
+            if (result.code() != 200) throw HttpException(result)
+
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 }

@@ -2,10 +2,13 @@ package com.naeggeodo.presentation.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.naeggeodo.data.api.RefreshTokenApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -23,11 +26,14 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named("AuthHeader")
-    fun provideHttpClient(): OkHttpClient {
+    fun provideHttpClient(
+        authenticator: Authenticator
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(10, TimeUnit.SECONDS)
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
+            .authenticator(authenticator)
             .addInterceptor(getLoggingInterceptor())
             .addInterceptor { chain ->
                 Timber.e("TOKEN / Bearer ${App.prefs.accessToken}")
@@ -115,7 +121,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideConverterFactory(): GsonConverterFactory {
-        val gson : Gson = GsonBuilder()
+        val gson: Gson = GsonBuilder()
             .setLenient()
             .create()
         return GsonConverterFactory.create(gson)
@@ -124,4 +130,32 @@ object NetworkModule {
     private fun getLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(
+        refreshTokenApi: RefreshTokenApi
+    ): Authenticator = Authenticator { _, response ->
+        val request = response.request
+        return@Authenticator synchronized(this) {
+            if (response.code == 401) {
+                val newToken =
+                    try {
+                        // This will write a new token to sharedPreferences.
+                        runBlocking { refreshTokenApi.refreshToken().body()?.accessToken }
+                    } catch (e: Exception) {
+                        // A error occurred while refreshing token.
+                        Timber.w(e)
+                        null
+                    }
+
+                // If we have a new token let's use it.
+                newToken?.let {
+                    App.prefs.accessToken = it
+                    request.newBuilder()
+                        .header("Authorization", "Bearer $it")
+                        .build()
+                }
+            } else null
+        }
+    }
 }

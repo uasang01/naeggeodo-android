@@ -6,7 +6,6 @@ import com.naeggeodo.domain.model.MyInfo
 import com.naeggeodo.domain.model.MyNickName
 import com.naeggeodo.domain.utils.RemoteErrorEmitter
 import retrofit2.HttpException
-import timber.log.Timber
 import javax.inject.Inject
 
 class InfoRemoteDataSourceImpl @Inject constructor(
@@ -18,14 +17,11 @@ class InfoRemoteDataSourceImpl @Inject constructor(
         nickname: String
     ): MyNickName? {
         val res = safeApiCall(remoteErrorEmitter) {
-            infoApi.changeNickName(userId, nickname)
+            val result = infoApi.changeNickName(userId, nickname)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getMyNickName(
@@ -33,14 +29,11 @@ class InfoRemoteDataSourceImpl @Inject constructor(
         userId: String
     ): MyNickName? {
         val res = safeApiCall(remoteErrorEmitter) {
-            infoApi.getMyNickName(userId)
+            val result = infoApi.getMyNickName(userId)
+            if (result.code() != 200) throw HttpException(result)
+            result
         }
-        return if (res != null && res.isSuccessful && res.code() == 200) {
-            res.body()
-        } else {
-            Timber.e("Api call failed / status:${res?.code()} errorBody:${res?.errorBody()}")
-            null
-        }
+        return res?.body()
     }
 
     override suspend fun getMyInfo(

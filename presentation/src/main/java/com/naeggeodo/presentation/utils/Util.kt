@@ -2,6 +2,7 @@ package com.naeggeodo.presentation.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Point
@@ -23,6 +24,7 @@ import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.di.GlideApp
 import com.naeggeodo.presentation.utils.svg.SvgSoftwareLayerSetter
+import com.naeggeodo.presentation.view.LoginActivity
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -36,6 +38,13 @@ import java.util.*
 
 object Util {
     var toast: Toast? = null
+
+    fun goToLoginScreen(context: Context){
+        App.prefs.clearAll()
+        val intent = Intent(context, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        context.startActivity(intent)
+    }
 
     fun getSvgRequestBuilder(context: Context): RequestBuilder<PictureDrawable> =
         GlideApp.with(context)

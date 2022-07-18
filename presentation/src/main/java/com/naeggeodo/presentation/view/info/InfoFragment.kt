@@ -13,6 +13,7 @@ import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentInfoBinding
 import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.utils.Util.goToLoginScreen
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.view.CommonDialogFragment
@@ -123,10 +124,7 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
                 colorButtonText = "취소",
                 normalButtonText = "로그아웃",
                 normalButtonListener = {
-                    App.prefs.clearAll()
-                    val intent = Intent(requireContext(), LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                    goToLoginScreen(requireContext())
                 }
             )
             dialog.show(childFragmentManager, "Dialog")
