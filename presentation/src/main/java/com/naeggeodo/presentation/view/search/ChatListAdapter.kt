@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.naeggeodo.domain.model.Chat
+import com.naeggeodo.domain.utils.OrderTimeType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.databinding.ItemChatListBinding
 import com.naeggeodo.presentation.utils.Util
@@ -66,6 +67,10 @@ class ChatListAdapter(
                     .centerCrop()
                     .into(image)
             }
+
+            orderTypeTextView.text =
+                enumValueOf<OrderTimeType>(datas[position].orderTimeType).korean
+
             enterContainer.setOnClickListener {
                 listener(position)
             }

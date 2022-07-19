@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide
 import com.naeggeodo.domain.model.ChatHistory
 import com.naeggeodo.domain.model.User
 import com.naeggeodo.domain.utils.ChatDetailType
-import com.naeggeodo.domain.utils.ErrorType
 import com.naeggeodo.presentation.BuildConfig
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -307,10 +306,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                         ChatDetailType.IMAGE.name -> {
                             imageReceiver(h)
                         }
-                        ChatDetailType.WELCOME.name -> {
-                            addNoticeView("${h.nickname}${h.contents}")
-                        }
-                        ChatDetailType.EXIT.name -> {
+                        ChatDetailType.WELCOME.name, ChatDetailType.EXIT.name -> {
                             addNoticeView("${h.nickname}${h.contents}")
                         }
                     }
@@ -351,6 +347,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                 }
                 ChatDetailType.EXIT.name -> {
                     addNoticeView("${msgInfo.nickname}${msgInfo.contents}")
+                    // 방장이 나로 바뀔 경우
                     if (msgInfo.contents.contains(App.prefs.nickname!!)) {
                         binding.checkDepositButton.visibility = View.VISIBLE
                     }
@@ -673,6 +670,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
 
 
     private fun addNoticeView(str: String) {
+        Timber.e("strstr $str")
         // view, image
         val inflater = LayoutInflater.from(requireContext())
         val layoutBinding = ItemChatNoticeBinding.inflate(inflater)

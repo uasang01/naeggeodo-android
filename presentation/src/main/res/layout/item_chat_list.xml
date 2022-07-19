@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="인원이 모집되는 대로"
+            android:text="모집되는 대로"
             android:textColor="@color/main_color"
             app:layout_constraintBottom_toBottomOf="@id/timeCardView"
             app:layout_constraintStart_toEndOf="@id/timeCardView"
