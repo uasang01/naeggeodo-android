@@ -10,12 +10,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.gson.Gson
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentCreateNewChatBinding
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util.persistImage
+import com.naeggeodo.presentation.utils.Util.sessionErrorHandle
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.utils.dpToPx
 import com.naeggeodo.presentation.viewmodel.CreateChatViewModel
@@ -210,6 +210,15 @@ class CreateNewChatFragment :
         }
         createHistoryViewModel.selectedChat.observe(viewLifecycleOwner) {
             createButtonEnable()
+        }
+
+
+
+        createChatViewModel.mutableErrorType.observe(this) {
+            sessionErrorHandle(requireContext(), it)
+        }
+        createHistoryViewModel.mutableErrorType.observe(this) {
+            sessionErrorHandle(requireContext(), it)
         }
     }
 

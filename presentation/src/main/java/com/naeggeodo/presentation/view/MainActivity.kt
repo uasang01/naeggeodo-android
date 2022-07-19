@@ -1,5 +1,6 @@
 package com.naeggeodo.presentation.view
 
+import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat.Type.ime
 import androidx.core.view.isGone
 import androidx.navigation.NavController
@@ -9,8 +10,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseActivity
 import com.naeggeodo.presentation.databinding.ActivityMainBinding
-import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.utils.Util
+import com.naeggeodo.presentation.viewmodel.ChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,6 +19,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private lateinit var navController: NavController
     private var backKeyPressedTime = 0L
+
+    private val chatViewModel by viewModels<ChatViewModel>()
 
     override fun initView() {
         // init bottom navigation
@@ -45,10 +48,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             binding.navBar.isGone = windowInsets.isVisible(ime())
             view.onApplyWindowInsets(windowInsets)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onBackPressed() {

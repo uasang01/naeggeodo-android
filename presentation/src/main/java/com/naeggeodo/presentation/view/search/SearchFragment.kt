@@ -12,6 +12,7 @@ import com.google.android.flexbox.JustifyContent
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentSearchBinding
+import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.viewmodel.SearchViewModel
@@ -121,6 +122,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
             }
             chatListAdapter.setData(ArrayList(it))
 //            recyclerViewChanger(false)
+        }
+
+        searchViewModel.mutableErrorType.observe(this) {
+            Util.sessionErrorHandle(requireContext(), it)
         }
     }
 

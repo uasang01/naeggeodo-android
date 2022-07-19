@@ -7,12 +7,12 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import com.naeggeodo.domain.utils.ErrorType
 import com.naeggeodo.domain.utils.ReportType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentInfoBinding
 import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.utils.Util.goToLoginScreen
 import com.naeggeodo.presentation.utils.Util.hideKeyboard
 import com.naeggeodo.presentation.utils.Util.showShortToast
@@ -156,28 +156,8 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
             binding.recentOrderTextView.text = "${it.myOrdersCount}건"
             binding.nicknameEditText.setText(it.nickname)
         }
-        infoViewModel.mutableErrorType.observe(viewLifecycleOwner) {
-            Timber.e("gdgdgdgdgd")
-            when (it) {
-                ErrorType.ACCESS_TOKEN_EXPIRED -> {
-                    showShortToast(requireContext(), "ACCESS_TOKEN_EXPIRED")
-                }
-                ErrorType.REFRESH_TOKEN_EXPIRED -> {
-                    showShortToast(requireContext(), "REFRESH_TOKEN_EXPIRED")
-                }
-                ErrorType.TIMEOUT -> {
-                    showShortToast(requireContext(), "TIMEOUT")
-                }
-                ErrorType.NETWORK -> {
-                    showShortToast(requireContext(), "NETWORK")
-                }
-                ErrorType.UNKNOWN -> {
-                    showShortToast(requireContext(), "UNKNOWN")
-                }
-                else -> {
-                    showShortToast(requireContext(), "UNKNOWN")
-                }
-            }
+        infoViewModel.mutableErrorType.observe(this) {
+            Util.sessionErrorHandle(requireContext(), it)
         }
     }
 
@@ -189,8 +169,8 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(R.layout.fragment_info) {
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = infoViewModel.report(body)
-            withContext(Dispatchers.Main){
-                if(result) showShortToast(requireContext(), "접수되었습니다")
+            withContext(Dispatchers.Main) {
+                if (result) showShortToast(requireContext(), "접수되었습니다")
                 else showShortToast(requireContext(), "에러가 발생했습니다")
             }
         }

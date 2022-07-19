@@ -37,7 +37,7 @@ abstract class BaseRepository {
                 Timber.e("BaseRemoteRepo Call error: ${e.localizedMessage} ${e.cause}")
                 when (e) {
                     is HttpException -> {
-                        if (e.code() == 401) emitter.onError(ErrorType.ACCESS_TOKEN_EXPIRED)
+                        if (e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
                         else if(e.code() == 403) {
                             emitter.onError(ErrorType.REFRESH_TOKEN_EXPIRED)
                         }else{
@@ -70,7 +70,7 @@ abstract class BaseRepository {
             Timber.e("BaseRemoteRepo Call error: ${e.localizedMessage} ${e.cause}")
             when (e) {
                 is HttpException -> {
-                    if (e.code() == 401) emitter.onError(ErrorType.ACCESS_TOKEN_EXPIRED)
+                    if (e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
                     else {
                         val body = e.response()?.errorBody()
                         emitter.onError(getErrorMessage(body))

@@ -212,6 +212,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 binding.noneAddress.root.visibility = View.GONE
             }
         }
+
+        homeViewModel.mutableErrorType.observe(this) {
+            Util.sessionErrorHandle(requireContext(), it)
+        }
     }
 
     private fun addressInfoUpdated() {

@@ -7,6 +7,7 @@ import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
 import com.naeggeodo.presentation.databinding.FragmentMyChatBinding
 import com.naeggeodo.presentation.di.App
+import com.naeggeodo.presentation.utils.Util
 import com.naeggeodo.presentation.utils.Util.showShortToast
 import com.naeggeodo.presentation.viewmodel.MyChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,6 +63,11 @@ class MyChatFragment : BaseFragment<FragmentMyChatBinding>(R.layout.fragment_my_
                     }
                 }
             }
+        }
+
+
+        myChatViewModel.mutableErrorType.observe(this) {
+            Util.sessionErrorHandle(requireContext(), it)
         }
     }
 }

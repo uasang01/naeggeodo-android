@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
+import com.naeggeodo.domain.utils.ErrorType
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.di.App
 import com.naeggeodo.presentation.di.GlideApp
@@ -39,11 +40,36 @@ import java.util.*
 object Util {
     var toast: Toast? = null
 
-    fun goToLoginScreen(context: Context){
+    fun goToLoginScreen(context: Context) {
         App.prefs.clearAll()
         val intent = Intent(context, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         context.startActivity(intent)
+    }
+
+    fun sessionErrorHandle(context: Context, errorType: ErrorType) {
+        when (errorType) {
+            ErrorType.SESSION_EXPIRED -> {
+                Timber.e("SESSION_EXPIRED")
+
+                goToLoginScreen(context)
+
+            }
+            ErrorType.NETWORK -> {
+                showShortToast(context, "NETWORK ERROR")
+            }
+            ErrorType.REFRESH_TOKEN_EXPIRED -> {
+                Timber.e("REFRESH_TOKEN_EXPIRED")
+                // 로그인 화면으로 이동
+                goToLoginScreen(context)
+            }
+            ErrorType.TIMEOUT -> {
+                showShortToast(context, "TIMEOUT ERROR")
+            }
+            else -> {
+
+            }
+        }
     }
 
     fun getSvgRequestBuilder(context: Context): RequestBuilder<PictureDrawable> =
@@ -55,7 +81,7 @@ object Util {
             .listener(SvgSoftwareLayerSetter())
 
     fun loadImageAndSetView(context: Context, imagePath: String?, view: ImageView) {
-        if(imagePath == null) return
+        if (imagePath == null) return
         val uri = Uri.parse(imagePath)
         if (uri.toString().split((".")).last() == "svg") {
             getSvgRequestBuilder(context).load(uri)
@@ -91,7 +117,7 @@ object Util {
     ) {
         val snackBar = Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT)
         action?.let {
-            snackBar.setAction(buttonText?:"허용하기") {
+            snackBar.setAction(buttonText ?: "허용하기") {
                 it()
             }
         }
@@ -154,7 +180,12 @@ object Util {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
 //        Timber.e("before ${stream.toByteArray().size} ${stream.size()} bitmap byte count: ${bitmap.byteCount} row bytes: ${bitmap.rowBytes} ${bitmap.rowBytes * bitmap.height}")
-        return "data:image/jpeg;base64,${Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)}"
+        return "data:image/jpeg;base64,${
+            Base64.encodeToString(
+                stream.toByteArray(),
+                Base64.DEFAULT
+            )
+        }"
     }
 
     fun decodeString(data: String): ByteArray = Base64.decode(data, Base64.DEFAULT)

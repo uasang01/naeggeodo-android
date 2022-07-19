@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide
 import com.naeggeodo.domain.model.ChatHistory
 import com.naeggeodo.domain.model.User
 import com.naeggeodo.domain.utils.ChatDetailType
+import com.naeggeodo.domain.utils.ErrorType
 import com.naeggeodo.presentation.BuildConfig
 import com.naeggeodo.presentation.R
 import com.naeggeodo.presentation.base.BaseFragment
@@ -370,6 +371,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
                 }
             }
         }
+
     }
 
     private fun showGallery() {
