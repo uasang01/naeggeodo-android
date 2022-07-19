@@ -1,5 +1,6 @@
 package com.naeggeodo.presentation.view
 
+import android.os.Build
 import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat.Type.ime
 import androidx.core.view.isGone
@@ -45,7 +46,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         }
 
         window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
-            binding.navBar.isGone = windowInsets.isVisible(ime())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                binding.navBar.isGone = windowInsets.isVisible(ime())
+            }else{
+
+            }
             view.onApplyWindowInsets(windowInsets)
         }
     }

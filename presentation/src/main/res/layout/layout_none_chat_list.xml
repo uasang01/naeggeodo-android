@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/none_chat_text_view"
-        style="@style/font_medium_17"
+        style="@style/font_medium_20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="채팅방이 없어요 먼저 만들어 보세요"

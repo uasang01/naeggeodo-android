@@ -6,10 +6,12 @@
 
     <TextView
         android:id="@+id/none_address_text_view"
-        style="@style/font_medium_17"
+        style="@style/font_medium_20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="채팅방을 검색하기 위해 주소가 필요해요"
+        android:gravity="center"
+        android:lineHeight="30dp"
+        android:text="아파트나 공동주택에서만\n서비스를 이용할 수 있어요"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@id/search_address_button"
         app:layout_constraintEnd_toEndOf="parent"

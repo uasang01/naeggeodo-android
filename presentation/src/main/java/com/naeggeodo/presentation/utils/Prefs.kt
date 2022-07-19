@@ -1,10 +1,24 @@
 package com.naeggeodo.presentation.utils
 
 import android.content.Context
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 
 class Prefs(context: Context) {
     private val prefNm = "naeggeodoPref"
-    private val prefs = context.getSharedPreferences(prefNm, Context.MODE_PRIVATE)
+    private val masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
+
+    //    private val prefs = context.getSharedPreferences(prefNm, Context.MODE_PRIVATE)
+    private val prefs = EncryptedSharedPreferences
+        .create(
+            context,
+            prefNm,
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
 
     var accessToken: String?
         get() = prefs.getString("accessToken", null)
@@ -54,11 +68,11 @@ class Prefs(context: Context) {
         buildingCode = null
         apartment = null
 
-        nickname= null
+        nickname = null
     }
 
     fun clearNickname() {
-        nickname= null
+        nickname = null
     }
 
     fun clearAccessToken() {

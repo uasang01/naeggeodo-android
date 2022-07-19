@@ -18,6 +18,7 @@ import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.crypto.AEADBadTagException
 
 
 @AndroidEntryPoint
@@ -26,29 +27,31 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     private val loginViewModel: LoginViewModel by viewModels()
 
     override fun init() {
-        if(App.prefs.accessToken != null) goToHome()
+        if (App.prefs.accessToken != null) goToHome()
     }
 
     override fun initListener() {
         binding.naverButton.setOnClickListener {
-            NaverIdLoginSDK.initialize(
-                this,
-                getString(R.string.naver_client_id),
-                getString(R.string.naver_client_secret),
-                getString(R.string.app_name)
-            )
+            try {
 
-            // result callback
-            val oauthLoginCallback = object : OAuthLoginCallback {
-                override fun onSuccess() {
-                    // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
-                    Timber.d("access token ${NaverIdLoginSDK.getAccessToken()}")
-                    Timber.d("refresh token ${NaverIdLoginSDK.getRefreshToken()}")
-                    Timber.d("expires at ${NaverIdLoginSDK.getExpiresAt()}")
-                    Timber.d("token type ${NaverIdLoginSDK.getTokenType()}")
-                    Timber.d("state ${NaverIdLoginSDK.getState()}")
+                NaverIdLoginSDK.initialize(
+                    applicationContext,
+                    getString(R.string.naver_client_id),
+                    getString(R.string.naver_client_secret),
+                    getString(R.string.app_name)
+                )
 
-                    // 프로필 불러오기. 뒤에 바로 로그아웃 하게되면 401 에러 발생.
+                // result callback
+                val oauthLoginCallback = object : OAuthLoginCallback {
+                    override fun onSuccess() {
+                        // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
+                        Timber.d("access token ${NaverIdLoginSDK.getAccessToken()}")
+                        Timber.d("refresh token ${NaverIdLoginSDK.getRefreshToken()}")
+                        Timber.d("expires at ${NaverIdLoginSDK.getExpiresAt()}")
+                        Timber.d("token type ${NaverIdLoginSDK.getTokenType()}")
+                        Timber.d("state ${NaverIdLoginSDK.getState()}")
+
+                        // 프로필 불러오기. 뒤에 바로 로그아웃 하게되면 401 에러 발생.
 //                    NidOAuthLogin().callProfileApi(object: NidProfileCallback<NidProfileResponse> {
 //                        override fun onError(errorCode: Int, message: String) {
 //                            Timber.e("onError to get profile / $errorCode / $message")
@@ -64,12 +67,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 //                    })
 
 
-                    // 서버에 토큰 전송
-                    requestLogin("naver", NaverIdLoginSDK.getAccessToken()!!)
+                        // 서버에 토큰 전송
+                        requestLogin("naver", NaverIdLoginSDK.getAccessToken()!!)
 //
 //                    Timber.e("NaverIdLoginSDK.getState()  ${NaverIdLoginSDK.getState()}")
 //                    // 로그아웃. 클라이언트에 저장된 토큰 삭제.
-                    NaverIdLoginSDK.logout()
+                        NaverIdLoginSDK.logout()
 //                    Timber.e("NaverIdLoginSDK.getState()  ${NaverIdLoginSDK.getState()}")
 //
 ////                    // 네이버 로그인 연동 해제
@@ -91,24 +94,31 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 ////                    })
 
 //                    NaverIdLoginSDK.logout()
+                    }
+
+
+                    override fun onFailure(httpStatus: Int, message: String) {
+                        val errorCode = NaverIdLoginSDK.getLastErrorCode().code
+                        val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
+
+                        Timber.e("naver login error occurred / errorCode:$errorCode, errorDesc:$errorDescription")
+                        showShortToast(applicationContext, "네이버 로그인 실패")
+                    }
+
+                    override fun onError(errorCode: Int, message: String) {
+                        onFailure(errorCode, message)
+                    }
                 }
 
-
-                override fun onFailure(httpStatus: Int, message: String) {
-                    val errorCode = NaverIdLoginSDK.getLastErrorCode().code
-                    val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-
-                    Timber.e("naver login error occurred / errorCode:$errorCode, errorDesc:$errorDescription")
-                    showShortToast(applicationContext, "네이버 로그인 실패")
-                }
-
-                override fun onError(errorCode: Int, message: String) {
-                    onFailure(errorCode, message)
-                }
+                // naver login start
+                NaverIdLoginSDK.authenticate(this, oauthLoginCallback)
+            } catch (e: Exception) {
+                Timber.e("naver login error / ${e.message}, ${e.cause}")
+                showShortToast(applicationContext, "네이버 로그인 실패")
+            } catch (e: AEADBadTagException) {
+                Timber.e("naver login error AEADBadTagException/ ${e.message}, ${e.cause}")
+                showShortToast(applicationContext, "네이버 로그인 실패")
             }
-
-            // naver login start
-            NaverIdLoginSDK.authenticate(this, oauthLoginCallback)
         }
 
 
