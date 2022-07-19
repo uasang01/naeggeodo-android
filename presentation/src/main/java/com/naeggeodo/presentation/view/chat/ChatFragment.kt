@@ -697,6 +697,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>(R.layout.fragment_chat),
     }
 
     override fun onStop() {
+        binding.msgContainer.removeAllViews()
         chatViewModel.stopStomp()
         super.onStop()
     }
