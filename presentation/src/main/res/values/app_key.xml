@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="kakao_app_key">50999d1a763796350d37045c83308374</string>
-    <string name="kakao_native_app_key">kakao50999d1a763796350d37045c83308374</string>
-    <string name="naver_client_id">FSZp_zbcpsL0vEkaSrBy</string>
-    <string name="naver_client_secret">UCYmpyMEye</string>
-</resources>
