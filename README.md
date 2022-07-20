@@ -14,6 +14,12 @@
 - 채팅을 통해 원하는 음식을 결정하고 아파트로비, 로비 1층 등 원하는 곳에서 음식을 받아가세요
 
 
+## 스토어 링크
+현재 스토어에 배포했으며 검토중 입니다. 배포가 완료되면 스토어에서 다운로드 할 수 있습니다.<br>
+[다운로드](https://drive.google.com/file/d/1adUYKrtfX6TFYsph2GtViZDaff2ULI9S/view?usp=sharing)<br>
+[스토어](https://play.google.com/store/apps/details?id=com.naeggeodo.presentation)
+
+
 ## ☎️ 팀원
 |                | Jayden  | Minhyeok  | Dahye | Seoyun | Sanghoon |
 |----------------|:--------------:|:--------------:|:--------------:|:--------------:|:--------------:|
@@ -23,11 +29,6 @@
 | **Blog**       | https://velog.io/@cjy0029 | https://velog.io/@kmh916 | https://dal-dagury.tistory.com/  | 🛵 | https://uasang01.tistory.com/ | 
 | **Position**   | FrontEnd / IOS | BackEnd | FrontEnd | BackEnd | Android |
 
-
-## 스토어 링크
-현재 스토어에 배포했으며 검토중 입니다. 배포가 완료되면 스토어에서 다운로드 할 수 있습니다.
-[다운로드](https://drive.google.com/file/d/1adUYKrtfX6TFYsph2GtViZDaff2ULI9S/view?usp=sharing)
-[스토어](https://play.google.com/store/apps/details?id=com.naeggeodo.presentation)
 
 
 ## Tech Stack
