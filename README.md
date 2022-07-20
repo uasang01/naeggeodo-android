@@ -113,8 +113,8 @@ Kotlin, Jetpack, Clean Architecture ...
 8. 로그아웃 버튼을 누르면 로그아웃되며, 로그인 화면으로 
 
 ### 설계
-- UI 설계 : [피그마](https://www.figma.com/file/flk99RkWlj4rw1djcltdhl/%EB%82%B4%EA%BA%BC%EB%8F%84-(1)?node-id=0%3A1)
-- 디자인 시스템 : [스토리북](https://62386cabc6001b003a44886f-sxupzucvew.chromatic.com/?path=/story/chatting-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8--chat-drawer-comp)
+- UI 설계 : [피그마](https://www.figma.com/file/flk99RkWlj4rw1djcltdhl/%EB%82%B4%EA%BA%BC%EB%8F%84-(1)?node-id=0%3A1) [피그마2](https://www.figma.com/file/Y8sO6Abym7rEPof5FIr0Vv/%EB%82%B4%EA%BA%BC%EB%8F%84-(Copy)?node-id=0%3A1)
+
 - DB ERD : [ERD](https://www.erdcloud.com/d/Wbg7xBJihLSrvxBbG)
 
 ### 커밋 규칙
