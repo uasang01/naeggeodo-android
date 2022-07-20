@@ -39,37 +39,38 @@ Kotlin, Jetpack, Clean Architecture ...
 <summary>펼쳐보기</summary>
 <div markdown="1">
 
-</div>
-</details>
 1. API 요청 시 AccessToken이 만료되었다면 RefreshToken을 이용하여 AccessToken을 갱신하고 기존 API를 다시 요청합니다
 2. RefreshToken이 만료되었다면 로그인 화면으로 이동합니다.
 3. 로그인 후 하단의 바텀텝을 이용하여 화면을 전환할 수 있습니다.
 4. Screen Back Stack이 없을 때 폰의 뒤로 버튼을 누르면 '한번 더 누르면 앱이 종료됩니다' 라는 토스트가 뜨며 두번 누르면 앱이 종료됩니다.
+</div>
+</details>
 
 #### 로그인 화면
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
 
-</div>
-</details>
 1. 카카오, 네이버 로그인을 통해 회원가입 / 로그인 할 수 있습니다.
 2. 로그아웃 한 경우가 아니라면 자동 로그인처리 됩니다.
 3. 로그인 후 홈 화면으로 이동합니다.
+</div>
+</details>
 
 #### 메인 화면
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
 
+1. 하단의 5가지 탭이 있고 Default는 홈 탭입니다
 </div>
 </details>
-1. 하단의 5가지 탭이 있고 Default는 홈 탭입니다
 
 #### 홈 탭
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
+  
 1. 음식 카테고리(전체, 치킨, 피자 ...)별로 나와 같은 주소의 유저들이 생성한 채팅방리스트를 보여줍니다
 2. 상단의 검색창을 클릭하면 다음 주소 API를 이용하여 주소를 검색할 수 있습니다(아파트나 공동주택 주소여야 서비스를 이용할 수 있습니다)
 3. 유저의 주소 정보가 없다면 주소를 검색하라는 버튼을 보여줍니다
@@ -82,6 +83,7 @@ Kotlin, Jetpack, Clean Architecture ...
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
+  
 1. 현재 내가 참여 중인 내꺼톡 리스트를 보여줍니다
 2. 리스트에서 채팅방 제목과 위치정보 해당 채팅방에서 마지막으로 주고받은 메시지 내용, 시간을 볼 수 있습니다
 3. 참여중인 채팅방의 방장일 경우 수정 버튼이 있으며 터치 시 채팅방 이름을 변경하는 Dialog를 띄웁니다
@@ -93,6 +95,7 @@ Kotlin, Jetpack, Clean Architecture ...
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
+  
 1. 언제 주문할지 버튼 3개중 하나를 터치하면 생성 화면으로 이동합니다
 2. 두개의 탭이 있고, 하나는 새로 채팅방을 생성하기 위한 화면, 하나는 기존 생성 내역을 보여주는 화면입니다
 3. 새로 채팅방을 생성하기 위해서 제목, 카테고리, 최대인원을 선택해야합니다
@@ -112,6 +115,7 @@ Kotlin, Jetpack, Clean Architecture ...
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
+  
 1. 채팅방 상단에는 채팅방 정보(채팅방 제목, 입장 가능 인원, 현재 참여 중인 인원, 배달앱 링크를 입력했다면 해당 링크로 이동 가능한 버튼)을 보여줍니다
 2. 방장일 경우 채팅방 정보 밑에 '돈을 받으셨나요?'버튼을 보여줍니다
 3. 채팅방에 유저가 입장하거나 퇴장 시 안내 메세지를 보여줍니다
@@ -138,6 +142,7 @@ Kotlin, Jetpack, Clean Architecture ...
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
+  
 1. 채팅방 제목으로 검색을 할 수 있습니다
 2. 많이 사용된 태그를 보여주며, 검색된 채팅방이 있다면 사라집니다 
 3. 검색된 채팅방이 있더라도 검색창을 누르면 태그가 보여집니다
@@ -150,6 +155,7 @@ Kotlin, Jetpack, Clean Architecture ...
 <details>
 <summary>펼쳐보기</summary>
 <div markdown="1">
+  
 1. 회원가입 시 임의로 생성된 닉네임을 보여줍니다
 2. 닉네임 옆 수정하기 버튼으로 닉네임을 변경할 수 있습니다
 4. 최근 3개월간 주문은 정상적으로 종료된 채팅방의 개수를 나타냅니다
