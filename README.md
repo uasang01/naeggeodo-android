@@ -15,8 +15,8 @@
 
 
 ## 스토어 링크
-현재 스토어에 배포했으며 검토중 입니다. 배포가 완료되면 스토어에서 다운로드 할 수 있습니다.<br>
-[스토어](https://play.google.com/store/apps/details?id=com.naeggeodo.presentation)
+현재 스토어에서 다운로드 할수 있습니다. [스토어로 이동](https://play.google.com/store/apps/details?id=com.naeggeodo.presentation)<br>
+
 
 
 ## ☎️ 팀원
