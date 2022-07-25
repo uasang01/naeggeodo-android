@@ -16,7 +16,6 @@
 
 ## 스토어 링크
 현재 스토어에 배포했으며 검토중 입니다. 배포가 완료되면 스토어에서 다운로드 할 수 있습니다.<br>
-[다운로드](https://drive.google.com/file/d/1adUYKrtfX6TFYsph2GtViZDaff2ULI9S/view?usp=sharing)<br>
 [스토어](https://play.google.com/store/apps/details?id=com.naeggeodo.presentation)
 
 
